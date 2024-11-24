@@ -3,7 +3,7 @@ include(FetchContent)
 FetchContent_Declare(
   sfml
   GIT_REPOSITORY "https://github.com/SFML/SFML"
-  GIT_TAG 2f11710abc5aa478503a7ff3f9e654bd2078ebab # 2.5.1
+  GIT_TAG 5383d2b3948f805af55c9f8a4587ac72ec5981d1# 2.6.2
 )
 set(BUILD_SHARED_LIBS false)
 add_subdirectory(sfml)
