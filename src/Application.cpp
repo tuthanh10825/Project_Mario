@@ -13,6 +13,7 @@ void Application::processInput()
 
 void Application::update(sf::Time dt)
 {
+	stateStack.update(dt);
 }
 
 void Application::render()
@@ -34,17 +35,20 @@ void Application::run()
 {
 	while (window.isOpen()) {
 		processInput();
-		if (stateStack.isEmpty()) window.close(); 
+		update(sf::Time()); 
+		if (stateStack.isEmpty())
+			window.close(); 
 		render();
 
 	}
 }
 
-Application::Application() : window(sf::VideoMode::getDesktopMode(), "Super Mario", sf::Style::Close | sf::Style::Titlebar),
+Application::Application() : window(sf::VideoMode(1000, 800), "Super Mario", sf::Style::Close | sf::Style::Titlebar),
 	textures(), fonts(), stateStack(State::Context(window, textures, fonts))
 {
 	window.setKeyRepeatEnabled(false);
 	window.setSize(window.getSize()); 
+
 	fonts.load(Fonts::PixeloidSansBold, "fonts/PixeloidSansBold.ttf"); 
 	fonts.load(Fonts::PixeloidMono, "fonts/PixeloidMono.ttf");
 	registerStates(); 

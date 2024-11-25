@@ -3,7 +3,7 @@
 #
 #adding all file in the src directories. 
 # Add the executable
-add_executable(game main.cpp)
+add_executable(game main.cpp "SceneNode.h" "Player.h" "Player.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET game PROPERTY CXX_STANDARD 20)
@@ -23,3 +23,4 @@ target_sources(game PUBLIC "ID.h")
 target_sources(game PUBLIC "MenuState.cpp" "MenuState.h")
 target_sources(game PUBLIC "ResourceHolder.h")
 target_sources(game PUBLIC "State.cpp" "State.h" "StateStack.cpp" "StateStack.h")
+target_sources(game PUBLIC "GameState.h" "GameState.cpp" "SceneNode.cpp" "Player.cpp")

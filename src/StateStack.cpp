@@ -1,6 +1,10 @@
 #include "StateStack.h"
 StateStack::PendingChange::PendingChange(StateStack::Action action, States::ID stateID) : action(action), stateID(stateID) {}
 StateStack::StateStack(State::Context context) : context(context) {}
+void StateStack::update(sf::Time dt)
+{
+	applyPendingChanges();
+}
 void StateStack::draw()
 {
 	for (auto &state : stack) {
@@ -10,8 +14,9 @@ void StateStack::draw()
 void StateStack::handleEvent(const sf::Event& event)
 {
 	for (auto it = stack.rbegin(); it != stack.rend(); ++it) {
-		if (!(*it)->handleEvent(event)) return; 
+		if (!((*it)->handleEvent(event))) break; 
 	}
+
 	applyPendingChanges(); 
 }
 void StateStack::pushState(States::ID stateID)

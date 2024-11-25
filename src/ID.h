@@ -1,6 +1,8 @@
 #pragma once
 namespace Textures {
 	enum ID {
+		Background, 
+		Character1, 
 
 	};
 }
