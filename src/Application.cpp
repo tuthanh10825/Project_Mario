@@ -1,5 +1,6 @@
 #include "Application.h"
 
+const sf::Time Application::timePerFrame = sf::seconds(1.f / 60.f);
 void Application::processInput()
 {
 	sf::Event event; 
@@ -27,18 +28,24 @@ void Application::render()
 void Application::registerStates()
 {
 	stateStack.registerState<MenuState>(States::Menu); 
-	//	stateStack.registerState<GameState>(States::Game); 
+	stateStack.registerState<GameState>(States::Game); 
 	//  stateStack.registerState<PauseState>(States::Pause); 
 }
 
 void Application::run()
 {
+	sf::Clock clock; 
+	sf::Time timeSinceLastUpdate = sf::Time::Zero; 
 	while (window.isOpen()) {
 		processInput();
-		update(sf::Time()); 
-		if (stateStack.isEmpty())
-			window.close(); 
-		render();
+		timeSinceLastUpdate += clock.restart(); 
+		while (timeSinceLastUpdate > timePerFrame) {
+			timeSinceLastUpdate -= timePerFrame;
+			update(timePerFrame);
+			if (stateStack.isEmpty())
+				window.close();
+			render();
+		}
 
 	}
 }

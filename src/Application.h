@@ -2,13 +2,17 @@
 #include "StateStack.h"
 #include "ResourceHolder.h"
 #include "MenuState.h"
+#include "GameState.h"
 class Application {
 private: 
+
+	static const sf::Time timePerFrame; 
 	StateStack stateStack; 
 	sf::RenderWindow window;
 	TextureHolder textures;
 	FontHolder fonts;
 	
+
 private:
 	void processInput(); 
 	void update(sf::Time dt); 

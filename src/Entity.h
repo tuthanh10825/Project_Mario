@@ -1,3 +1,4 @@
+#pragma once
 #include "SceneNode.h"
 class Entity :public SceneNode{
 public: 
@@ -6,4 +7,5 @@ public:
 	sf::Vector2f getVelocity() const;
 private: 
 	sf::Vector2f velocity; 
+	virtual void updateCurrent(sf::Time dt); 
 };

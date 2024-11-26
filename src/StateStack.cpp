@@ -3,6 +3,10 @@ StateStack::PendingChange::PendingChange(StateStack::Action action, States::ID s
 StateStack::StateStack(State::Context context) : context(context) {}
 void StateStack::update(sf::Time dt)
 {
+	for (auto it = stack.rbegin(); it != stack.rend(); ++it) {
+		if (!(*it)->update(dt))
+			break; 
+	}
 	applyPendingChanges();
 }
 void StateStack::draw()

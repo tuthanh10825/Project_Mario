@@ -69,6 +69,10 @@ bool MenuState::handleEvent(const sf::Event& event)
 		updateOptionText(); 
 	}
 	if (event.key.code == sf::Keyboard::Return) {
+		if (optionIndex == Play) {
+			requestStackPop(); 
+			requestStackPush(States::Game);
+		}
 		if (optionIndex == Exit)
 			requestStateClear(); 
 	}
