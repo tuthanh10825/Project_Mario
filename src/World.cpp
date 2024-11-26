@@ -8,7 +8,7 @@ World::World(sf::RenderWindow& window) : window(window), worldView(window.getDef
 		worldView.getSize().y
 		), 
 	spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f), 
-	player(nullptr), 
+	character(nullptr), 
 	scrollSpeed(80.f)
 {
 	loadTextures(); 
@@ -23,15 +23,18 @@ void World::draw()
 	window.draw(sceneGraph); 
 }
 
-void World::update(sf::Time dt) {
-	worldView.move(scrollSpeed * dt.asSeconds(), 0.f); 
-	sf::Vector2f position = player->getPosition(); 
-	sf::Vector2f velocity = player->getVelocity(); 
+CommandQueue& World::getCommandQueue()
+{
+	return commandQueue; 
+}
 
-	if (position.y <= worldBounds.top||
-		position.y >= worldBounds.top + worldBounds.height - 150) {
-		velocity.y = -velocity.y; 
-		player->setVelocity(velocity); 
+void World::update(sf::Time dt) {
+	//worldView.move(scrollSpeed * dt.asSeconds(), 0.f); 
+	sf::Vector2f position = character->getPosition(); 
+	sf::Vector2f velocity = character->getVelocity(); 
+	
+	while (!commandQueue.isEmpty()) {
+		sceneGraph.onCommand(commandQueue.pop(), dt); 
 	}
 
 	sceneGraph.update(dt); 
@@ -62,11 +65,10 @@ void World::buildScene()
 		backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
 		sceneLayers[Background]->attachChild(std::move(backgroundSprite)); 
 
-		std::unique_ptr<Player> tempPlayer(new Player(Player::Character1, textures)); 
+		std::unique_ptr<Character> tempPlayer(new Character(Character::Character1, textures)); 
 
-		player = tempPlayer.get(); 
-		player->setPosition(spawnPosition); 
-		player->setVelocity(80.f, scrollSpeed); 
+		character = tempPlayer.get(); 
+		character->setPosition(spawnPosition); 
 
 		sceneLayers[Air]->attachChild(std::move(tempPlayer)); 
 

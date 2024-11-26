@@ -1,4 +1,5 @@
 #pragma once
+#include "Command.h"
 #include <xutility> 
 #include <memory>
 #include <vector> 
@@ -15,6 +16,8 @@ public:
 	void attachChild(Ptr child); 
 	Ptr detachChild(const SceneNode& node); 
 	void update(sf::Time dt);
+	virtual unsigned getCategory() const; 
+	void onCommand(const Command& command, sf::Time dt); 
 
 	sf::Transform getWorldTransform() const; 
 	sf::Vector2f getWorldPosition() const; 

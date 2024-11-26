@@ -3,6 +3,7 @@
 #include <sfml/Graphics.hpp>
 #include <xutility>
 #include "ResourceHolder.h"
+#include "Player.h"
 class StateStack; 
 
 class State {
@@ -12,7 +13,8 @@ public:
 		sf::RenderWindow* window;
 		TextureHolder* textures;
 		FontHolder* fonts;
-		Context(sf::RenderWindow&, TextureHolder&, FontHolder&);
+		Player* player;
+		Context(sf::RenderWindow&, TextureHolder&, FontHolder&, Player&);
 	};
 public:
 	State(StateStack& stack, Context context);

@@ -51,9 +51,9 @@ void Application::run()
 }
 
 Application::Application() : window(sf::VideoMode(1000, 800), "Super Mario", sf::Style::Close | sf::Style::Titlebar),
-	textures(), fonts(), stateStack(State::Context(window, textures, fonts))
+	textures(), fonts(), player(), stateStack(State::Context(window, textures, fonts, player))
 {
-	window.setKeyRepeatEnabled(false);
+	//window.setKeyRepeatEnabled(false);
 	window.setSize(window.getSize()); 
 
 	fonts.load(Fonts::PixeloidSansBold, "fonts/PixeloidSansBold.ttf"); 

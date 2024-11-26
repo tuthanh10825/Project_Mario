@@ -3,7 +3,7 @@
 #
 #adding all file in the src directories. 
 # Add the executable
-add_executable(game main.cpp "SceneNode.h" "Player.h" "Player.cpp")
+add_executable(game main.cpp)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET game PROPERTY CXX_STANDARD 20)
@@ -22,8 +22,11 @@ target_sources(game PUBLIC "Application.cpp" "Application.h")
 target_sources(game PUBLIC "ID.h")
 target_sources(game PUBLIC "MenuState.cpp" "MenuState.h")
 target_sources(game PUBLIC "ResourceHolder.h")
+target_sources(game PUBLIC "Character.h" "Character.cpp")  
 target_sources(game PUBLIC "State.cpp" "State.h" "StateStack.cpp" "StateStack.h")
-target_sources(game PUBLIC "GameState.h" "GameState.cpp" "SceneNode.cpp" "Player.cpp")
+target_sources(game PUBLIC "GameState.h" "GameState.cpp" "SceneNode.h" "SceneNode.cpp" )
 target_sources(game PUBLIC "Entity.h" "Entity.cpp")
 target_sources(game PUBLIC "SpriteNode.h" "SpriteNode.cpp")
 target_sources(game PUBLIC "World.h" "World.cpp")
+target_sources(game PUBLIC "Command.h" "CommandQueue.h" "CommandQueue.cpp")
+target_sources(game PUBLIC "Player.h" "Player.cpp")

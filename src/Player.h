@@ -1,17 +1,8 @@
 #pragma once
-#include "Entity.h"
-#include "ResourceHolder.h"
-
-class Player : public Entity {
+#include "CommandQueue.h"
+#include "SFML/Graphics.hpp"
+class Player {
 public: 
-	enum Type {
-		Character1,
-	};
-	explicit Player(Type type, const TextureHolder& textures); 
-	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const; 
-
-private: 
-	Type type; 
-	sf::Sprite sprite; 
-
+	void handleEvent(const sf::Event& event, CommandQueue& commands); 
+	void handleRealtimeInput(CommandQueue& command); 
 };

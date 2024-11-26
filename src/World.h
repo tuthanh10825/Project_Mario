@@ -1,13 +1,15 @@
 #pragma once
-#include "Player.h"
+#include "Character.h"
 #include <array>
 #include "ResourceHolder.h"
 #include "SpriteNode.h"
+#include "CommandQueue.h"
 class World : private sf::NonCopyable {
 public: 
 	explicit World(sf::RenderWindow& window); 
 	void update(sf::Time dt); 
 	void draw(); 
+	CommandQueue& getCommandQueue(); 
 private:
 	void loadTextures(); 
 	void buildScene(); 
@@ -27,5 +29,6 @@ private:
 	sf::FloatRect worldBounds; 
 	sf::Vector2f spawnPosition; 
 	float scrollSpeed; 
-	Player* player; 
+	Character* character; 
+	CommandQueue commandQueue; 
 };

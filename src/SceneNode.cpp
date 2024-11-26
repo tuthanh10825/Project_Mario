@@ -1,4 +1,5 @@
 #include "SceneNode.h"
+#include "ID.h"
 #include <cassert>
 
 SceneNode::SceneNode() : parent(nullptr), children()
@@ -65,5 +66,18 @@ void SceneNode::updateChildren(sf::Time dt)
 {
 	for (Ptr& child : children) {
 		child->update(dt); 
+	}
+}
+unsigned SceneNode::getCategory() const {
+	return Category::Scene;
+}
+
+void SceneNode::onCommand(const Command& command, sf::Time dt)
+{
+	if (command.category & getCategory()) {
+		command.action(*this, dt); 
+	}
+	for (Ptr& child : children) {
+		child->onCommand(command, dt); 
 	}
 }

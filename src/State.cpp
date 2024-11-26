@@ -1,7 +1,8 @@
 #include "State.h"
 #include "StateStack.h"
-State::Context::Context(sf::RenderWindow& window, TextureHolder& textureHolder, FontHolder& fontHolder) :
-	window(&window), textures(&textureHolder), fonts(&fontHolder) {
+State::Context::Context(sf::RenderWindow& window, TextureHolder& textureHolder,
+	FontHolder& fontHolder, Player& player) :
+	window(&window), textures(&textureHolder), fonts(&fontHolder), player(&player) {
 
 }
 
