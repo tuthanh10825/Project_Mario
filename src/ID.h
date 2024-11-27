@@ -3,7 +3,7 @@ namespace Textures {
 	enum ID {
 		Background, 
 		Character1, 
-
+		Block,
 	};
 }
 
@@ -28,5 +28,6 @@ namespace Category {
 		Scene = 1 << 0, 
 		Player = 1 << 1, 
 		Enemy = 1 << 2, 
+		Block = 1 << 3,
 	};
 }

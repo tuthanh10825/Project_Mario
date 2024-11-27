@@ -11,6 +11,8 @@ public:
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const; 
 	virtual unsigned getCategory() const; 
 
+	virtual sf::FloatRect getBoundingRect() const; 
+
 private: 
 	Type type; 
 	sf::Sprite sprite; 

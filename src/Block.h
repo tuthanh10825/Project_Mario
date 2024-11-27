@@ -1,0 +1,15 @@
+#pragma once
+#include "Entity.h"
+#include "ResourceHolder.h"
+#include "ID.h"
+
+class Block : public Entity{
+public: 
+	explicit Block(TextureHolder& textures); 
+	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+	virtual unsigned getCategory() const; 
+
+	virtual sf::FloatRect getBoundingRect() const; 
+private: 
+	sf::Sprite sprite; 
+};

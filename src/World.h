@@ -4,6 +4,7 @@
 #include "ResourceHolder.h"
 #include "SpriteNode.h"
 #include "CommandQueue.h"
+#include "Block.h"
 class World : private sf::NonCopyable {
 public: 
 	explicit World(sf::RenderWindow& window); 

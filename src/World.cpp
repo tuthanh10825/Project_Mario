@@ -44,10 +44,10 @@ void World::loadTextures()
 {
 	textures.load(Textures::Background, "textures/background.jpg"); 
 	textures.load(Textures::Character1, "textures/character1.png"); 
-
+	textures.load(Textures::Block, "textures/block.jpg");
 }
 
-void World::buildScene()
+void World::buildScene() // we need to load the "front" world here.
 {
 	for (std::size_t i = 0; i < LayerCount; ++i) {
 		SceneNode::Ptr layer(new SceneNode());
@@ -55,21 +55,29 @@ void World::buildScene()
 		sceneGraph.attachChild(std::move(layer));
 	}
 
-		sf::Texture& background = textures.get(Textures::Background); 
-		sf::IntRect textureRect(worldBounds); 
+	sf::Texture& background = textures.get(Textures::Background); 
+	sf::IntRect textureRect(worldBounds); 
 
-		background.setRepeated(true); 
-		std::unique_ptr<SpriteNode> backgroundSprite(
-			new SpriteNode(background, textureRect)
-		);
-		backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
-		sceneLayers[Background]->attachChild(std::move(backgroundSprite)); 
+	background.setRepeated(true); 
+	std::unique_ptr<SpriteNode> backgroundSprite(
+		new SpriteNode(background, textureRect)
+	);
+	backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
+	sceneLayers[Background]->attachChild(std::move(backgroundSprite)); 
 
-		std::unique_ptr<Character> tempPlayer(new Character(Character::Character1, textures)); 
+	std::unique_ptr<Character> tempPlayer(new Character(Character::Character1, textures)); 
 
-		character = tempPlayer.get(); 
-		character->setPosition(spawnPosition); 
+	character = tempPlayer.get(); 
+	character->setPosition(spawnPosition); 
 
-		sceneLayers[Air]->attachChild(std::move(tempPlayer)); 
+	
+
+	sceneLayers[Air]->attachChild(std::move(tempPlayer)); 
+
+	std::unique_ptr<Block> ground(new Block(textures)); 
+
+	ground -> scale(20.f, 0.5); 
+	ground->setPosition(0, worldBounds.top + worldBounds.height - ground -> getBoundingRect().height); 
+	sceneLayers[Air]->attachChild(std::move(ground)); 
 
 }
