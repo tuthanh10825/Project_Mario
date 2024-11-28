@@ -1,13 +1,14 @@
 #include "MenuState.h"
 
-MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack, context), optionIndex(0)
-{
+MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack, context), optionIndex(0) {
+	getContext().textures->load(Textures::Background, "textures/background.jpg"); 
+	backgroundSprite.setTexture(getContext().textures->get(Textures::Background));
 	sf::Text playOption; 
-
+	
 	sf::Vector2f windowSize = context.window->getView().getSize(); 
 	playOption.setFont(context.fonts->get(Fonts::PixeloidMono)); 
 	playOption.setString("Play"); 
-	playOption.setColor(sf::Color::White);
+	playOption.setColor(sf::Color(250, 200, 0));
 	sf::FloatRect bound = playOption.getLocalBounds(); 
 	playOption.setOrigin((bound.left + bound.width / 2.f), (bound.top + bound.height / 2)); 
 	playOption.setPosition(windowSize / 2.f); 
@@ -18,7 +19,7 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 
 	exitOption.setFont(context.fonts->get(Fonts::PixeloidMono));
 	exitOption.setString("Exit");
-	exitOption.setColor(sf::Color::White); 
+	exitOption.setColor(sf::Color(250, 200, 0)); 
 
 	sf::FloatRect bound2 = exitOption.getLocalBounds(); 
 	exitOption.setOrigin((bound2.left + bound2.width / 2.f),(bound2.top + bound2.height / 2.f)); 
@@ -29,7 +30,7 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 	title.setFont(context.fonts->get(Fonts::PixeloidSansBold)); 
 	title.setString("Super Mario"); 
 
-	title.setColor(sf::Color::White); 
+	title.setColor(sf::Color(250, 200, 0)); 
 	title.setCharacterSize(100); 
 	sf::FloatRect bound3 = title.getLocalBounds(); 
 	title.setOrigin(bound3.left + bound3.width / 2.f, bound3.top + bound3.height / 2.f); 
@@ -43,7 +44,7 @@ void MenuState::draw()
 	sf::RenderWindow& window = *getContext().window; 
 	//window.draw(backgroundSprite); 
 
-
+	window.draw(backgroundSprite); 
 	window.draw(title); 
 	for (sf::Text& text : options) {
 		window.draw(text); 
@@ -68,7 +69,7 @@ bool MenuState::handleEvent(const sf::Event& event)
 		else optionIndex = 0; 
 		updateOptionText(); 
 	}
-	if (event.key.code == sf::Keyboard::Return) {
+	if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {
 		if (optionIndex == Play) {
 			requestStackPop(); 
 			requestStackPush(States::Game);
@@ -84,7 +85,7 @@ void MenuState::updateOptionText()
 	if (options.empty()) return; 
 
 	for (sf::Text& text : options) {
-		text.setColor(sf::Color::White); 
+		text.setColor(sf::Color(250, 200, 0));
 	}
 	options[optionIndex].setColor(sf::Color::Red); 
 

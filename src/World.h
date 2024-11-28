@@ -7,7 +7,7 @@
 #include "Block.h"
 class World : private sf::NonCopyable {
 public: 
-	explicit World(sf::RenderWindow& window); 
+	explicit World(sf::RenderWindow& window, TextureHolder& texture); 
 	void update(sf::Time dt); 
 	void draw(); 
 	CommandQueue& getCommandQueue(); 
@@ -23,7 +23,7 @@ private:
 private: 
 	sf::RenderWindow& window; 
 	sf::View worldView; 
-	TextureHolder textures; 
+	TextureHolder& textures; 
 	SceneNode sceneGraph; 
 	std::array<SceneNode*, LayerCount> sceneLayers; 
 	

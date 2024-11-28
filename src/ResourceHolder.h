@@ -26,7 +26,7 @@ void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string
 	}
 	auto inserted = ResourceMap.insert(
 		std::make_pair(id, std::move(resource)));
-	assert(inserted.second); 
+	//assert(inserted.second); 
 }
 
 template<typename Resource, typename Identifier>

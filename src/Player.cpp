@@ -8,7 +8,7 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 
 void Player::handleRealtimeInput(CommandQueue& command)
 {
-	const float playerSpeed = 80.f; 
+	const float playerSpeed = 120.f; 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 		Command moveLeft; 
 		moveLeft.category = Category::Player; 

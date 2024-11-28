@@ -1,6 +1,6 @@
 #include "World.h"
 
-World::World(sf::RenderWindow& window) : window(window), worldView(window.getDefaultView()), 
+World::World(sf::RenderWindow& window, TextureHolder &textures) : window(window), worldView(window.getDefaultView()), textures(textures),
 	worldBounds(
 		0.f, 
 		0.f, 
