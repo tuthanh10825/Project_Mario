@@ -2,7 +2,7 @@
 #include "ID.h"
 #include <cassert>
 
-SceneNode::SceneNode() : parent(nullptr), children()
+SceneNode::SceneNode(Category::Type type)  : parent(nullptr), children(), defaultCategoryType(type)
 {
 }
 
@@ -45,6 +45,26 @@ sf::Vector2f SceneNode::getWorldPosition() const
 	return getWorldTransform() * sf::Vector2f(); 
 }
 
+void SceneNode::checkNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs)
+{
+	if (this != &node && collision(*this, node))
+		collisionPairs.insert(std::minmax(this, &node)); 
+	for (Ptr& child : children)
+		child -> checkNodeCollision(node, collisionPairs); 
+}
+
+void SceneNode::checkSceneCollision(SceneNode& sceneGraph, std::set<Pair>& collisionPairs)
+{
+	checkNodeCollision(sceneGraph, collisionPairs);
+	for (Ptr& child : sceneGraph.children) {
+		checkSceneCollision(*child, collisionPairs); 
+	}
+}
+
+sf::FloatRect SceneNode::getBoundingRect() const
+{
+	return sf::FloatRect();
+}
 void SceneNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform(); 
@@ -80,4 +100,8 @@ void SceneNode::onCommand(const Command& command, sf::Time dt)
 	for (Ptr& child : children) {
 		child->onCommand(command, dt); 
 	}
+}
+
+bool collision(const SceneNode& lhs, const SceneNode& rhs) {
+	return lhs.getBoundingRect().intersects(rhs.getBoundingRect());
 }

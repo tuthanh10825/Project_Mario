@@ -5,6 +5,7 @@
 #include "SpriteNode.h"
 #include "CommandQueue.h"
 #include "Block.h"
+#include "Entity.h"
 class World : private sf::NonCopyable {
 public: 
 	explicit World(sf::RenderWindow& window, TextureHolder& texture); 
@@ -14,6 +15,7 @@ public:
 private:
 	void loadTextures(); 
 	void buildScene(); 
+	void handleCollisions(); 
 private: 
 	enum Layer {
 		Background, 
@@ -33,3 +35,5 @@ private:
 	Character* character; 
 	CommandQueue commandQueue; 
 };
+
+bool matchesCatetgories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

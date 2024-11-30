@@ -12,8 +12,15 @@ public:
 	virtual unsigned getCategory() const; 
 
 	virtual sf::FloatRect getBoundingRect() const; 
-
+	virtual void updateCurrent(sf::Time dt); 
+	void setMoveLeft(bool isMove); 
+	void setMoveRight(bool isMove); 
+	void setAir(bool isAir); 
+	bool isAir() const; 
 private: 
+	bool moveLeft; 
+	bool moveRight; 
+	bool air; 
 	Type type; 
 	sf::Sprite sprite; 
 

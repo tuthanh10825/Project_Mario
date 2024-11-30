@@ -37,7 +37,9 @@ void World::update(sf::Time dt) {
 		sceneGraph.onCommand(commandQueue.pop(), dt); 
 	}
 
+	//handleCollisions(); 
 	sceneGraph.update(dt); 
+	handleCollisions(); 
 }
 
 void World::loadTextures()
@@ -80,4 +82,32 @@ void World::buildScene() // we need to load the "front" world here.
 	ground->setPosition(0, worldBounds.top + worldBounds.height - ground -> getBoundingRect().height); 
 	sceneLayers[Air]->attachChild(std::move(ground)); 
 
+}
+
+void World::handleCollisions()
+{
+	std::set<SceneNode::Pair> collisionPairs; 
+	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
+	for (SceneNode::Pair pair : collisionPairs) {
+		if (matchesCatetgories(pair, Category::Player, Category::Block)) {
+			auto& character = static_cast<Character&>(*pair.first); 
+		
+			character.setAir(false); 
+		}
+	}
+}
+
+bool matchesCatetgories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
+{
+	unsigned category1 = colliders.first->getCategory(); 
+	unsigned category2 = colliders.second->getCategory(); 
+
+	if (type1 & category1 && type2 & category2) {
+		return true;
+	}
+	else if (type1 & category2 && type2 & category1) {
+		std::swap(colliders.first, colliders.second);
+		return true;
+	}
+	else return false; 
 }
