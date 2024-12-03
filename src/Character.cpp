@@ -11,18 +11,26 @@ Character::Character(Type type, const TextureHolder& textures)
 	: Entity()
 	, type(type)
 	, sprite(textures.get(toTextureID(type)))
-	, mMovement(textures.get(Textures::Movement))
+	, mMovRight(textures.get(Textures::MovRight))
+	, mMovLeft(textures.get(Textures::MovLeft))
 	, moveLeft(false)
 	, moveRight(false)
 	, air(true)
 {
 
-	mMovement.setFrameSize(sf::Vector2i(128, 128));
-	mMovement.setNumFrames(3);
-	mMovement.setDuration(sf::seconds(0.3));
-	mMovement.setRepeating(true);
+	mMovRight.setFrameSize(sf::Vector2i(160, 160));
+	mMovRight.setNumFrames(5);
+	mMovRight.setDuration(sf::seconds(0.8));
+	mMovRight.setRepeating(true);
 
-	centerOrigin(mMovement);
+	centerOrigin(mMovRight);
+
+	mMovLeft.setFrameSize(sf::Vector2i(160, 160));
+	mMovLeft.setNumFrames(5);
+	mMovLeft.setDuration(sf::seconds(0.8));
+	mMovLeft.setRepeating(true);
+
+	centerOrigin(mMovLeft);
 
 
 	sf::FloatRect bound = sprite.getLocalBounds();
@@ -32,8 +40,11 @@ Character::Character(Type type, const TextureHolder& textures)
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (moveRight) {
-		target.draw(mMovement, states);
+	if (moveRight && !moveLeft) {
+		target.draw(mMovRight, states);
+	}
+	else if (moveLeft && !moveRight) {
+		target.draw(mMovLeft, states);
 	}
 	else target.draw(sprite, states);
 }
@@ -91,8 +102,11 @@ void Character::updateCurrent(sf::Time dt)
 
 	//Handle Animation
 	
-	if (moveRight) {
-		mMovement.update(dt);
+	if (moveRight && !moveLeft) {
+		mMovRight.update(dt);
+	}
+	else if (moveLeft) {
+		mMovLeft.update(dt);
 	}
 
 	setVelocity(charVelocity); 

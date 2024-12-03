@@ -45,9 +45,10 @@ void World::update(sf::Time dt) {
 void World::loadTextures()
 {
 	textures.load(Textures::Background, "textures/background.jpg"); 
-	textures.load(Textures::Character1, "textures/character1.png"); 
+	textures.load(Textures::Character1, "textures/idle.png"); 
 	textures.load(Textures::Block, "textures/block.jpg");
-	textures.load(Textures::Movement, "textures/movement.png");
+	textures.load(Textures::MovRight, "textures/movRight.png");
+	textures.load(Textures::MovLeft, "textures/movLeft.png");
 }
 
 void World::buildScene() // we need to load the "front" world here.
