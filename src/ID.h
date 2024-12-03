@@ -4,6 +4,7 @@ namespace Textures {
 		Background, 
 		Character1, 
 		Block,
+		Movement,
 	};
 }
 

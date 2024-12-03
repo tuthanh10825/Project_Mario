@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "Utility.h"
 
 static Textures::ID toTextureID(Character::Type type) {
 	switch (type) {
@@ -6,8 +7,24 @@ static Textures::ID toTextureID(Character::Type type) {
 		return Textures::Character1;
 	}
 }
-Character::Character(Type type, const TextureHolder& textures) : Entity(), type(type), sprite(textures.get(toTextureID(type))), moveLeft(false), moveRight(false), air(true)
+Character::Character(Type type, const TextureHolder& textures) 
+	: Entity()
+	, type(type)
+	, sprite(textures.get(toTextureID(type)))
+	, mMovement(textures.get(Textures::Movement))
+	, moveLeft(false)
+	, moveRight(false)
+	, air(true)
 {
+
+	mMovement.setFrameSize(sf::Vector2i(128, 128));
+	mMovement.setNumFrames(3);
+	mMovement.setDuration(sf::seconds(0.3));
+	mMovement.setRepeating(true);
+
+	centerOrigin(mMovement);
+
+
 	sf::FloatRect bound = sprite.getLocalBounds();
 	sprite.setOrigin(bound.width / 2.f, bound.height / 2.f);
 	this->setAcceleration(0, 200);
@@ -15,7 +32,10 @@ Character::Character(Type type, const TextureHolder& textures) : Entity(), type(
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(sprite, states);
+	if (moveRight) {
+		target.draw(mMovement, states);
+	}
+	else target.draw(sprite, states);
 }
 
 unsigned Character::getCategory() const
@@ -68,6 +88,13 @@ void Character::updateCurrent(sf::Time dt)
 		charAccel.y = 0; 
 		charVelocity.y = 0; 
 	}
+
+	//Handle Animation
+	
+	if (moveRight) {
+		mMovement.update(dt);
+	}
+
 	setVelocity(charVelocity); 
 	setAcceleration(charAccel); 
 	Entity::updateCurrent(dt);

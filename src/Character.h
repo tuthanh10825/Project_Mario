@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "ResourceHolder.h"
+#include "Animation.h"
 
 class Character : public Entity {
 public: 
@@ -23,5 +24,6 @@ private:
 	bool air; 
 	Type type; 
 	sf::Sprite sprite; 
+	Animation mMovement;
 
 };
