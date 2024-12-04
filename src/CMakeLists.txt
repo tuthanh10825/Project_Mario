@@ -17,7 +17,7 @@ add_custom_command(TARGET game POST_BUILD
 	${CMAKE_CURRENT_BINARY_DIR}
 )
 
-
+target_sources(game PUBLIC "Animation.h" "Animation.cpp" "Utility.h" "Utility.cpp") 
 target_sources(game PUBLIC "Application.cpp" "Application.h") 
 target_sources(game PUBLIC "ID.h")
 target_sources(game PUBLIC "MenuState.cpp" "MenuState.h")

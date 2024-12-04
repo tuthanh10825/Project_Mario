@@ -4,6 +4,8 @@ namespace Textures {
 		Background, 
 		Character1, 
 		Block,
+		MovRight,
+		MovLeft,
 	};
 }
 

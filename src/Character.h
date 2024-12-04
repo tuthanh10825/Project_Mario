@@ -1,11 +1,13 @@
 #pragma once
 #include "Entity.h"
 #include "ResourceHolder.h"
+#include "Animation.h"
 
 class Character : public Entity {
 public: 
 	enum Type {
 		Character1,
+		Character2,
 	};
 	explicit Character(Type type, const TextureHolder& textures); 
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const; 
@@ -17,11 +19,15 @@ public:
 	void setMoveRight(bool isMove); 
 	void setAir(bool isAir); 
 	bool isAir() const; 
+
 private: 
+
 	bool moveLeft; 
 	bool moveRight; 
 	bool air; 
 	Type type; 
 	sf::Sprite sprite; 
+	Animation mMovRight;
+	Animation mMovLeft;
 
 };
