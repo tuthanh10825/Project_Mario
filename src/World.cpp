@@ -30,16 +30,23 @@ CommandQueue& World::getCommandQueue()
 
 void World::update(sf::Time dt) {
 	//worldView.move(scrollSpeed * dt.asSeconds(), 0.f); 
-	sf::Vector2f position = character->getPosition(); 
-	sf::Vector2f velocity = character->getVelocity(); 
-	
+	sf::Vector2f before = character->getWorldPosition();
+	sf::Vector2f windowSize = worldView.getSize();
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt); 
 	}
 
 	//handleCollisions(); 
+	
+	//update first
 	sceneGraph.update(dt); 
+	//Collision next
 	handleCollisions(); 
+	
+	////set Worldview here ? 
+	sf::Vector2f after = character->getWorldPosition();
+	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return; 
+	else worldView.move(sf::Vector2f(after.x - before.x, 0.f));
 }
 
 void World::loadTextures()
