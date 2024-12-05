@@ -3,9 +3,11 @@ namespace Textures {
 	enum ID {
 		Background, 
 		Character1, 
-		Block,
+		Floor,
+		Dirt,
 		MovRight,
 		MovLeft,
+		Special
 	};
 }
 

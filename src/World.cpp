@@ -1,11 +1,14 @@
 #include "World.h"
-
+#include <nlohmann/json.hpp>
+#include <fstream>
+#include <iostream>
+using json = nlohmann::json; 
 World::World(sf::RenderWindow& window, TextureHolder &textures) : window(window), worldView(window.getDefaultView()), textures(textures),
 	worldBounds(
 		0.f, 
 		0.f, 
-		3000.f, 
-		worldView.getSize().y
+		1556.f,
+		520.f
 		), 
 	spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f), 
 	character(nullptr), 
@@ -53,6 +56,16 @@ void World::loadTextures()
 	textures.load(Textures::Character1, "textures/idle.png"); 
 	textures.load(Textures::MovRight, "textures/movRight.png");
 	textures.load(Textures::MovLeft, "textures/movLeft.png");
+	sf::Image tileset; 
+	tileset.loadFromFile("textures/tilesets.png");
+	sf::Texture floor; floor.loadFromImage(tileset, sf::IntRect(0, 0, 60, 60)); 
+	textures.load(Textures::Floor, floor); 
+	sf::Texture dirt; dirt.loadFromImage(tileset, sf::IntRect(60, 0, 60, 60)); 
+	textures.load(Textures::Dirt, dirt); 
+	sf::Texture special; special.loadFromImage(tileset, sf::IntRect(120, 0, 60, 60)); 
+	textures.load(Textures::Special, special); 
+
+	
 }
 
 void World::buildScene(Level level) // we need to load the "front" world here.
@@ -62,6 +75,7 @@ void World::buildScene(Level level) // we need to load the "front" world here.
 		sceneLayers[i] = layer.get();
 		sceneGraph.attachChild(std::move(layer));
 	}
+	
 
 	sf::Texture& background = textures.get(Textures::Background); 
 	sf::IntRect textureRect(worldBounds); 
@@ -74,20 +88,32 @@ void World::buildScene(Level level) // we need to load the "front" world here.
 	sceneLayers[Background]->attachChild(std::move(backgroundSprite)); 
 
 	std::unique_ptr<Character> tempPlayer(new Character(Character::Character1, textures)); 
-
 	character = tempPlayer.get(); 
-	character->setPosition(spawnPosition); 
-
-	
-
+	character->setPosition(spawnPosition);
 	sceneLayers[Air]->attachChild(std::move(tempPlayer)); 
+	std::ifstream mapInfo("testmap/test/Level_0.ldtkl");
+	
+	json map = json::parse(mapInfo);
+	json mapData = map["layerInstances"][0]["gridTiles"];
+	Textures::ID id; 
+	for (auto info : mapData) {
+		std::cout << info; 
+		if (info["src"] == json::array({ 0, 0 })) {
+			id = Textures::Floor;
+		}
+		else if (info["src"] == json::array({ 60, 0 })) {
+			id = Textures::Dirt; 
+		}
+		else if (info["src"] == json::array({ 120, 0 })) {
+			id = Textures::Special; 
+		}
+		std::unique_ptr<Block> block(new Block(textures, id)); 
+		auto jsonPos = info["px"];
+		block->setPosition(sf::Vector2f(jsonPos[0], jsonPos[1]));
 
-	std::unique_ptr<Block> ground(new Block(textures)); 
-
-	ground -> scale(20.f, 0.5); 
-	ground->setPosition(0, worldBounds.top + worldBounds.height - ground -> getBoundingRect().height); 
-	sceneLayers[Air]->attachChild(std::move(ground)); 
-
+		sceneLayers[Air]->attachChild(std::move(block)); 
+	}
+		
 }
 
 void World::handleCollisions()

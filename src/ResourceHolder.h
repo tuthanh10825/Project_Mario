@@ -9,8 +9,9 @@
 template<typename Resource, typename Identifier> 
 class ResourceHolder {
 public: 
-	void load(Identifier id, const std::string& filename); 
+	bool load(Identifier id, const std::string& filename); 
 	Resource& get(Identifier id); 
+	bool load(Identifier id, Resource& resource); 
 	const Resource& get(Identifier id) const; 
 
 private: 
@@ -18,7 +19,7 @@ private:
 };
 
 template<typename Resource, typename Identifier>
-void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string& filename)
+bool ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string& filename)
 {
 	std::unique_ptr<Resource> resource(new Resource());
 	if (!resource->loadFromFile(filename)) {
@@ -26,7 +27,15 @@ void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string
 	}
 	auto inserted = ResourceMap.insert(
 		std::make_pair(id, std::move(resource)));
+	return inserted.second; 
 	//assert(inserted.second); 
+}
+template<typename Resource, typename Identifier> 
+bool ResourceHolder<Resource, Identifier>::load(Identifier id, Resource& resource) {
+	std::unique_ptr<Resource> resourcePtr(new Resource(resource)); 
+	auto inserted = ResourceMap.insert(
+		std::make_pair(id, std::move(resourcePtr))); 
+	return inserted.second; 
 }
 
 template<typename Resource, typename Identifier>

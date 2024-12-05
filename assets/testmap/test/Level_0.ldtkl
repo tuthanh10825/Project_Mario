@@ -38,7 +38,7 @@
 			"__pxTotalOffsetX": 0,
 			"__pxTotalOffsetY": 0,
 			"__tilesetDefUid": 5,
-			"__tilesetRelPath": "../mario/assets/textures/tilesets.png",
+			"__tilesetRelPath": "../textures/tilesets.png",
 			"iid": "ea645a20-9b00-11ef-b505-cfd3f0305de3",
 			"levelId": 0,
 			"layerDefUid": 3,
