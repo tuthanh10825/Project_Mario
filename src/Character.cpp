@@ -61,9 +61,11 @@ sf::FloatRect Character::getBoundingRect() const
 
 void Character::updateCurrent(sf::Time dt)
 {
-	const float speed = 500.f;
-	const float friction = 1000.f;	
+	const float accel_x = 600.f;
+	const float friction = 1500.f;	
 	const float g = 1000.f;
+
+	const float speedcap = 500.f;
 
 	sf::Vector2f charVelocity = getVelocity();
 	sf::Vector2f charAccel = getAcceleration();
@@ -71,10 +73,28 @@ void Character::updateCurrent(sf::Time dt)
 	//Handle x speed
 	if (moveLeft ^ moveRight) {
 		if (moveLeft) {
-			charVelocity.x = -speed; 
+			if (charVelocity.x > 0) {
+				charAccel.x = -friction;
+			}
+			else if (charVelocity.x > -speedcap) {
+				charAccel.x = -accel_x;
+			}
+			else {
+				charAccel.x = 0;
+				charVelocity.x = -speedcap;
+			}
 		}
 		else {
-			charVelocity.x = speed; 
+			if (charVelocity.x < 0) {
+				charAccel.x = friction;
+			}
+			else if (charVelocity.x < speedcap) {
+				charAccel.x = accel_x;
+			}
+			else {
+				charAccel.x = 0;
+				charVelocity.x = speedcap;
+			}
 		}
 	}
 	else {

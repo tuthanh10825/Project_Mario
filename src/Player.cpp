@@ -50,10 +50,10 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 void Player::handleRealtimeInput(CommandQueue& command)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-		Command jump; 
-		jump.category = Category::Player; 
+		Command jump;
+		jump.category = Category::Player;
 		jump.action = [=](SceneNode& s, sf::Time dt) {
-			
+
 			Character& mainChar = static_cast<Character&> (s);
 			if (!mainChar.isAir())
 			{
@@ -62,7 +62,7 @@ void Player::handleRealtimeInput(CommandQueue& command)
 				mainChar.setAir(true);
 			}
 			};
-		command.push(jump); 
+		command.push(jump);
 	}
 	//TODO: adding function when the right is released.
 }
