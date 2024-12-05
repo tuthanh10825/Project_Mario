@@ -18,14 +18,15 @@ Character::Character(Type type, const TextureHolder& textures)
 	, air(true)
 {
 
-	mMovRight.setFrameSize(sf::Vector2i(160, 160));
+	mMovRight.setFrameSize(sf::Vector2i(120, 120));
 	mMovRight.setNumFrames(5);
 	mMovRight.setDuration(sf::seconds(0.8));
 	mMovRight.setRepeating(true);
 
+
 	centerOrigin(mMovRight);
 
-	mMovLeft.setFrameSize(sf::Vector2i(160, 160));
+	mMovLeft.setFrameSize(sf::Vector2i(120, 120));
 	mMovLeft.setNumFrames(5);
 	mMovLeft.setDuration(sf::seconds(0.8));
 	mMovLeft.setRepeating(true);
@@ -106,6 +107,7 @@ void Character::updateCurrent(sf::Time dt)
 		}
 		else {
 			charAccel.x = 0; 
+			charVelocity.x = 0;
 		}
 
 	}
