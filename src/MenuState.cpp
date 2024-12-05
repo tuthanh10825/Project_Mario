@@ -2,6 +2,8 @@
 
 MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack, context), optionIndex(0) {
 	getContext().textures->load(Textures::Background, "textures/background.jpg"); 
+	sf::RenderWindow& currWindow = *(context.window); 
+	currWindow.setView(currWindow.getDefaultView()); 
 	backgroundSprite.setTexture(getContext().textures->get(Textures::Background));
 	sf::Text playOption; 
 	

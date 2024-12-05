@@ -2,21 +2,22 @@
 
 PauseState::PauseState(StateStack& stateStack, Context context) : State(stateStack, context), optionIndex(0) {
 	sf::RenderWindow& window = *getContext().window; 
-	window.setView(window.getDefaultView());
 
+
+	sf::Vector2f windowPos = window.getView().getCenter();
+	sf::Vector2f windowSize = window.getView().getSize(); 
 	backgroundShape.setFillColor(sf::Color(0, 0, 0, 150));
-	backgroundShape.setSize(sf::Vector2f(window.getSize()));
+	backgroundShape.setSize(windowPos + windowSize / 2.f);
 
 	sf::Text continueOption; 
 	sf::Text exitOption;
-
-	sf::Vector2f windowSize = context.window->getView().getSize();
+	
 	continueOption.setFont(context.fonts->get(Fonts::PixeloidMono));
 	continueOption.setString("Continue");
 	continueOption.setColor(sf::Color::White);
 	sf::FloatRect bound = continueOption.getLocalBounds();
 	continueOption.setOrigin((bound.left + bound.width / 2.f), (bound.top + bound.height / 2));
-	continueOption.setPosition(windowSize / 2.f);
+	continueOption.setPosition(windowPos);
 	options.push_back(continueOption);
 
 	exitOption.setFont(context.fonts->get(Fonts::PixeloidMono));
