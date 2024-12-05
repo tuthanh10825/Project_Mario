@@ -22,7 +22,9 @@ void State::requestStateClear()
 {
 	stack->clearStates(); 
 }
-
+void State::requestStackPushGame(Level level) {
+	stack->pushGameState(level); 
+}
 State::Context State::getContext() const
 {
 	return context;

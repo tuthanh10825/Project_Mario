@@ -4,6 +4,8 @@
 #include <functional>
 #include "ID.h"
 #include "State.h"
+#include "GameState.h"
+
 class StateStack :private sf::NonCopyable {
 public: 
 	enum Action {
@@ -21,22 +23,23 @@ public:
 	void draw(); 
 	void handleEvent(const sf::Event& event); 
 
-	void pushState(States::ID stateID); 
+	void pushState(States::ID stateID);
+	void pushGameState(Level level); 
 	void popState();
 	void clearStates(); 
-	
 	bool isEmpty() const; 
 	
 private: 
-	State::Ptr createState(States::ID stateID); 
+	State::Ptr createState(States::ID stateID);
 	void applyPendingChanges(); 
 
 private: 
 	struct PendingChange {
-		explicit PendingChange(Action action, States::ID stateID = States::None); 
+		explicit PendingChange(Action action, States::ID stateID = States::None, Level level = Level::None); 
 
 		Action action;
-		States::ID  stateID; 
+		States::ID stateID;
+		Level level; 
 	};
 private: 
 	std::vector<State::Ptr> stack; 
@@ -44,6 +47,7 @@ private:
 
 	State::Context context; 
 	std::map<States::ID, std::function<State::Ptr()>> factories;
+
 };
 
 template<typename T>

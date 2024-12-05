@@ -26,3 +26,8 @@ bool GameState::handleEvent(const sf::Event& event)
 	player.handleRealtimeInput(commands); 
 	return true; 
 }
+
+void GameState::setLevel(Level level)
+{
+	world.buildScene(level); 
+}

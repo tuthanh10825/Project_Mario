@@ -12,10 +12,11 @@ public:
 	void update(sf::Time dt); 
 	void draw(); 
 	CommandQueue& getCommandQueue(); 
+	void buildScene(Level level);
+
 private:
 	void loadTextures(); 
-	void buildScene(); 
-	void handleCollisions(); 
+		void handleCollisions(); 
 private: 
 	enum Layer {
 		Background, 
