@@ -6,17 +6,19 @@
 #include "CommandQueue.h"
 #include "Block.h"
 #include "Entity.h"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 class World : private sf::NonCopyable {
 public: 
 	explicit World(sf::RenderWindow& window, TextureHolder& texture); 
 	void update(sf::Time dt); 
 	void draw(); 
 	CommandQueue& getCommandQueue(); 
-	void buildScene(Level level);
-
+	void buildScene(json& info);
+	void setWorldBound(sf::FloatRect& rect); 
 private:
 	void loadTextures(); 
-		void handleCollisions(); 
+	void handleCollisions(); 
 private: 
 	enum Layer {
 		Background, 
@@ -24,12 +26,16 @@ private:
 		LayerCount
 	};
 private: 
+
 	sf::RenderWindow& window; 
 	sf::View worldView; 
 	TextureHolder& textures; 
 	SceneNode sceneGraph; 
 	std::array<SceneNode*, LayerCount> sceneLayers; 
+
 	
+	sf::Image tilesetImg;
+	std::map<json, sf::Texture> tileset; 
 	sf::FloatRect worldBounds; 
 	sf::Vector2f spawnPosition; 
 	float scrollSpeed; 

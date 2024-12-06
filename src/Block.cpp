@@ -1,6 +1,6 @@
 #include "Block.h"
 
-Block::Block(TextureHolder& textures) : Entity(), sprite(textures.get(Textures::Block))
+Block::Block(sf::Texture& texture) : Entity(), sprite(texture)
 {
 }
 
