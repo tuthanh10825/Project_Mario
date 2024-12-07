@@ -11,11 +11,13 @@ endif()
 
 # TODO: Add tests and install targets if needed.
 target_link_libraries(game PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+
 add_custom_command(TARGET game POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
-	${CMAKE_SOURCE_DIR}/assets
+	${CMAKE_SOURCE_DIR}/assets 	${CMAKE_SOURCE_DIR}/map
 	${CMAKE_CURRENT_BINARY_DIR}
 )
+target_link_libraries(game PRIVATE nlohmann_json::nlohmann_json)
 
 target_sources(game PUBLIC "Animation.h" "Animation.cpp" "Utility.h" "Utility.cpp") 
 target_sources(game PUBLIC "Application.cpp" "Application.h") 

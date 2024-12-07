@@ -1,7 +1,14 @@
 #include "GameState.h"
+#include <fstream>
+#include <iostream>
 
 GameState::GameState(StateStack& stack, Context context) : State(stack, context), world(*context.window, *context.textures), player(*context.player)
 {
+	std::ifstream file("mapsConfig.ldtk", std::ios_base::binary);
+	assert(file.is_open()); 
+	mapsConfig = json::parse(file); 
+	sf::FloatRect worldBounds(0, 0, mapsConfig["defaultLevelWidth"], mapsConfig["defaultLevelHeight"]);
+	world.setWorldBound(worldBounds);
 }
 
 void GameState::draw()
@@ -25,4 +32,9 @@ bool GameState::handleEvent(const sf::Event& event)
 	player.handleEvent(event, commands); 
 	player.handleRealtimeInput(commands); 
 	return true; 
+}
+
+void GameState::setLevel(Level level)
+{
+	world.buildScene(mapsConfig["levels"][level - 1]);
 }

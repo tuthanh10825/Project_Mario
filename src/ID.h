@@ -33,3 +33,10 @@ namespace Category {
 		Block = 1 << 3,
 	};
 }
+enum Level {
+	None = 0,
+	Easy = 1, 
+	Medium = 2, 
+	Hard = 3,
+
+};

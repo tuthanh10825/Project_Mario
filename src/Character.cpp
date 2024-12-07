@@ -99,10 +99,10 @@ void Character::updateCurrent(sf::Time dt)
 		}
 	}
 	else {
-		if (charVelocity.x > 1) {
+		if (charVelocity.x > 10) {
 			charAccel.x = -friction; 
 		}
-		else if (charVelocity.x < -1) {
+		else if (charVelocity.x < -10) {
 			charAccel.x = friction; 
 		}
 		else {
