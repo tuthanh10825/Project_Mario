@@ -24,6 +24,7 @@ Character::Character(Type type, const TextureHolder& textures)
 	mMovRight.setRepeating(true);
 
 
+
 	centerOrigin(mMovRight);
 
 	mMovLeft.setFrameSize(sf::Vector2i(120, 120));
