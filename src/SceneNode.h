@@ -43,4 +43,4 @@ private:
 
 };
 bool collision(const SceneNode& lhs, const SceneNode& rhs);
-unsigned collisionType(const SceneNode& lhs, const SceneNode& rhs); 
+Collision::Direction collisionType(const SceneNode& lhs, const SceneNode& rhs); 

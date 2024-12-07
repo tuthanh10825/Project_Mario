@@ -57,9 +57,7 @@ void Player::handleRealtimeInput(CommandQueue& command)
 			Character& mainChar = static_cast<Character&> (s);
 			if (!mainChar.isAir())
 			{
-				sf::Vector2f currVelocity = mainChar.getVelocity();
-				mainChar.setVelocity(currVelocity.x, -500.f);
-				mainChar.setAir(true);
+				mainChar.setJump(true); 
 			}
 			};
 		command.push(jump);

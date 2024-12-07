@@ -106,7 +106,7 @@ bool collision(const SceneNode& lhs, const SceneNode& rhs) {
 	return lhs.getBoundingRect().intersects(rhs.getBoundingRect());
 }
 
-unsigned collisionType(const SceneNode& lhs, const SceneNode& rhs)
+Collision::Direction collisionType(const SceneNode& lhs, const SceneNode& rhs)
 {
 	sf::FloatRect boxX = lhs.getBoundingRect(); 
 	sf::FloatRect boxY = rhs.getBoundingRect();
@@ -119,15 +119,13 @@ unsigned collisionType(const SceneNode& lhs, const SceneNode& rhs)
 
 	float overlapX = boxX.width / 2.f + boxY.width / 2.f - std::abs(dx); 
 	float overlapY = boxX.height / 2.f + boxY.height / 2.f - std::abs(dy);
-	unsigned ans = Collision::None;
 
-	if (overlapY > 0) {
-		ans |= ((dx > 0) ? Collision::Right : Collision::Left);
+	if (overlapX > 0 || overlapY > 0) {
+		if (overlapX >= overlapY) {
+			return (dy > 0) ? Collision::Up : Collision::Down;
+		}
+		else return (dx > 0) ? Collision::Left : Collision::Right;
 	}
-	if (overlapX > 0) {
-		ans |= (dy > 0) ? Collision::Down : Collision::Up;
-	}
-
-	return ans; 
+	else return Collision::None; 
 
 }

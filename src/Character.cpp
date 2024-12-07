@@ -15,6 +15,7 @@ Character::Character(Type type, const TextureHolder& textures)
 	, mMovLeft(textures.get(Textures::MovLeft))
 	, moveLeft(false)
 	, moveRight(false)
+	, jump(false)
 	, air(true)
 {
 
@@ -62,68 +63,8 @@ sf::FloatRect Character::getBoundingRect() const
 
 void Character::updateCurrent(sf::Time dt)
 {
-	const float accel_x = 600.f;
-	const float friction = 1500.f;	
-	const float g = 1000.f;
-
-	const float speedcap = 500.f;
-
-	sf::Vector2f charVelocity = getVelocity();
-	sf::Vector2f charAccel = getAcceleration();
-
-	//Handle x speed
-	if (moveLeft ^ moveRight) {
-		if (moveLeft) {
-			if (charVelocity.x > 0) {
-				charAccel.x = -friction;
-			}
-			else if (charVelocity.x > -speedcap) {
-				charAccel.x = -accel_x;
-			}
-			else {
-				charAccel.x = 0;
-				charVelocity.x = -speedcap;
-			}
-		}
-		else {
-			if (charVelocity.x < 0) {
-				charAccel.x = friction;
-			}
-			else if (charVelocity.x < speedcap) {
-				charAccel.x = accel_x;
-			}
-			else {
-				charAccel.x = 0;
-				charVelocity.x = speedcap;
-			}
-		}
-	}
-	else {
-		if (charVelocity.x > 10) {
-			charAccel.x = -friction; 
-		}
-		else if (charVelocity.x < -10) {
-			charAccel.x = friction; 
-		}
-		else {
-			charAccel.x = 0; 
-			charVelocity.x = 0;
-		}
-
-	}
-	//Handle y speed
-
-	if (air) {
-		charAccel.y = g;
-	}
-
-	else if (!air) {
-		charAccel.y = 0; 
-		charVelocity.y = 0; 
-	}
-
-	//Handle Animation
 	
+	//Handle Animation
 	if (moveRight && !moveLeft) {
 		mMovRight.update(dt);
 	}
@@ -131,8 +72,6 @@ void Character::updateCurrent(sf::Time dt)
 		mMovLeft.update(dt);
 	}
 
-	setVelocity(charVelocity); 
-	setAcceleration(charAccel); 
 	Entity::updateCurrent(dt);
 }
 
@@ -146,6 +85,13 @@ void Character::setMoveRight(bool isMove)
 	moveRight = isMove; 
 }
 
+void Character::setJump(bool isJump)
+{
+	this -> jump = isJump;
+}
+
+
+
 void Character::setAir(bool isAir) 
 {
 	this -> air = isAir; 
@@ -154,6 +100,21 @@ void Character::setAir(bool isAir)
 bool Character::isAir() const
 {
 	return this -> air;
+}
+
+bool Character::isMoveLeft() const
+{
+	return this -> moveLeft;
+}
+
+bool Character::isMoveRight() const
+{
+	return this -> moveRight;
+}
+
+bool Character::isJump() const
+{
+	return this->jump;
 }
 
 

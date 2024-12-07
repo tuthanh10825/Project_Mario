@@ -16,9 +16,14 @@ public:
 	CommandQueue& getCommandQueue(); 
 	void buildScene(json& info);
 	void setWorldBound(sf::FloatRect& rect); 
+	
 private:
+	void adaptPlayerVelocity(); 
 	void loadTextures(); 
 	void handleCollisions(); 
+	void adaptGravity(); 
+
+	void adjustChar(SceneNode& node, Collision::Direction direction); 
 private: 
 	enum Layer {
 		Background, 
