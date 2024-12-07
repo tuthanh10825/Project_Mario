@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 class Animation : public sf::Drawable, public sf::Transformable
 {
@@ -36,11 +37,13 @@ public:
 private:
 	void 					draw(sf::RenderTarget& target, sf::RenderStates states) const;
 private:
-    sf::Sprite				mSprite;
+    sf::RectangleShape		mSprite;
     sf::Vector2i			mFrameSize;
     std::size_t				mNumFrames;
     std::size_t				mCurrentFrame;
     sf::Time				mDuration;
     sf::Time				mElapsedTime;
     bool					mRepeat;
+			
+	
 };

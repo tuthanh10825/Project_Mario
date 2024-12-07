@@ -4,6 +4,19 @@
 
 void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 {
+	if ((event.key.code == sf::Keyboard::Space) && (event.type == event.KeyPressed)) {
+		Command jump;
+		jump.category = Category::Player;
+		jump.action = [=](SceneNode& s, sf::Time dt) {
+
+			Character& mainChar = static_cast<Character&> (s);
+			if (!mainChar.isAir() && !mainChar.isJump())
+			{
+				mainChar.setJump(true);
+			}
+			};
+		commands.push(jump);
+	}
 	if (event.key.code == sf::Keyboard::Left) {
 		if (event.type == event.KeyPressed) {
 			Command moveLeft;
@@ -45,22 +58,11 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 		}
 	}
 	
+	
 }
 
 void Player::handleRealtimeInput(CommandQueue& command)
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-		Command jump;
-		jump.category = Category::Player;
-		jump.action = [=](SceneNode& s, sf::Time dt) {
-
-			Character& mainChar = static_cast<Character&> (s);
-			if (!mainChar.isAir())
-			{
-				mainChar.setJump(true); 
-			}
-			};
-		command.push(jump);
-	}
+	
 	//TODO: adding function when the right is released.
 }

@@ -103,6 +103,7 @@ void SceneNode::onCommand(const Command& command, sf::Time dt)
 }
 
 bool collision(const SceneNode& lhs, const SceneNode& rhs) {
+	if (lhs.getCategory() == rhs.getCategory()) return false; 
 	return lhs.getBoundingRect().intersects(rhs.getBoundingRect());
 }
 
@@ -120,7 +121,7 @@ Collision::Direction collisionType(const SceneNode& lhs, const SceneNode& rhs)
 	float overlapX = boxX.width / 2.f + boxY.width / 2.f - std::abs(dx); 
 	float overlapY = boxX.height / 2.f + boxY.height / 2.f - std::abs(dy);
 
-	if (overlapX > 0 || overlapY > 0) {
+	if (overlapX > 0 && overlapY > 0) {
 		if (overlapX >= overlapY) {
 			return (dy > 0) ? Collision::Up : Collision::Down;
 		}

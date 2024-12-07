@@ -99,6 +99,7 @@ void World::adaptPlayerVelocity()
 	}
 	if (character->isJump()) {
 		charVelocity.y = -500.f; 
+		character->setJump(false); 
 	}
 	character -> setVelocity(charVelocity);
 	character -> setAcceleration(charAccel);
@@ -168,7 +169,7 @@ void World::handleCollisions()
 			
 			//handle the collision
 			Collision::Direction direction = collisionType(*character, *pair.second);
-			
+
 			adjustChar(*pair.second, direction);
 			sf::Vector2f charVelocity = character -> getVelocity(); 
 			sf::Vector2f charAccel = character -> getAcceleration(); 
@@ -197,12 +198,10 @@ void World::adaptGravity()
 	sf::Vector2f charVelocity = character->getVelocity(); 
 	if (air) {
 		charAccel.y = 1000.f; //g
-		character->setJump(false); 
 	}
 	else if (!air) {
 		charAccel.y = 0;
-		if (!character->isJump())
-		{
+		if (charVelocity.y > 0) {
 			charVelocity.y = 0; 
 		}
 	}

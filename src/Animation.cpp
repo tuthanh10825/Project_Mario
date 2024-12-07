@@ -13,10 +13,15 @@ Animation::Animation()
 	, mElapsedTime(sf::Time::Zero)
 	, mRepeat(false)
 {
+	
+#if _DEBUG
+	mSprite.setOutlineColor(sf::Color::Red);
+	mSprite.setOutlineThickness(-2);
+#endif // _DEBUG
 }
 
 Animation::Animation(const sf::Texture& texture)
-	: mSprite(texture)
+	: mSprite()
 	, mFrameSize()
 	, mNumFrames(0)
 	, mCurrentFrame(0)
@@ -24,11 +29,16 @@ Animation::Animation(const sf::Texture& texture)
 	, mElapsedTime(sf::Time::Zero)
 	, mRepeat(false)
 {
+	mSprite.setTexture(&texture); 
+#if _DEBUG
+	mSprite.setOutlineColor(sf::Color::Red);
+	mSprite.setOutlineThickness(-2);
+#endif // _DEBUG
 }
 
 void Animation::setTexture(const sf::Texture& texture)
 {
-	mSprite.setTexture(texture);
+	mSprite.setTexture(&texture);
 }
 
 const sf::Texture* Animation::getTexture() const
@@ -39,6 +49,7 @@ const sf::Texture* Animation::getTexture() const
 void Animation::setFrameSize(sf::Vector2i frameSize)
 {
 	mFrameSize = frameSize;
+	mSprite.setSize(sf::Vector2f(frameSize.x, frameSize.y)); 
 }
 
 sf::Vector2i Animation::getFrameSize() const
@@ -137,6 +148,7 @@ void Animation::update(sf::Time dt)
 	}
 
 	mSprite.setTextureRect(textureRect);
+
 }
 
 void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const
