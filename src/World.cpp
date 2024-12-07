@@ -224,11 +224,14 @@ void World::adjustChar(SceneNode& node, Collision::Direction direction)
 	
 	if (direction == Collision::Right || direction == Collision::Left) {
 		float offset = charBox.width/ 2 + nodeBox.width / 2 - std::abs(dx);
-		character->move(-offset, 0); 
+		if (direction == Collision::Left) offset *= -1; 
+		character->move(offset, 0); 
 	}
 	else if (direction == Collision::Up || direction == Collision::Down) {
+
 		float offset = charBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
-		character->move(0, -offset);
+		if (direction == Collision::Up) offset *= -1; 
+		character->move(0, offset);
 	}
 }
 

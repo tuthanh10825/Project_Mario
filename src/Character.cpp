@@ -19,7 +19,7 @@ Character::Character(Type type, const TextureHolder& textures)
 	, air(true)
 {
 
-	mMovRight.setFrameSize(sf::Vector2i(120, 120));
+	mMovRight.setFrameSize(sf::Vector2i(60, 120));
 	mMovRight.setNumFrames(5);
 	mMovRight.setDuration(sf::seconds(0.8));
 	mMovRight.setRepeating(true);
@@ -28,7 +28,7 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	centerOrigin(mMovRight);
 
-	mMovLeft.setFrameSize(sf::Vector2i(120, 120));
+	mMovLeft.setFrameSize(sf::Vector2i(60, 120));
 	mMovLeft.setNumFrames(5);
 	mMovLeft.setDuration(sf::seconds(0.8));
 	mMovLeft.setRepeating(true);
