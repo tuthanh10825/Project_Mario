@@ -24,21 +24,84 @@ void World::update(sf::Time dt) {
 	//worldView.move(scrollSpeed * dt.asSeconds(), 0.f); 
 	sf::Vector2f before = character->getWorldPosition();
 	sf::Vector2f windowSize = worldView.getSize();
+	
+	//handle player input here. 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
 	}
 
 	//handleCollisions(); 
-
+	adaptPlayerVelocity(); 
+	handleCollisions();
+	adaptGravity(); 
 	//update first
 	sceneGraph.update(dt);
 	//Collision next
-	handleCollisions();
+	
 
 	////set Worldview here ? 
 	sf::Vector2f after = character->getWorldPosition();
 	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return;
 	else worldView.move(sf::Vector2f(after.x - before.x, 0.f));
+}
+
+void World::adaptPlayerVelocity()
+{
+	const float accel_x = 600.f;
+	const float friction = 1500.f;
+	const float g = 1000.f;
+
+	const float speedcap = 500.f;
+
+	sf::Vector2f charVelocity = character -> getVelocity();
+	sf::Vector2f charAccel = character -> getAcceleration();
+
+	bool moveLeft = character->isMoveLeft(); 
+	bool moveRight = character->isMoveRight(); 
+	//Handle x speed
+	if (moveLeft ^ moveRight) {
+		if (moveLeft) {
+			if (charVelocity.x > 0) {
+				charAccel.x = -friction;
+			}
+			else if (charVelocity.x > -speedcap) {
+				charAccel.x = -accel_x;
+			}
+			else {
+				charAccel.x = 0;
+				charVelocity.x = -speedcap;
+			}
+		}
+		else {
+			if (charVelocity.x < 0) {
+				charAccel.x = friction;
+			}
+			else if (charVelocity.x < speedcap) {
+				charAccel.x = accel_x;
+			}
+			else {
+				charAccel.x = 0;
+				charVelocity.x = speedcap;
+			}
+		}
+	}
+	else {
+		if (charVelocity.x > 10) {
+			charAccel.x = -friction;
+		}
+		else if (charVelocity.x < -10) {
+			charAccel.x = friction;
+		}
+		else {
+			charAccel.x = 0;
+			charVelocity.x = 0;
+		}
+	}
+	if (character->isJump()) {
+		charVelocity.y = -500.f; 
+	}
+	character -> setVelocity(charVelocity);
+	character -> setAcceleration(charAccel);
 }
 
 void World::loadTextures()
@@ -98,13 +161,77 @@ void World::handleCollisions()
 {
 	std::set<SceneNode::Pair> collisionPairs; 
 	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
+	bool isAir = true; 
 	for (SceneNode::Pair pair : collisionPairs) {
 		if (matchesCatetgories(pair, Category::Player, Category::Block)) {
-			auto& character = static_cast<Character&>(*pair.first); 
-			character.setAir(false); 
+			
+			
+			//handle the collision
+			Collision::Direction direction = collisionType(*character, *pair.second);
+			
+			adjustChar(*pair.second, direction);
+			sf::Vector2f charVelocity = character -> getVelocity(); 
+			sf::Vector2f charAccel = character -> getAcceleration(); 
+			if (direction == Collision::Up) {
+				isAir = false; 
+			}
+			else if (direction == Collision::Down) {
+				charVelocity.y = 0; 
+			}
+			else if ((direction == Collision::Left) || (direction == Collision::Right)) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			character->setVelocity(charVelocity);
+			character->setAcceleration(charAccel);
 		}
 	}
+	
+	character->setAir(isAir); 
 }
+
+void World::adaptGravity()
+{
+	bool air = character->isAir(); 
+	sf::Vector2f charAccel = character->getAcceleration(); 
+	sf::Vector2f charVelocity = character->getVelocity(); 
+	if (air) {
+		charAccel.y = 1000.f; //g
+		character->setJump(false); 
+	}
+	else if (!air) {
+		charAccel.y = 0;
+		if (!character->isJump())
+		{
+			charVelocity.y = 0; 
+		}
+	}
+	character->setAcceleration(charAccel); 
+	character->setVelocity(charVelocity); 
+}
+
+void World::adjustChar(SceneNode& node, Collision::Direction direction)
+{
+	sf::FloatRect charBox = character->getBoundingRect(); 
+	sf::FloatRect nodeBox = node.getBoundingRect(); 
+	
+	sf::Vector2f charCenter = charBox.getPosition() + charBox.getSize() / 2.f; 
+	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f; 
+
+	float dx = nodeCenter.x - charCenter.x; 
+	float dy = nodeCenter.y - charCenter.y; 
+
+	
+	if (direction == Collision::Right || direction == Collision::Left) {
+		float offset = charBox.width/ 2 + nodeBox.width / 2 - std::abs(dx);
+		character->move(-offset, 0); 
+	}
+	else if (direction == Collision::Up || direction == Collision::Down) {
+		float offset = charBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
+		character->move(0, -offset);
+	}
+}
+
 
 bool matchesCatetgories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
 {

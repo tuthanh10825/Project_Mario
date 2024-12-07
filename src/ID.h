@@ -40,3 +40,13 @@ enum Level {
 	Hard = 3,
 
 };
+
+namespace Collision {
+	enum Direction {
+		None = 0,
+		Up = 1,
+		Down = 1 << 1,
+		Left = 1 << 2,
+		Right = 1 << 3
+	};
+}
