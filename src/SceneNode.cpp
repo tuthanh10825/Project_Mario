@@ -105,3 +105,29 @@ void SceneNode::onCommand(const Command& command, sf::Time dt)
 bool collision(const SceneNode& lhs, const SceneNode& rhs) {
 	return lhs.getBoundingRect().intersects(rhs.getBoundingRect());
 }
+
+unsigned collisionType(const SceneNode& lhs, const SceneNode& rhs)
+{
+	sf::FloatRect boxX = lhs.getBoundingRect(); 
+	sf::FloatRect boxY = rhs.getBoundingRect();
+	
+	sf::Vector2f centerX = boxX.getPosition() + boxX.getSize() / 2.f; 
+	sf::Vector2f centerY = boxY.getPosition() + boxY.getSize() / 2.f; 
+
+	float dx = centerY.x - centerX.x; 
+	float dy = centerY.y - centerX.y; 
+
+	float overlapX = boxX.width / 2.f + boxY.width / 2.f - std::abs(dx); 
+	float overlapY = boxX.height / 2.f + boxY.height / 2.f - std::abs(dy);
+	unsigned ans = Collision::None;
+
+	if (overlapY > 0) {
+		ans |= ((dx > 0) ? Collision::Right : Collision::Left);
+	}
+	if (overlapX > 0) {
+		ans |= (dy > 0) ? Collision::Down : Collision::Up;
+	}
+
+	return ans; 
+
+}
