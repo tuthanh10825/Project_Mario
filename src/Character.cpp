@@ -7,10 +7,9 @@ static Textures::ID toTextureID(Character::Type type) {
 		return Textures::Character1;
 	}
 }
-Character::Character(Type type, const TextureHolder& textures) 
+Character::Character(Type type, TextureHolder& textures) 
 	: Entity()
 	, type(type)
-	, sprite(textures.get(toTextureID(type)))
 	, mMovRight(textures.get(Textures::MovRight))
 	, mMovLeft(textures.get(Textures::MovLeft))
 	, moveLeft(false)
@@ -18,6 +17,17 @@ Character::Character(Type type, const TextureHolder& textures)
 	, jump(false)
 	, air(true)
 {
+	sf::Texture& texture = textures.get(toTextureID(type)); 
+
+	sf::Vector2u boundaryRect = texture.getSize();
+
+	sprite.setTexture(&texture); 
+	sprite.setSize(sf::Vector2f(boundaryRect.x, boundaryRect.y)); 
+	sprite.setOrigin(sf::Vector2f(boundaryRect.x / 2.f, boundaryRect.y / 2.f)); 
+#if _DEBUG
+	sprite.setOutlineColor(sf::Color::Red);
+	sprite.setOutlineThickness(-2);
+#endif // _DEBUG
 
 	mMovRight.setFrameSize(sf::Vector2i(60, 120));
 	mMovRight.setNumFrames(5);
@@ -35,9 +45,6 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	centerOrigin(mMovLeft);
 
-
-	sf::FloatRect bound = sprite.getLocalBounds();
-	sprite.setOrigin(bound.width / 2.f, bound.height / 2.f);
 	this->setAcceleration(0, 200);
 }
 

@@ -11,6 +11,6 @@ public:
 
 	virtual sf::FloatRect getBoundingRect() const; 
 private: 
-	sf::Sprite sprite; 
+	sf::RectangleShape boundary; 
 
 };

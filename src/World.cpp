@@ -220,8 +220,8 @@ void World::adjustChar(SceneNode& node, Collision::Direction direction)
 
 	float dx = nodeCenter.x - charCenter.x; 
 	float dy = nodeCenter.y - charCenter.y; 
-
 	
+	sf::Vector2f dv(dx, dy);
 	if (direction == Collision::Right || direction == Collision::Left) {
 		float offset = charBox.width/ 2 + nodeBox.width / 2 - std::abs(dx);
 		if (direction == Collision::Left) offset *= -1; 

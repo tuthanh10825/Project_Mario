@@ -9,7 +9,7 @@ public:
 		Character1,
 		Character2,
 	};
-	explicit Character(Type type, const TextureHolder& textures); 
+	explicit Character(Type type, TextureHolder& textures); 
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const; 
 	virtual unsigned getCategory() const; 
 
@@ -33,7 +33,7 @@ private:
 	bool air; 
 	bool jump; 
 	Type type; 
-	sf::Sprite sprite; 
+	sf::RectangleShape sprite; 
 	Animation mMovRight;
 	Animation mMovLeft;
 
