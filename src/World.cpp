@@ -111,6 +111,10 @@ void World::loadTextures()
 	textures.load(Textures::Character1, "textures/idle.png");
 	textures.load(Textures::MovRight, "textures/movRight.png");
 	textures.load(Textures::MovLeft, "textures/movLeft.png");
+	textures.load(Textures::Goomba, "textures/Goomba.png");
+	textures.load(Textures::GoombaMovRight, "textures/GoombaMovRight.png");
+	textures.load(Textures::GoombaMovLeft, "textures/GoombaMovLeft.png");
+	textures.load(Textures::GoombaDead, "textures/GoombaDead.png");
 }
 
 void World::buildScene(json& info) // we need to load the "front" world here.
