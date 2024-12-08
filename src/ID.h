@@ -15,6 +15,10 @@ namespace Textures {
 		Block,
 		MovRight,
 		MovLeft,
+		Goomba,
+		GoombaMovRight,
+		GoombaMovLeft,
+		GoombaDead,
 	};
 }
 
