@@ -114,7 +114,7 @@ bool collision(const SceneNode& lhs, const SceneNode& rhs) {
 
 	float overlapX = boxX.width / 2.f + boxY.width / 2.f - std::abs(dx);
 	float overlapY = boxX.height / 2.f + boxY.height / 2.f - std::abs(dy);
- 
+	if (overlapX == 0 && overlapY == 0) return false; 
 	return ((overlapX >= 0) && (overlapY >= 0));
 
 }
