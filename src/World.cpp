@@ -29,12 +29,17 @@ void World::update(sf::Time dt) {
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
 	}
-
+	assert(commandQueue.isEmpty()); 
+	
 	//handleCollisions(); 
 	adaptPlayerVelocity(); 
 	handleCollisions();
 	adaptGravity(); 
 	//update first
+
+	/*sf::Vector2f charPos = character->getPosition();
+	std::cout << "After updating: " << charPos.x << " " << charPos.y << std::endl;*/
+
 	sceneGraph.update(dt);
 	//Collision next
 	
@@ -165,21 +170,25 @@ void World::handleCollisions()
 	bool isAir = true; 
 	for (SceneNode::Pair pair : collisionPairs) {
 		if (matchesCatetgories(pair, Category::Player, Category::Block)) {
-			
-			
+
+
 			//handle the collision
 			Collision::Direction direction = collisionType(*character, *pair.second);
-
 			adjustChar(*pair.second, direction);
-			sf::Vector2f charVelocity = character -> getVelocity(); 
-			sf::Vector2f charAccel = character -> getAcceleration(); 
-			if (direction == Collision::Up) {
-				isAir = false; 
+
+			sf::Vector2f charVelocity = character->getVelocity();
+			sf::Vector2f charAccel = character->getAcceleration();
+			if (direction == Collision::Up && charVelocity.y >= -10) {
+				isAir = false;
 			}
-			else if (direction == Collision::Down) {
-				charVelocity.y = 0; 
+			else if (direction == Collision::Down && charVelocity.y < 0) {
+				charVelocity.y = 0;
 			}
-			else if ((direction == Collision::Left) || (direction == Collision::Right)) {
+			else if ((direction == Collision::Left) && charVelocity.x > 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			else if ((direction == Collision::Right) && charVelocity.x < 0) {
 				charVelocity.x = 0;
 				charAccel.x = 0;
 			}
