@@ -1,27 +1,34 @@
 #include "MenuState.h"
 
 MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack, context), optionIndex(0) {
-	getContext().textures->load(Textures::Background, "textures/background.jpg"); 
+	getContext().textures->load(Textures::TitleBackground, "textures/TitleBackground.png");
+	getContext().textures->load(Textures::PlayButton, "textures/PlayButtons.png");
+	getContext().textures->load(Textures::ExitButton, "textures/ExitButtons.png");
+	getContext().textures->load(Textures::Title, "textures/Title.png");
+	getContext().textures->load(Textures::Arrow, "textures/Arrow.png");
+
+	mButtonSize = sf::Vector2i(160, 80);
+
 	sf::RenderWindow& currWindow = *(context.window); 
 	currWindow.setView(currWindow.getDefaultView()); 
-	backgroundSprite.setTexture(getContext().textures->get(Textures::Background));
-	sf::Text playOption; 
+	backgroundSprite.setTexture(getContext().textures->get(Textures::TitleBackground));
+	sf::Sprite playOption; 
+	playOption.setTexture(getContext().textures->get(Textures::PlayButton));
+	playOption.setTextureRect(sf::IntRect(0, 0, mButtonSize.x, mButtonSize.y));
+	
 	
 	sf::Vector2f windowSize = context.window->getView().getSize(); 
-	playOption.setFont(context.fonts->get(Fonts::PixeloidMono)); 
-	playOption.setString("Play"); 
-	playOption.setColor(sf::Color(250, 200, 0));
 	sf::FloatRect bound = playOption.getLocalBounds(); 
 	playOption.setOrigin((bound.left + bound.width / 2.f), (bound.top + bound.height / 2)); 
 	playOption.setPosition(windowSize / 2.f); 
 	options.push_back(playOption); 
 	
 
-	sf::Text exitOption;
+	sf::Sprite exitOption;
 
-	exitOption.setFont(context.fonts->get(Fonts::PixeloidMono));
-	exitOption.setString("Exit");
-	exitOption.setColor(sf::Color(250, 200, 0)); 
+	exitOption.setTexture(getContext().textures->get(Textures::ExitButton));
+	exitOption.setTextureRect(sf::IntRect(0, 0, mButtonSize.x, mButtonSize.y));
+
 
 	sf::FloatRect bound2 = exitOption.getLocalBounds(); 
 	exitOption.setOrigin((bound2.left + bound2.width / 2.f),(bound2.top + bound2.height / 2.f)); 
@@ -29,14 +36,14 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 	options.push_back(exitOption);
 
 
-	title.setFont(context.fonts->get(Fonts::PixeloidSansBold)); 
-	title.setString("Super Mario"); 
-
-	title.setColor(sf::Color(250, 200, 0)); 
-	title.setCharacterSize(100); 
+	title.setTexture(getContext().textures->get(Textures::Title));
 	sf::FloatRect bound3 = title.getLocalBounds(); 
 	title.setOrigin(bound3.left + bound3.width / 2.f, bound3.top + bound3.height / 2.f); 
-	title.setPosition(sf::Vector2f(windowSize.x/2.f, windowSize.y/3.f));
+	title.setPosition(sf::Vector2f(windowSize.x/2.f, windowSize.y/4.f));
+
+	mArrow.setTexture(getContext().textures->get(Textures::Arrow));
+	mArrow.setOrigin(mArrow.getLocalBounds().width, mArrow.getLocalBounds().height / 2.f);
+	mArrow.setPosition(options[optionIndex].getPosition() - sf::Vector2f(80.f, 10.f));
 
 	updateOptionText();
 }
@@ -48,9 +55,11 @@ void MenuState::draw()
 
 	window.draw(backgroundSprite); 
 	window.draw(title); 
-	for (sf::Text& text : options) {
-		window.draw(text); 
+	for (sf::Sprite& sprite : options) {
+		window.draw(sprite); 
 	}
+
+	window.draw(mArrow);
 }
 
 bool MenuState::update(sf::Time dt)
@@ -84,11 +93,18 @@ bool MenuState::handleEvent(const sf::Event& event)
 
 void MenuState::updateOptionText()
 {
-	if (options.empty()) return; 
+	if (options.empty()) return;
 
-	for (sf::Text& text : options) {
-		text.setColor(sf::Color(250, 200, 0));
+	// Reset texture rects for all options
+	for (sf::Sprite& sprite : options) {
+		sprite.setTextureRect(sf::IntRect(0, 0, mButtonSize.x, mButtonSize.y));
 	}
-	options[optionIndex].setColor(sf::Color::Red); 
 
+	// Highlight the selected option
+	sf::IntRect textureRect = options[optionIndex].getTextureRect();
+	textureRect.top += textureRect.height;
+	options[optionIndex].setTextureRect(textureRect);
+
+	// Update the arrow position to point at the selected option
+	mArrow.setPosition(options[optionIndex].getPosition() - sf::Vector2f(80.f, 10.f));
 }

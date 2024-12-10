@@ -10,7 +10,7 @@ Block::Block(sf::Texture& texture) : Entity()
 	boundary.setTexture(&texture); 
 #ifdef _DEBUG
 	boundary.setOutlineColor(sf::Color::Red);
-	boundary.setOutlineThickness(-2);
+	boundary.setOutlineThickness(-1);
 #endif // _DEBUG
 }
 

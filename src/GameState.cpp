@@ -29,8 +29,8 @@ bool GameState::handleEvent(const sf::Event& event)
 		return true; 
 	}
 	CommandQueue& commands = world.getCommandQueue(); 
+	player.handleRealtimeInput(commands);
 	player.handleEvent(event, commands); 
-	player.handleRealtimeInput(commands); 
 	return true; 
 }
 
