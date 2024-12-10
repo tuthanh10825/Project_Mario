@@ -21,7 +21,7 @@ void Application::render()
 {
 	window.clear(); 
 	stateStack.draw(); 
-	
+
 	window.display(); 
 }
 

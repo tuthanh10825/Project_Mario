@@ -7,10 +7,12 @@ private:
 		Play, 
 		Exit
 	};
-	std::vector<sf::Text> options; 
+	std::vector<sf::Sprite> options; 
 	std::size_t optionIndex; 
 	sf::Sprite backgroundSprite; 
-	sf::Text title; 
+	sf::Sprite title; 
+	sf::Vector2i mButtonSize;
+	sf::Sprite mArrow;
 
 public: 
 	MenuState(StateStack&, Context context); 

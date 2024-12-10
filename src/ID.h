@@ -2,6 +2,11 @@
 namespace Textures {
 	enum ID {
 		Background, 
+		TitleBackground,
+		Title,
+		PlayButton,
+		ExitButton,
+		Arrow,
 		Character1, 
 		Block,
 		MovRight,
@@ -15,7 +20,20 @@ namespace Fonts {
 		PixeloidSans,
 		PixeloidSansBold,
 	};
+
+
 }
+
+namespace Buttons {
+	enum ID {
+		Play,
+		SelectedPlay,
+		Exit,
+		SelectedExit,
+	};
+}
+
+
 namespace States {
 	enum ID {
 		None,
