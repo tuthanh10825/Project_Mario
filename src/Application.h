@@ -4,6 +4,8 @@
 #include "MenuState.h"
 #include "GameState.h"
 #include "PauseState.h"
+#include "LevelSelectState.h"
+
 class Application {
 private: 
 

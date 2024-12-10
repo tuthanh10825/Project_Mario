@@ -65,7 +65,7 @@ bool PauseState::handleEvent(const sf::Event& event)
 		}
 		if (optionIndex == Exit) {
 			requestStateClear();
-			requestStackPush(States::Menu);
+			requestStackPush(States::LevelSelect);
 		}
 
 	}

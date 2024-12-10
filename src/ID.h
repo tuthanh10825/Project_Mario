@@ -6,6 +6,10 @@ namespace Textures {
 		Title,
 		PlayButton,
 		ExitButton,
+		Level1,
+		Level2,
+		Level3,
+		Back,
 		Arrow,
 		Character1, 
 		Block,
@@ -38,6 +42,7 @@ namespace States {
 	enum ID {
 		None,
 		Menu, 
+		LevelSelect,
 		Game, 
 		Pause
 	};
