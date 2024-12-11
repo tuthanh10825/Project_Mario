@@ -6,6 +6,7 @@ namespace Textures {
 		Block,
 		MovRight,
 		MovLeft,
+		Pickup,
 	};
 }
 
@@ -31,6 +32,7 @@ namespace Category {
 		Player = 1 << 1, 
 		Enemy = 1 << 2, 
 		Block = 1 << 3,
+		Pickup = 1 << 4,
 	};
 }
 enum Level {
