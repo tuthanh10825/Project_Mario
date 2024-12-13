@@ -152,10 +152,19 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 			tileset[blockInfo["src"]].loadFromImage(tilesetImg, sf::IntRect(blockInfo["src"][0], blockInfo["src"][1], 60, 60)); 
 		}
 		sf::Texture& blockTexture = tileset[blockInfo["src"]];
+	
 
-		std::unique_ptr<Block> block(new Block(blockTexture));
-		block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1])); 
-		sceneLayers[Air]->attachChild(std::move(block)); 
+		if (blockInfo["src"][0] == 540) {
+			std::unique_ptr<MovableBlock> block(new MovableBlock(blockTexture)); 
+			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+			sceneLayers[Air]->attachChild(std::move(block));
+		
+		}
+		else {
+			std::unique_ptr<Block> block(new Block(blockTexture));
+			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+			sceneLayers[Air]->attachChild(std::move(block));
+		}
 	}
 
 }
@@ -171,6 +180,33 @@ void World::handleCollisions()
 	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
 	bool isAir = true; 
 	for (SceneNode::Pair pair : collisionPairs) {
+
+		if (matchesCategories(pair, Category::Player, Category::MovableBlock)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			adjustChar(*pair.second, direction);
+
+			sf::Vector2f charVelocity = character->getVelocity();
+			sf::Vector2f charAccel = character->getAcceleration();
+
+			if (direction == Collision::Down) {
+				charVelocity.y = 0;
+				static_cast<MovableBlock&>(*pair.second).setMove(-character->getVelocity().y);
+			}
+			else if (direction == Collision::Up && charVelocity.y >= -10) {
+				isAir = false;
+			}
+			else if ((direction == Collision::Left) && charVelocity.x > 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			else if ((direction == Collision::Right) && charVelocity.x < 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			character->setVelocity(charVelocity);
+			character->setAcceleration(charAccel);
+		}
+
 		if (matchesCategories(pair, Category::Player, Category::Block)) {
 
 
@@ -198,33 +234,7 @@ void World::handleCollisions()
 			character->setAcceleration(charAccel);
 		}
 
-		else if (matchesCategories(pair, Category::Player, Category::MovableBlock)) {
-			Collision::Direction direction = collisionType(*pair.first, *pair.second);
-			adjustChar(*pair.second, direction);
-
-			sf::Vector2f charVelocity = character->getVelocity();
-			sf::Vector2f charAccel = character->getAcceleration();
-
-			if (direction == Collision::Down) {
-				charVelocity.y = 0;
-				static_cast<MovableBlock&>(*pair.second).setMove(); 
-			}
-			else if (direction == Collision::Up && charVelocity.y >= -10) {
-				isAir = false;
-			}
-			else if ((direction == Collision::Left) && charVelocity.x > 0) {
-				charVelocity.x = 0;
-				charAccel.x = 0;
-			}
-			else if ((direction == Collision::Right) && charVelocity.x < 0) {
-				charVelocity.x = 0;
-				charAccel.x = 0;
-			}
-			character->setVelocity(charVelocity);
-			character->setAcceleration(charAccel);
-		}
 	}
-	
 	character->setAir(isAir); 
 }
 

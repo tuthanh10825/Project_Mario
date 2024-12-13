@@ -12,5 +12,6 @@ public:
 	virtual sf::FloatRect getBoundingRect() const; 
 private: 
 	sf::RectangleShape boundary; 
-
+protected: 
+	virtual void updateCurrent(sf::Time dt) {};
 };
