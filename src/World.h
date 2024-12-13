@@ -5,6 +5,7 @@
 #include "SpriteNode.h"
 #include "CommandQueue.h"
 #include "Block.h"
+#include "MovableBlock.h"
 #include "Entity.h"
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -22,6 +23,8 @@ private:
 	void loadTextures(); 
 	void handleCollisions(); 
 	void adaptGravity(); 
+
+	void updatePlayerView(sf::Time dt); 
 
 	void adjustChar(SceneNode& node, Collision::Direction direction); 
 private: 
@@ -48,4 +51,4 @@ private:
 	CommandQueue commandQueue; 
 };
 
-bool matchesCatetgories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 
+bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

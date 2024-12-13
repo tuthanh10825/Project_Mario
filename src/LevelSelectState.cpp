@@ -106,7 +106,8 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 			requestStackPushGame(Level::Easy);
 		}
 		if (optionIndex == Level2) {
-
+			requestStackPop(); 
+			requestStackPushGame(Level::Medium); 
 		}
 		if (optionIndex == Level3) {
 
