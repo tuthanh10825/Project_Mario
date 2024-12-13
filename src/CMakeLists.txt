@@ -3,7 +3,7 @@
 #
 #adding all file in the src directories. 
 # Add the executable
-add_executable(game main.cpp)
+add_executable(game main.cpp "MovableBlock.h" "MovableBlock.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET game PROPERTY CXX_STANDARD 20)

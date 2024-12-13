@@ -22,19 +22,20 @@ CommandQueue& World::getCommandQueue()
 
 void World::update(sf::Time dt) {
 	//worldView.move(scrollSpeed * dt.asSeconds(), 0.f); 
-	sf::Vector2f before = character->getWorldPosition();
-	sf::Vector2f windowSize = worldView.getSize();
-	
+
+
 	//handle player input here. 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
 	}
-	assert(commandQueue.isEmpty()); 
-	
+	assert(commandQueue.isEmpty());
+
 	//handleCollisions(); 
-	adaptPlayerVelocity(); 
+
+	//this will handle the player velocity during the gameplay.  
+	adaptPlayerVelocity();
 	handleCollisions();
-	adaptGravity(); 
+	adaptGravity();
 	//update first
 
 	/*sf::Vector2f charPos = character->getPosition();
@@ -42,14 +43,11 @@ void World::update(sf::Time dt) {
 
 	sceneGraph.update(dt);
 	//Collision next
-	
+
 
 	////set Worldview here ? 
-	sf::Vector2f after = character->getWorldPosition();
-	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return;
-	else worldView.move(sf::Vector2f(after.x - before.x, 0.f));
+	updatePlayerView(dt); 
 }
-
 void World::adaptPlayerVelocity()
 {
 	const float accel_x = 600.f;
@@ -169,7 +167,7 @@ void World::handleCollisions()
 	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
 	bool isAir = true; 
 	for (SceneNode::Pair pair : collisionPairs) {
-		if (matchesCatetgories(pair, Category::Player, Category::Block)) {
+		if (matchesCategories(pair, Category::Player, Category::Block)) {
 
 
 			//handle the collision
@@ -183,6 +181,32 @@ void World::handleCollisions()
 			}
 			else if (direction == Collision::Down && charVelocity.y < 0) {
 				charVelocity.y = 0;
+			}
+			else if ((direction == Collision::Left) && charVelocity.x > 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			else if ((direction == Collision::Right) && charVelocity.x < 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			character->setVelocity(charVelocity);
+			character->setAcceleration(charAccel);
+		}
+
+		else if (matchesCategories(pair, Category::Player, Category::MovableBlock)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			adjustChar(*pair.second, direction);
+
+			sf::Vector2f charVelocity = character->getVelocity();
+			sf::Vector2f charAccel = character->getAcceleration();
+
+			if (direction == Collision::Down) {
+				charVelocity.y = 0;
+				static_cast<MovableBlock&>(*pair.second).setMove(); 
+			}
+			else if (direction == Collision::Up && charVelocity.y >= -10) {
+				isAir = false;
 			}
 			else if ((direction == Collision::Left) && charVelocity.x > 0) {
 				charVelocity.x = 0;
@@ -218,6 +242,16 @@ void World::adaptGravity()
 	character->setVelocity(charVelocity); 
 }
 
+void World::updatePlayerView(sf::Time dt)
+{
+	sf::Vector2f windowSize = worldView.getSize();
+	sf::Vector2f after = character->getWorldPosition();
+
+	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return;
+	else worldView.move(sf::Vector2f(character->getVelocity().x * dt.asSeconds(), 0.f));
+
+}
+
 void World::adjustChar(SceneNode& node, Collision::Direction direction)
 {
 	sf::FloatRect charBox = character->getBoundingRect(); 
@@ -244,7 +278,7 @@ void World::adjustChar(SceneNode& node, Collision::Direction direction)
 }
 
 
-bool matchesCatetgories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
+bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
 {
 	unsigned category1 = colliders.first->getCategory(); 
 	unsigned category2 = colliders.second->getCategory(); 
