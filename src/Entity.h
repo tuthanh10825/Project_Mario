@@ -17,11 +17,16 @@ public:
 	virtual void remove();
 	bool isDestroyed() const;
 	Entity(int hp);
+
+	virtual bool isAir() const; 
+	virtual void setAir(bool isAir); 
+
 private: 
 	const sf::Vector2f g = sf::Vector2f(0, 9.8); 
 	sf::Vector2f velocity; 
 	sf::Vector2f acceleration; 
 	int hp;
+	bool air; 
 protected: 
 	virtual void updateCurrent(sf::Time dt); 
 	

@@ -8,6 +8,23 @@ scrollSpeed(80.f)
 {
 	loadTextures();
 	worldView.setCenter(spawnPosition);
+
+	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup; 
+	applyGravity.action = [](SceneNode& s, sf::Time dt) {
+		Entity& entity = static_cast<Entity&> (s); 
+		sf::Vector2f accel = entity.getAcceleration();
+		sf::Vector2f velocity = entity.getVelocity(); 
+		if (entity.isAir()) {
+			entity.setAcceleration(accel.x , 1000.f);
+		}
+		else {
+			
+			entity.setAcceleration(accel.x, 0); 
+			if (velocity.y > 0) 
+				entity.setVelocity(velocity.x, 0); 
+		}
+		}; 
+
 }
 void World::draw()
 {
@@ -23,20 +40,21 @@ CommandQueue& World::getCommandQueue()
 void World::update(sf::Time dt) {
 	//worldView.move(scrollSpeed * dt.asSeconds(), 0.f); 
 
-
+	
 	//handle player input here. 
+	commandQueue.push(applyGravity); 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
 	}
-	assert(commandQueue.isEmpty());
+	
 
 	//handleCollisions(); 
 
 	//this will handle the player velocity during the gameplay.  
 	adaptPlayerVelocity();
-	handlePlayerCollisions();
-	handleEnemyCollision();
-	adaptGravity();
+	handleCollisions();
+	
+	sceneGraph.onCommand(applyGravity, dt);
 	//update first
 
 	while (!commandQueue.isEmpty()) {
@@ -59,7 +77,6 @@ void World::adaptPlayerVelocity()
 {
 	const float accel_x = 600.f;
 	const float friction = 1500.f;
-	const float g = 1000.f;
 
 	const float speedcap = 500.f;
 
@@ -187,12 +204,14 @@ void World::setWorldBound(sf::FloatRect& rect)
 	worldBounds = rect; 
 }
 
-void World::handlePlayerCollisions()
+void World::handleCollisions()
 {
 	std::set<SceneNode::Pair> collisionPairs; 
 	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
 	bool isAir = true; 
-
+	for (Enemy* enemy : enemies) {
+		enemy->setAir(true);
+	}
 	sf::Vector2f charVelocity = character->getVelocity();
 	sf::Vector2f charAccel = character->getAcceleration();
 	for (SceneNode::Pair pair : collisionPairs) {
@@ -274,30 +293,94 @@ void World::handlePlayerCollisions()
 
 		}
 
+		// enemy and block collision
+		if (matchesCategories(pair, Category::Enemy, Category::Block)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& enemy = static_cast<Enemy&>(*pair.first);
+			adjustEnemy(enemy, *pair.second, direction);
+
+			if (direction == Collision::Left) {
+				std::cout << enemy.getPosition().x << " " << enemy.getPosition().y << std::endl;
+				enemy.setMoveLeft(true);
+				enemy.setMoveRight(false);
+			}
+			else if (direction == Collision::Right) {
+				enemy.setMoveRight(true);
+				enemy.setMoveLeft(false);
+			}
+			if (direction == Collision::Up) {
+				enemy.setAir(false);
+			}
+		}
+
+		// enemy and movable block collision
+		if (matchesCategories(pair, Category::Enemy, Category::MysteryBlock)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& enemy = static_cast<Enemy&>(*pair.first);
+			adjustEnemy(enemy, *pair.second, direction);
+
+			if (direction == Collision::Left) {
+				enemy.setMoveLeft(true);
+				enemy.setMoveRight(false);
+			}
+			else if (direction == Collision::Right) {
+				enemy.setMoveRight(true);
+				enemy.setMoveLeft(false);
+			}
+			if (direction == Collision::Up) {
+				enemy.setAir(false);
+			}
+		}
+
+		// enemy and enemy collision
+		if (matchesCategories(pair, Category::Enemy, Category::Enemy)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& enemy1 = static_cast<Enemy&>(*pair.first);
+			auto& enemy2 = static_cast<Enemy&>(*pair.second);
+
+			if (direction == Collision::Left) {
+				enemy1.setMoveLeft(true);
+				enemy1.setMoveRight(false);
+				enemy2.setMoveRight(true);
+				enemy2.setMoveLeft(false);
+			}
+			else if (direction == Collision::Right) {
+				enemy1.setMoveRight(true);
+				enemy1.setMoveLeft(false);
+				enemy2.setMoveLeft(true);
+				enemy2.setMoveRight(false);
+			}
+			if (direction == Collision::Up) {
+				enemy1.setAir(false);
+				enemy2.setAir(false);
+			}
+		}
+
+		// enemy and player collision
+		if (matchesCategories(pair, Category::Enemy, Category::Player)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& enemy = static_cast<Enemy&>(*pair.first);
+			if (direction == Collision::Down) {
+				enemy.setMoveRight(false);
+				enemy.setMoveLeft(false);
+				enemy.setScale(1, 0.5);
+				enemy.move(0, 12);
+				enemy.destroy();
+
+			}
+		}
+		if (matchesCategories(pair, Category::Pickup, Category::MysteryBlock)) {
+			if (collisionType(*pair.first, *pair.second) == Collision::Up) {
+				static_cast<Pickup&>(*pair.first).setAir(false); 
+			}
+		}
+
 	}
+
 	character->setVelocity(charVelocity);
 	character->setAcceleration(charAccel);
 	character->setAir(isAir); 
 }
-
-void World::adaptGravity()
-{
-	bool air = character->isAir(); 
-	sf::Vector2f charAccel = character->getAcceleration(); 
-	sf::Vector2f charVelocity = character->getVelocity(); 
-	if (air) {
-		charAccel.y = 1000.f; //g
-	}
-	else if (!air) {
-		charAccel.y = 0;
-		if (charVelocity.y > 0) {
-			charVelocity.y = 0; 
-		}
-	}
-	character->setAcceleration(charAccel); 
-	character->setVelocity(charVelocity); 
-}
-
 void World::updatePlayerView(sf::Time dt)
 {
 	sf::Vector2f windowSize = worldView.getSize();
@@ -363,94 +446,6 @@ void World::adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction dire
 		enemy.move(0, offset);
 	}
 
-}
-void World::handleEnemyCollision() {
-	// set acceleration for all the enemies
-	for (Enemy* enemy : enemies) {
-		enemy->setAir(true);
-	}
-
-	std::set<SceneNode::Pair> collisionPairs;
-	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs);
-	for (SceneNode::Pair pair : collisionPairs) {
-
-		// enemy and block collision
-		if (matchesCategories(pair, Category::Enemy, Category::Block)) {
-			Collision::Direction direction = collisionType(*pair.first, *pair.second);
-			auto& enemy = static_cast<Enemy&>(*pair.first);
-			adjustEnemy(enemy, *pair.second, direction);
-
-			if (direction == Collision::Left) {
-				std::cout << enemy.getPosition().x << " " << enemy.getPosition().y << std::endl;
-				enemy.setMoveLeft(true);
-				enemy.setMoveRight(false);
-			}
-			else if (direction == Collision::Right) {
-				enemy.setMoveRight(true);
-				enemy.setMoveLeft(false);
-			}
-			if (direction == Collision::Up) {
-				enemy.setAir(false);
-			}
-		}	
-
-		// enemy and movable block collision
-		if (matchesCategories(pair, Category::Enemy, Category::MysteryBlock)) {
-			Collision::Direction direction = collisionType(*pair.first, *pair.second);
-			auto& enemy = static_cast<Enemy&>(*pair.first);
-			adjustEnemy(enemy, *pair.second, direction);
-
-			if (direction == Collision::Left) {
-				enemy.setMoveLeft(true);
-				enemy.setMoveRight(false);
-			}
-			else if (direction == Collision::Right) {
-				enemy.setMoveRight(true);
-				enemy.setMoveLeft(false);
-			}
-			if (direction == Collision::Up) {
-				enemy.setAir(false);
-			}
-		}
-
-		// enemy and enemy collision
-		if (matchesCategories(pair, Category::Enemy, Category::Enemy)) {
-			Collision::Direction direction = collisionType(*pair.first, *pair.second);
-			auto& enemy1 = static_cast<Enemy&>(*pair.first);
-			auto& enemy2 = static_cast<Enemy&>(*pair.second);
-
-			if (direction == Collision::Left) {
-				enemy1.setMoveLeft(true);
-				enemy1.setMoveRight(false);
-				enemy2.setMoveRight(true);
-				enemy2.setMoveLeft(false);
-			}
-			else if (direction == Collision::Right) {
-				enemy1.setMoveRight(true);
-				enemy1.setMoveLeft(false);
-				enemy2.setMoveLeft(true);
-				enemy2.setMoveRight(false);
-			}
-			if (direction == Collision::Up) {
-				enemy1.setAir(false);
-				enemy2.setAir(false);
-			}
-		}
-
-		// enemy and player collision
-		if (matchesCategories(pair, Category::Enemy, Category::Player)) {
-			Collision::Direction direction = collisionType(*pair.first, *pair.second);
-			auto& enemy = static_cast<Enemy&>(*pair.first);
-			if (direction == Collision::Down) {
-				enemy.setMoveRight(false);
-				enemy.setMoveLeft(false);
-				enemy.setScale(1, 0.5); 
-				enemy.move(0, 12);
-				enemy.destroy();
-				
-			}
-		}
-	}
 }
 
 void World::removeEnemies() {

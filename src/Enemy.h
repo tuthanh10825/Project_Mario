@@ -30,9 +30,6 @@ public:
 	bool isMoveLeft() const;
 	bool isMoveRight() const;
 
-	void setAir(bool isAir);
-	bool isAir() const;
-
 	void remove();
 	bool isMarkedForRemoval() const;
 private:

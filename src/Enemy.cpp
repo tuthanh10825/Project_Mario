@@ -145,15 +145,6 @@ bool Enemy::isMoveRight() const
 	return moveRight;
 }
 
-void Enemy::setAir(bool isAir)
-{
-	air = isAir;
-}
-
-bool Enemy::isAir() const
-{
-	return air;
-}
 
 void Enemy::remove()
 {
