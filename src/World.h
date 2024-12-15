@@ -5,7 +5,10 @@
 #include "SpriteNode.h"
 #include "CommandQueue.h"
 #include "Block.h"
+#include "MovableBlock.h"
 #include "Entity.h"
+#include "Enemy.h"
+#include <vector>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 class World : private sf::NonCopyable {
@@ -23,12 +26,28 @@ private:
 	void handleCollisions(); 
 	void adaptGravity(); 
 
+	void handleEnemyCollision();
+
+	void updatePlayerView(sf::Time dt); 
+
 	void adjustChar(SceneNode& node, Collision::Direction direction); 
+	void adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction);
 private: 
 	enum Layer {
 		Background, 
 		Air, 
 		LayerCount
+	};
+
+	struct EnemyInfo
+	{
+		Enemy::Type type;
+		sf::Vector2f position;
+
+		bool operator>(const EnemyInfo& other) const
+		{
+			return position.x > other.position.x;
+		}
 	};
 private: 
 
@@ -46,6 +65,8 @@ private:
 	float scrollSpeed; 
 	Character* character; 
 	CommandQueue commandQueue; 
+	std::vector<EnemyInfo> enemyInfo;
+	std::vector<Enemy*> enemies;
 };
 
-bool matchesCatetgories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 
+bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

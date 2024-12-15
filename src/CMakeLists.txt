@@ -3,7 +3,7 @@
 #
 #adding all file in the src directories. 
 # Add the executable
-add_executable(game main.cpp)
+add_executable(game main.cpp "MovableBlock.h" "MovableBlock.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET game PROPERTY CXX_STANDARD 20)
@@ -19,7 +19,7 @@ add_custom_command(TARGET game POST_BUILD
 )
 target_link_libraries(game PRIVATE nlohmann_json::nlohmann_json)
 
-target_sources(game PUBLIC "Animation.h" "Animation.cpp" "Utility.h" "Utility.cpp" "Pickup.h" "Pickup.cpp") 
+target_sources(game PUBLIC "Animation.h" "Animation.cpp" "Utility.h" "Utility.cpp" "Enemy.h" "Enemy.cpp" "Pickup.h" "Pickup.cpp") 
 target_sources(game PUBLIC "Application.cpp" "Application.h") 
 target_sources(game PUBLIC "ID.h")
 target_sources(game PUBLIC "MenuState.cpp" "MenuState.h")
@@ -33,4 +33,4 @@ target_sources(game PUBLIC "World.h" "World.cpp")
 target_sources(game PUBLIC "Command.h" "CommandQueue.h" "CommandQueue.cpp")
 target_sources(game PUBLIC "Player.h" "Player.cpp")
 target_sources(game PUBLIC "Block.h" "Block.cpp")
-target_sources(game PUBLIC "PauseState.h" "PauseState.cpp")
+target_sources(game PUBLIC "PauseState.h" "PauseState.cpp" "LevelSelectState.h" "LevelSelectState.cpp")

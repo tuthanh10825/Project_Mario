@@ -21,7 +21,7 @@ void Application::render()
 {
 	window.clear(); 
 	stateStack.draw(); 
-	
+
 	window.display(); 
 }
 
@@ -30,6 +30,7 @@ void Application::registerStates()
 	stateStack.registerState<MenuState>(States::Menu); 
 	stateStack.registerState<GameState>(States::Game); 
 	stateStack.registerState<PauseState>(States::Pause); 
+	stateStack.registerState<LevelSelectState>(States::LevelSelect);
 }
 
 void Application::run()

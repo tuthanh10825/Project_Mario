@@ -22,29 +22,34 @@ CommandQueue& World::getCommandQueue()
 
 void World::update(sf::Time dt) {
 	//worldView.move(scrollSpeed * dt.asSeconds(), 0.f); 
-	sf::Vector2f before = character->getWorldPosition();
-	sf::Vector2f windowSize = worldView.getSize();
-	
+
+
 	//handle player input here. 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
 	}
+	assert(commandQueue.isEmpty());
 
 	//handleCollisions(); 
-	adaptPlayerVelocity(); 
+
+	//this will handle the player velocity during the gameplay.  
+	adaptPlayerVelocity();
 	handleCollisions();
-	adaptGravity(); 
+	adaptGravity();
 	//update first
+
+	handleEnemyCollision();
+
+	/*sf::Vector2f charPos = character->getPosition();
+	std::cout << "After updating: " << charPos.x << " " << charPos.y << std::endl;*/
+
 	sceneGraph.update(dt);
 	//Collision next
-	
+
 
 	////set Worldview here ? 
-	sf::Vector2f after = character->getWorldPosition();
-	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return;
-	else worldView.move(sf::Vector2f(after.x - before.x, 0.f));
+	updatePlayerView(dt); 
 }
-
 void World::adaptPlayerVelocity()
 {
 	const float accel_x = 600.f;
@@ -111,6 +116,10 @@ void World::loadTextures()
 	textures.load(Textures::Character1, "textures/idle.png");
 	textures.load(Textures::MovRight, "textures/movRight.png");
 	textures.load(Textures::MovLeft, "textures/movLeft.png");
+	textures.load(Textures::Goomba, "textures/Goomba.png");
+	textures.load(Textures::GoombaMovRight, "textures/GoombaMovLeft.png");
+	textures.load(Textures::GoombaMovLeft, "textures/GoombaMovLeft.png");
+	textures.load(Textures::GoombaDead, "textures/GoombaDead.png");
 }
 
 void World::buildScene(json& info) // we need to load the "front" world here.
@@ -145,12 +154,23 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 			tileset[blockInfo["src"]].loadFromImage(tilesetImg, sf::IntRect(blockInfo["src"][0], blockInfo["src"][1], 60, 60)); 
 		}
 		sf::Texture& blockTexture = tileset[blockInfo["src"]];
+	
 
-		std::unique_ptr<Block> block(new Block(blockTexture));
-		block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1])); 
-		sceneLayers[Air]->attachChild(std::move(block)); 
+		if (blockInfo["src"][0] == 540) {
+			std::unique_ptr<MovableBlock> block(new MovableBlock(blockTexture)); 
+			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+			sceneLayers[Air]->attachChild(std::move(block));
+		}
+		else if (blockInfo["src"][0] == 600) {
+			enemyInfo.push_back({ Enemy::Goomba, sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]) });
+		}
+		else {
+			std::unique_ptr<Block> block(new Block(blockTexture));
+			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+			sceneLayers[Air]->attachChild(std::move(block));
+		}
 	}
-
+	sort(enemyInfo.begin(), enemyInfo.end(), std::greater<EnemyInfo>());
 }
 
 void World::setWorldBound(sf::FloatRect& rect)
@@ -164,30 +184,86 @@ void World::handleCollisions()
 	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
 	bool isAir = true; 
 	for (SceneNode::Pair pair : collisionPairs) {
-		if (matchesCatetgories(pair, Category::Player, Category::Block)) {
-			
-			
-			//handle the collision
-			Collision::Direction direction = collisionType(*character, *pair.second);
 
+		if (matchesCategories(pair, Category::Player, Category::MovableBlock)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			adjustChar(*pair.second, direction);
-			sf::Vector2f charVelocity = character -> getVelocity(); 
-			sf::Vector2f charAccel = character -> getAcceleration(); 
-			if (direction == Collision::Up) {
-				isAir = false; 
+
+			sf::Vector2f charVelocity = character->getVelocity();
+			sf::Vector2f charAccel = character->getAcceleration();
+
+			if (direction == Collision::Down) {
+				charVelocity.y = 0;
+				static_cast<MovableBlock&>(*pair.second).setMove(-character->getVelocity().y);
 			}
-			else if (direction == Collision::Down) {
-				charVelocity.y = 0; 
+			else if (direction == Collision::Up && charVelocity.y >= -10) {
+				isAir = false;
 			}
-			else if ((direction == Collision::Left) || (direction == Collision::Right)) {
+			else if ((direction == Collision::Left) && charVelocity.x > 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			else if ((direction == Collision::Right) && charVelocity.x < 0) {
 				charVelocity.x = 0;
 				charAccel.x = 0;
 			}
 			character->setVelocity(charVelocity);
 			character->setAcceleration(charAccel);
 		}
+
+		if (matchesCategories(pair, Category::Player, Category::Block)) {
+
+
+			//handle the collision
+			Collision::Direction direction = collisionType(*character, *pair.second);
+			adjustChar(*pair.second, direction);
+
+			sf::Vector2f charVelocity = character->getVelocity();
+			sf::Vector2f charAccel = character->getAcceleration();
+			if (direction == Collision::Up && charVelocity.y >= -10) {
+				isAir = false;
+			}
+			else if (direction == Collision::Down && charVelocity.y < 0) {
+				charVelocity.y = 0;
+			}
+			else if ((direction == Collision::Left) && charVelocity.x > 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			else if ((direction == Collision::Right) && charVelocity.x < 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			character->setVelocity(charVelocity);
+			character->setAcceleration(charAccel);
+		}
+
+		if (matchesCategories(pair, Category::Player, Category::Enemy)) {
+			//handle the collision
+			Collision::Direction direction = collisionType(*character, *pair.second);
+			adjustChar(*pair.second, direction);
+
+			sf::Vector2f charVelocity = character->getVelocity();
+			sf::Vector2f charAccel = character->getAcceleration();
+			if (direction == Collision::Up && charVelocity.y >= -10) {
+				isAir = false;
+			}
+			else if (direction == Collision::Down && charVelocity.y < 0) {
+				charVelocity.y = 0;
+			}
+			else if ((direction == Collision::Left) && charVelocity.x > 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			else if ((direction == Collision::Right) && charVelocity.x < 0) {
+				charVelocity.x = 0;
+				charAccel.x = 0;
+			}
+			character->setVelocity(charVelocity);
+			character->setAcceleration(charAccel);
+		}
+
 	}
-	
 	character->setAir(isAir); 
 }
 
@@ -207,6 +283,24 @@ void World::adaptGravity()
 	}
 	character->setAcceleration(charAccel); 
 	character->setVelocity(charVelocity); 
+}
+
+void World::updatePlayerView(sf::Time dt)
+{
+	sf::Vector2f windowSize = worldView.getSize();
+	sf::Vector2f after = character->getWorldPosition();
+
+	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return;
+	else worldView.move(sf::Vector2f(character->getVelocity().x * dt.asSeconds(), 0.f));
+
+	while (enemyInfo.size() && enemyInfo.back().position.x > after.x - windowSize.x / 2 && enemyInfo.back().position.x < after.x + windowSize.x / 2) {
+		EnemyInfo enemy = enemyInfo.back();
+		enemyInfo.pop_back();
+		std::unique_ptr<Enemy> tempEnemy(new Enemy(enemy.type, textures));
+		tempEnemy->setPosition(enemy.position);
+		enemies.push_back(tempEnemy.get());
+		sceneLayers[Air]->attachChild(std::move(tempEnemy));
+	}
 }
 
 void World::adjustChar(SceneNode& node, Collision::Direction direction)
@@ -234,8 +328,122 @@ void World::adjustChar(SceneNode& node, Collision::Direction direction)
 	}
 }
 
+void World::adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction) {
+	sf::FloatRect enemyBox = enemy.getBoundingRect();
+	sf::FloatRect nodeBox = node.getBoundingRect();
 
-bool matchesCatetgories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
+	sf::Vector2f enemyCenter = enemyBox.getPosition() + enemyBox.getSize() / 2.f;
+	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f;
+
+	float dx = nodeCenter.x - enemyCenter.x;
+	float dy = nodeCenter.y - enemyCenter.y;
+
+	sf::Vector2f dv(dx, dy);
+	if (direction == Collision::Right || direction == Collision::Left) {
+		float offset = enemyBox.width / 2 + nodeBox.width / 2 - std::abs(dx);
+		if (direction == Collision::Left) offset *= -1;
+		enemy.move(offset, 0);
+	}
+	else if (direction == Collision::Up || direction == Collision::Down) {
+		float offset = enemyBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
+		if (direction == Collision::Up) offset *= -1;
+		enemy.move(0, offset);
+	}
+
+}
+void World::handleEnemyCollision() {
+	// set acceleration for all the enemies
+	for (Enemy* enemy : enemies) {
+		enemy->setAir(true);
+	}
+
+	std::set<SceneNode::Pair> collisionPairs;
+	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs);
+	for (SceneNode::Pair pair : collisionPairs) {
+
+		// enemy and block collision
+		if (matchesCategories(pair, Category::Enemy, Category::Block)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& enemy = static_cast<Enemy&>(*pair.first);
+			adjustEnemy(enemy, *pair.second, direction);
+
+			if (direction == Collision::Left) {
+				std::cout << enemy.getPosition().x << " " << enemy.getPosition().y << std::endl;
+				enemy.setMoveLeft(true);
+				enemy.setMoveRight(false);
+			}
+			else if (direction == Collision::Right) {
+				enemy.setMoveRight(true);
+				enemy.setMoveLeft(false);
+			}
+			if (direction == Collision::Up) {
+				enemy.setAir(false);
+			}
+		}	
+
+		// enemy and movable block collision
+		if (matchesCategories(pair, Category::Enemy, Category::MovableBlock)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& enemy = static_cast<Enemy&>(*pair.first);
+			adjustEnemy(enemy, *pair.second, direction);
+
+			if (direction == Collision::Left) {
+				enemy.setMoveLeft(true);
+				enemy.setMoveRight(false);
+			}
+			else if (direction == Collision::Right) {
+				enemy.setMoveRight(true);
+				enemy.setMoveLeft(false);
+			}
+			if (direction == Collision::Up) {
+				enemy.setAir(false);
+			}
+		}
+
+		// enemy and enemy collision
+		if (matchesCategories(pair, Category::Enemy, Category::Enemy)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& enemy1 = static_cast<Enemy&>(*pair.first);
+			auto& enemy2 = static_cast<Enemy&>(*pair.second);
+
+			if (direction == Collision::Left) {
+				enemy1.setMoveLeft(true);
+				enemy1.setMoveRight(false);
+				enemy2.setMoveRight(true);
+				enemy2.setMoveLeft(false);
+			}
+			else if (direction == Collision::Right) {
+				enemy1.setMoveRight(true);
+				enemy1.setMoveLeft(false);
+				enemy2.setMoveLeft(true);
+				enemy2.setMoveRight(false);
+			}
+			if (direction == Collision::Up) {
+				enemy1.setAir(false);
+				enemy2.setAir(false);
+			}
+		}
+
+		// enemy and player collision
+		if (matchesCategories(pair, Category::Enemy, Category::Player)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& enemy = static_cast<Enemy&>(*pair.first);
+
+			if (direction == Collision::Left) {
+				// character dies
+			}
+			else if (direction == Collision::Right) {
+				// character dies
+			}
+			else if (direction == Collision::Down) {
+				enemy.setDead(true);
+			}
+		}
+	}
+}
+
+
+bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
 {
 	unsigned category1 = colliders.first->getCategory(); 
 	unsigned category2 = colliders.second->getCategory(); 

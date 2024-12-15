@@ -2,10 +2,23 @@
 namespace Textures {
 	enum ID {
 		Background, 
+		TitleBackground,
+		Title,
+		PlayButton,
+		ExitButton,
+		Level1,
+		Level2,
+		Level3,
+		Back,
+		Arrow,
 		Character1, 
 		Block,
 		MovRight,
 		MovLeft,
+		Goomba,
+		GoombaMovRight,
+		GoombaMovLeft,
+		GoombaDead,
 		Pickup,
 	};
 }
@@ -16,11 +29,25 @@ namespace Fonts {
 		PixeloidSans,
 		PixeloidSansBold,
 	};
+
+
 }
+
+namespace Buttons {
+	enum ID {
+		Play,
+		SelectedPlay,
+		Exit,
+		SelectedExit,
+	};
+}
+
+
 namespace States {
 	enum ID {
 		None,
 		Menu, 
+		LevelSelect,
 		Game, 
 		Pause
 	};
@@ -28,11 +55,12 @@ namespace States {
 namespace Category {
 	enum Type {
 		None = 0, 
-		Scene = 1 << 0, 
-		Player = 1 << 1, 
-		Enemy = 1 << 2, 
-		Block = 1 << 3,
-		Pickup = 1 << 4,
+		Scene = 1 << 1,
+		Player = 1 << 2, 
+		Enemy = 1 << 3, 
+		Block = 1 << 4,
+		MovableBlock = 1 << 5,
+		Pickup = 1 << 6
 	};
 }
 enum Level {
