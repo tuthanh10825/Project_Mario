@@ -8,6 +8,7 @@
 #include "MovableBlock.h"
 #include "Entity.h"
 #include "Enemy.h"
+#include "Pickup.h"
 #include <vector>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;

@@ -59,8 +59,9 @@ namespace Category {
 		Player = 1 << 2, 
 		Enemy = 1 << 3, 
 		Block = 1 << 4,
-		MovableBlock = 1 << 5,
-		Pickup = 1 << 6
+		MysteryBlock = 1 << 5,
+		Pickup = 1 << 6, 
+		SceneNodeAir =  1 << 7, 
 	};
 }
 enum Level {

@@ -4,7 +4,8 @@
 Pickup::Pickup(Type type, TextureHolder& textures)
 	: Entity(1)
 	, type(type)
-	, mov(false)
+	, mov(true)
+	, animation(textures.get(Textures::Pickup))
 {
 	sf::Texture& texture = textures.get(Textures::Pickup);
 	sf::Vector2u boundaryRect = texture.getSize();
@@ -17,8 +18,8 @@ Pickup::Pickup(Type type, TextureHolder& textures)
 	sprite.setOutlineThickness(-2);
 #endif // _DEBUG
 	
-	animation.setFrameSize(sf::Vector2i(60, 60));
-	animation.setNumFrames(5);
+	animation.setFrameSize(sf::Vector2i(48, 48));
+	animation.setNumFrames(1);
 	animation.setDuration(sf::seconds(0.8));
 	animation.setRepeating(true);
 
@@ -26,11 +27,9 @@ Pickup::Pickup(Type type, TextureHolder& textures)
 }
 
 void Pickup::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	if (mov)
-		target.draw(animation, states);
-	else 
-		target.draw(sprite, states);
+{ 
+	target.draw(sprite, states);
+
 }
 
 unsigned Pickup::getCategory() const

@@ -39,6 +39,9 @@ void World::update(sf::Time dt) {
 	adaptGravity();
 	//update first
 
+	while (!commandQueue.isEmpty()) {
+		sceneGraph.onCommand(commandQueue.pop(), dt);
+	}
 	removeEnemies();
 	
 
@@ -122,6 +125,7 @@ void World::loadTextures()
 	textures.load(Textures::GoombaMovRight, "textures/GoombaMovLeft.png");
 	textures.load(Textures::GoombaMovLeft, "textures/GoombaMovLeft.png");
 	textures.load(Textures::GoombaDead, "textures/GoombaDead.png");
+	textures.load(Textures::Pickup, "textures/mushroom.png"); 
 }
 
 void World::buildScene(json& info) // we need to load the "front" world here.
@@ -131,6 +135,8 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 		sceneLayers[i] = layer.get();
 		sceneGraph.attachChild(std::move(layer));
 	}
+	sceneLayers[Air]->setCategory(Category::SceneNodeAir);
+
 	//can be improved here, since the path to the background is existing. 
 	sf::Texture& background = textures.get(Textures::Background);
 	sf::IntRect textureRect(worldBounds);
@@ -145,6 +151,7 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 	std::unique_ptr<Character> tempPlayer(new Character(Character::Character1, textures));
 	character = tempPlayer.get();
 	character->setPosition(spawnPosition);
+
 	sceneLayers[Air]->attachChild(std::move(tempPlayer));
 	//can be improved here, since the path to the tileset is existing. 
 
@@ -159,7 +166,7 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 	
 
 		if (blockInfo["src"][0] == 540) {
-			std::unique_ptr<MovableBlock> block(new MovableBlock(blockTexture)); 
+			std::unique_ptr<MysteryBlock> block(new MysteryBlock(blockTexture)); 
 			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
 			sceneLayers[Air]->attachChild(std::move(block));
 		}
@@ -190,14 +197,20 @@ void World::handlePlayerCollisions()
 	sf::Vector2f charAccel = character->getAcceleration();
 	for (SceneNode::Pair pair : collisionPairs) {
 
-		if (matchesCategories(pair, Category::Player, Category::MovableBlock)) {
+		if (matchesCategories(pair, Category::Player, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			adjustChar(*pair.second, direction);
 
 
 			if (direction == Collision::Down) {
 				charVelocity.y = 0;
-				static_cast<MovableBlock&>(*pair.second).setMove(-character->getVelocity().y);
+				static_cast<MysteryBlock&>(*pair.second).setMove(-character->getVelocity().y);
+				Command createPickupCommand; 
+				createPickupCommand.category = Category::SceneNodeAir; 
+				createPickupCommand.action = [pair, this](SceneNode& node, sf::Time) {
+					static_cast<MysteryBlock&>(*pair.second).createPickup(node, textures);
+				};
+				commandQueue.push(createPickupCommand);
 			}
 			else if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
@@ -214,8 +227,6 @@ void World::handlePlayerCollisions()
 		}
 
 		if (matchesCategories(pair, Category::Player, Category::Block)) {
-
-
 			//handle the collision
 			Collision::Direction direction = collisionType(*character, *pair.second);
 			adjustChar(*pair.second, direction);
@@ -241,20 +252,24 @@ void World::handlePlayerCollisions()
 			//handle the collision
 			Collision::Direction direction = collisionType(*character, *pair.second);
 			adjustChar(*pair.second, direction);
+			Enemy& enemy = static_cast<Enemy&>(*pair.second);
 
 			if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
 			}
 			else if (direction == Collision::Down && charVelocity.y < 0) {
 				charVelocity.y = 0;
+				character->damage(enemy.getHp());
 			}
 			else if ((direction == Collision::Left) && charVelocity.x > 0) {
 				charVelocity.x = 0;
 				charAccel.x = 0;
+				character->damage(enemy.getHp());
 			}
 			else if ((direction == Collision::Right) && charVelocity.x < 0) {
 				charVelocity.x = 0;
 				charAccel.x = 0;
+				character->damage(enemy.getHp());
 			}
 
 		}
@@ -380,7 +395,7 @@ void World::handleEnemyCollision() {
 		}	
 
 		// enemy and movable block collision
-		if (matchesCategories(pair, Category::Enemy, Category::MovableBlock)) {
+		if (matchesCategories(pair, Category::Enemy, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& enemy = static_cast<Enemy&>(*pair.first);
 			adjustEnemy(enemy, *pair.second, direction);

@@ -1,24 +1,32 @@
 #include "MovableBlock.h"
-
-MovableBlock::MovableBlock(sf::Texture& texture) : Block(texture), moving(false), movingState(MovingState::None){}
-unsigned MovableBlock::getCategory() const
+#include "Pickup.h"
+MysteryBlock::MysteryBlock(sf::Texture& texture) : Block(texture), moving(false), movingState(MovingState::None){}
+unsigned MysteryBlock::getCategory() const
 {
-	return Category::MovableBlock;
+	return Category::MysteryBlock;
 }
 
-void MovableBlock::setPosition(const sf::Vector2f& position)
+void MysteryBlock::setPosition(const sf::Vector2f& position)
 {
 	Block::setPosition(position); 
 	origin = position; 
 }
 
-void MovableBlock::setMove(float speed)
+void MysteryBlock::setMove(float speed)
 {
 	this->speed = speed;
 	moving = true; 
 }
 
-void MovableBlock::updateCurrent(sf::Time dt)
+void MysteryBlock::createPickup(SceneNode& node, TextureHolder& textures)
+{
+	std::unique_ptr<Pickup> pickup(new Pickup(Pickup::Type::mushroom, textures));
+	sf::Vector2f position = getWorldPosition();
+	pickup->setPosition(position.x, position.y - 60.f);
+	node.attachChild(std::move(pickup));
+}
+
+void MysteryBlock::updateCurrent(sf::Time dt)
 {
 	if (!moving) {
 		return; 

@@ -20,6 +20,7 @@ public:
 	Ptr detachChild(const SceneNode& node); 
 	void update(sf::Time dt);
 	virtual unsigned getCategory() const; 
+	void setCategory(Category::Type type);  // remember to use it properly 
 	void onCommand(const Command& command, sf::Time dt); 
 
 	sf::Transform getWorldTransform() const; 
