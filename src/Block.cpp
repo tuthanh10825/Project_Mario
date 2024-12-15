@@ -1,6 +1,6 @@
 #include "Block.h"
 
-Block::Block(sf::Texture& texture) : Entity()
+Block::Block(sf::Texture& texture) : Entity(1)
 {
 
 	sf::Vector2u boxSize = texture.getSize();

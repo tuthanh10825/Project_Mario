@@ -2,7 +2,7 @@
 #include "Utility.h"
 
 Pickup::Pickup(Type type, TextureHolder& textures)
-	: Entity()
+	: Entity(1)
 	, type(type)
 	, mov(false)
 {
@@ -11,6 +11,11 @@ Pickup::Pickup(Type type, TextureHolder& textures)
 	sprite.setTexture(&texture);
 	sprite.setSize(sf::Vector2f(boundaryRect.x, boundaryRect.y));
 	sprite.setOrigin(sf::Vector2f(boundaryRect.x / 2.f, boundaryRect.y / 2.f));
+
+#if _DEBUG
+	sprite.setOutlineColor(sf::Color::Red);
+	sprite.setOutlineThickness(-2);
+#endif // _DEBUG
 	
 	animation.setFrameSize(sf::Vector2i(60, 60));
 	animation.setNumFrames(5);

@@ -29,14 +29,15 @@ static Textures::ID toTextureID(Enemy::Type type, Enemy::State state)
 }
 
 Enemy::Enemy(Type type, TextureHolder& textures)
-	: Entity()
+	: Entity(1)
 	, type(type)
 	, mMovLeft(textures.get(toTextureID(type, Enemy::movLeft)))
 	, mMovRight(textures.get(toTextureID(type, Enemy::movRight)))
+	, mDead(textures.get(toTextureID(type, Enemy::die)))
 	, moveLeft(true)
 	, moveRight(false)
 	, air(true)
-	, dead(false)
+	, showDead(true)
 {
 	sf::Texture& texture = textures.get(toTextureID(type, Enemy::alive));
 
@@ -46,19 +47,9 @@ Enemy::Enemy(Type type, TextureHolder& textures)
 	sprite.setSize(sf::Vector2f(boundaryRect.x, boundaryRect.y));
 	sprite.setOrigin(sf::Vector2f(boundaryRect.x / 2.f, boundaryRect.y / 2.f));
 
-	sf::Texture& deadTexture = textures.get(toTextureID(type, Enemy::die));
-
-	sf::Vector2u deadBoundaryRect = deadTexture.getSize();
-
-	deadSprite.setTexture(&deadTexture);
-	deadSprite.setSize(sf::Vector2f(deadBoundaryRect.x, deadBoundaryRect.y));
-	deadSprite.setOrigin(sf::Vector2f(deadBoundaryRect.x / 2.f, deadBoundaryRect.y / 2));
-
 #if _DEBUG
 	sprite.setOutlineColor(sf::Color::Red);
 	sprite.setOutlineThickness(-2);
-	deadSprite.setOutlineColor(sf::Color::Red);
-	deadSprite.setOutlineThickness(-2);
 #endif // _DEBUG
 
 	mMovRight.setFrameSize(sf::Vector2i(48, 48));
@@ -74,18 +65,28 @@ Enemy::Enemy(Type type, TextureHolder& textures)
 	mMovLeft.setRepeating(true);
 
 	centerOrigin(mMovLeft);
+
+	mDead.setFrameSize(sf::Vector2i(48, 24));
+	mDead.setNumFrames(1);
+	mDead.setDuration(sf::seconds(0.1));
+	mDead.setRepeating(false);
+
+	centerOrigin(mDead);
 }
 
 void Enemy::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
+	if (isDestroyed() && mDead.isFinished()) {
+		return;
+	}
 	if (moveRight && !moveLeft) {
 		target.draw(mMovRight, states);
 	}
 	else if (moveLeft && !moveRight) {
 		target.draw(mMovLeft, states);
 	}
-	else if (dead) {
-		target.draw(deadSprite, states);
+	else if (isDestroyed() && showDead) {
+		target.draw(sprite, states);
 	}
 	else target.draw(sprite, states);
 }
@@ -110,7 +111,8 @@ void Enemy::updateCurrent(sf::Time dt)
 		this->setVelocity(-100.f, 0);
 		mMovLeft.update(dt);
 	}
-	else {
+	else if (isDestroyed()) {
+		mDead.update(dt);
 		this->setVelocity(0, 0);
 	}
 
@@ -153,12 +155,13 @@ bool Enemy::isAir() const
 	return air;
 }
 
-void Enemy::setDead(bool isDead)
+void Enemy::remove()
 {
-	dead = isDead;
+	Enemy::destroy();
+	showDead = false;
 }
 
-bool Enemy::isDead() const
+bool Enemy::isMarkedForRemoval() const
 {
-	return dead;
+	return isDestroyed() && mDead.isFinished();
 }

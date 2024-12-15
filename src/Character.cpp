@@ -8,7 +8,7 @@ static Textures::ID toTextureID(Character::Type type) {
 	}
 }
 Character::Character(Type type, TextureHolder& textures) 
-	: Entity()
+	: Entity(1)
 	, type(type)
 	, mMovRight(textures.get(Textures::MovRight))
 	, mMovLeft(textures.get(Textures::MovLeft))
@@ -71,9 +71,9 @@ sf::FloatRect Character::getBoundingRect() const
 
 void Character::updateCurrent(sf::Time dt)
 {
-	
 	//Handle Animation
 	if (moveRight && !moveLeft) {
+
 		mMovRight.update(dt);
 	}
 	else if (moveLeft) {
@@ -97,8 +97,6 @@ void Character::setJump(bool isJump)
 {
 	this -> jump = isJump;
 }
-
-
 
 void Character::setAir(bool isAir) 
 {

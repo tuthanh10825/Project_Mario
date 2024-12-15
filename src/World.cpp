@@ -34,11 +34,13 @@ void World::update(sf::Time dt) {
 
 	//this will handle the player velocity during the gameplay.  
 	adaptPlayerVelocity();
-	handleCollisions();
+	handlePlayerCollisions();
+	handleEnemyCollision();
 	adaptGravity();
 	//update first
 
-	handleEnemyCollision();
+	removeEnemies();
+	
 
 	/*sf::Vector2f charPos = character->getPosition();
 	std::cout << "After updating: " << charPos.x << " " << charPos.y << std::endl;*/
@@ -178,7 +180,7 @@ void World::setWorldBound(sf::FloatRect& rect)
 	worldBounds = rect; 
 }
 
-void World::handleCollisions()
+void World::handlePlayerCollisions()
 {
 	std::set<SceneNode::Pair> collisionPairs; 
 	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
@@ -428,16 +430,26 @@ void World::handleEnemyCollision() {
 		if (matchesCategories(pair, Category::Enemy, Category::Player)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& enemy = static_cast<Enemy&>(*pair.first);
+			if (direction == Collision::Down) {
+				enemy.setMoveRight(false);
+				enemy.setMoveLeft(false);
+				enemy.setScale(1, 0.5); 
+				enemy.move(0, 12);
+				enemy.destroy();
+				
+			}
+		}
+	}
+}
 
-			if (direction == Collision::Left) {
-				// character dies
-			}
-			else if (direction == Collision::Right) {
-				// character dies
-			}
-			else if (direction == Collision::Down) {
-				enemy.setDead(true);
-			}
+void World::removeEnemies() {
+	for (auto it = enemies.begin(); it != enemies.end();) {
+		if ((*it)->isMarkedForRemoval()) {
+			sceneLayers[Air]->detachChild(**it);
+			it = enemies.erase(it);
+		}
+		else {
+			++it;
 		}
 	}
 }

@@ -23,10 +23,11 @@ public:
 private:
 	void adaptPlayerVelocity(); 
 	void loadTextures(); 
-	void handleCollisions(); 
+	void handlePlayerCollisions(); 
 	void adaptGravity(); 
 
 	void handleEnemyCollision();
+	void removeEnemies();
 
 	void updatePlayerView(sf::Time dt); 
 
