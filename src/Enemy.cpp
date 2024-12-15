@@ -35,7 +35,7 @@ Enemy::Enemy(Type type, TextureHolder& textures)
 	, mMovRight(textures.get(toTextureID(type, Enemy::movRight)))
 	, moveLeft(true)
 	, moveRight(false)
-	, air(false)
+	, air(true)
 	, dead(false)
 {
 	sf::Texture& texture = textures.get(toTextureID(type, Enemy::alive));
@@ -53,6 +53,13 @@ Enemy::Enemy(Type type, TextureHolder& textures)
 	deadSprite.setTexture(&deadTexture);
 	deadSprite.setSize(sf::Vector2f(deadBoundaryRect.x, deadBoundaryRect.y));
 	deadSprite.setOrigin(sf::Vector2f(deadBoundaryRect.x / 2.f, deadBoundaryRect.y / 2));
+
+#if _DEBUG
+	sprite.setOutlineColor(sf::Color::Red);
+	sprite.setOutlineThickness(-2);
+	deadSprite.setOutlineColor(sf::Color::Red);
+	deadSprite.setOutlineThickness(-2);
+#endif // _DEBUG
 
 	mMovRight.setFrameSize(sf::Vector2i(48, 48));
 	mMovRight.setNumFrames(2);
@@ -103,9 +110,12 @@ void Enemy::updateCurrent(sf::Time dt)
 		this->setVelocity(-100.f, 0);
 		mMovLeft.update(dt);
 	}
+	else {
+		this->setVelocity(0, 0);
+	}
 
 	if (air) {
-		this->setAcceleration(0, 9800);
+		this->setAcceleration(0,10000);
 	}
 	else {
 		this->setAcceleration(0, 0);
