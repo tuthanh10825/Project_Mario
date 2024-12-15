@@ -185,14 +185,15 @@ void World::handlePlayerCollisions()
 	std::set<SceneNode::Pair> collisionPairs; 
 	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
 	bool isAir = true; 
+
+	sf::Vector2f charVelocity = character->getVelocity();
+	sf::Vector2f charAccel = character->getAcceleration();
 	for (SceneNode::Pair pair : collisionPairs) {
 
 		if (matchesCategories(pair, Category::Player, Category::MovableBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			adjustChar(*pair.second, direction);
 
-			sf::Vector2f charVelocity = character->getVelocity();
-			sf::Vector2f charAccel = character->getAcceleration();
 
 			if (direction == Collision::Down) {
 				charVelocity.y = 0;
@@ -209,8 +210,7 @@ void World::handlePlayerCollisions()
 				charVelocity.x = 0;
 				charAccel.x = 0;
 			}
-			character->setVelocity(charVelocity);
-			character->setAcceleration(charAccel);
+			
 		}
 
 		if (matchesCategories(pair, Category::Player, Category::Block)) {
@@ -220,8 +220,6 @@ void World::handlePlayerCollisions()
 			Collision::Direction direction = collisionType(*character, *pair.second);
 			adjustChar(*pair.second, direction);
 
-			sf::Vector2f charVelocity = character->getVelocity();
-			sf::Vector2f charAccel = character->getAcceleration();
 			if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
 			}
@@ -236,8 +234,7 @@ void World::handlePlayerCollisions()
 				charVelocity.x = 0;
 				charAccel.x = 0;
 			}
-			character->setVelocity(charVelocity);
-			character->setAcceleration(charAccel);
+		
 		}
 
 		if (matchesCategories(pair, Category::Player, Category::Enemy)) {
@@ -245,8 +242,6 @@ void World::handlePlayerCollisions()
 			Collision::Direction direction = collisionType(*character, *pair.second);
 			adjustChar(*pair.second, direction);
 
-			sf::Vector2f charVelocity = character->getVelocity();
-			sf::Vector2f charAccel = character->getAcceleration();
 			if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
 			}
@@ -261,11 +256,12 @@ void World::handlePlayerCollisions()
 				charVelocity.x = 0;
 				charAccel.x = 0;
 			}
-			character->setVelocity(charVelocity);
-			character->setAcceleration(charAccel);
+
 		}
 
 	}
+	character->setVelocity(charVelocity);
+	character->setAcceleration(charAccel);
 	character->setAir(isAir); 
 }
 
