@@ -19,6 +19,7 @@ namespace Textures {
 		GoombaMovRight,
 		GoombaMovLeft,
 		GoombaDead,
+		Pickup,
 	};
 }
 
@@ -59,6 +60,7 @@ namespace Category {
 		Enemy = 1 << 3, 
 		Block = 1 << 4,
 		MovableBlock = 1 << 5,
+		Pickup = 1 << 6
 	};
 }
 enum Level {
