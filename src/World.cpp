@@ -153,12 +153,11 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 		}
 		sf::Texture& blockTexture = tileset[blockInfo["src"]];
 	
-
+		//hardcoded for now, will be improved later.
 		if (blockInfo["src"][0] == 540) {
 			std::unique_ptr<MovableBlock> block(new MovableBlock(blockTexture)); 
 			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
 			sceneLayers[Air]->attachChild(std::move(block));
-		
 		}
 		else {
 			std::unique_ptr<Block> block(new Block(blockTexture));
