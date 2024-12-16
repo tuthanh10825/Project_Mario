@@ -103,11 +103,11 @@ sf::FloatRect Enemy::getBoundingRect() const
 void Enemy::updateCurrent(sf::Time dt)
 {
 	if (moveRight && !moveLeft) {
-		this->setVelocity(100.f, 0);
+		this->setVelocity(80.f, 0);
 		mMovRight.update(dt);
 	}
 	else if (moveLeft) {
-		this->setVelocity(-100.f, 0);
+		this->setVelocity(-80.f, 0);
 		mMovLeft.update(dt);
 	}
 	else if (isDestroyed()) {
@@ -115,6 +115,12 @@ void Enemy::updateCurrent(sf::Time dt)
 		this->setVelocity(0, 0);
 	}
 
+	if (isAir()) {
+		this->setAcceleration(0,10000);
+	}
+	else {
+		this->setAcceleration(0, 0);
+	}
 	Entity::updateCurrent(dt);
 }
 
