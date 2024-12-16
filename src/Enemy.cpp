@@ -102,12 +102,13 @@ sf::FloatRect Enemy::getBoundingRect() const
 
 void Enemy::updateCurrent(sf::Time dt)
 {
+	sf::Vector2f currVelo = getVelocity();
 	if (moveRight && !moveLeft) {
-		this->setVelocity(80.f, 0);
+		this->setVelocity(80.f, currVelo.y);
 		mMovRight.update(dt);
 	}
 	else if (moveLeft) {
-		this->setVelocity(-80.f, 0);
+		this->setVelocity(-80.f, currVelo.y);
 		mMovLeft.update(dt);
 	}
 	else if (isDestroyed()) {

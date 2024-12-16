@@ -17,7 +17,7 @@ scrollSpeed(80.f)
 		
 		if (entity.isAir()) {
 			if (entity.getCategory() == Category::Enemy) {
-				entity.setAcceleration(accel.x, 12000.f); 
+				entity.setAcceleration(accel.x, 1000.f); 
 			}
 			else entity.setAcceleration(accel.x , 1000.f);
 		}
