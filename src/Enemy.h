@@ -33,17 +33,17 @@ public:
 	void setAir(bool isAir);
 	bool isAir() const;
 
-	void setDead(bool isDead);
-	bool isDead() const;
+	void remove();
+	bool isMarkedForRemoval() const;
 private:
 
 	bool moveLeft;
 	bool moveRight;
 	bool air;
-	bool dead;
 	Type type;
 	sf::RectangleShape sprite;
-	sf::RectangleShape deadSprite;
+	bool showDead;
+	Animation mDead;
 	Animation mMovRight;
 	Animation mMovLeft;
 };

@@ -1,6 +1,7 @@
 #include "SceneNode.h"
 #include "ID.h"
 #include <cassert>
+#include <iostream>
 
 SceneNode::SceneNode(Category::Type type)  : parent(nullptr), children(), defaultCategoryType(type)
 {
@@ -89,11 +90,17 @@ void SceneNode::updateChildren(sf::Time dt)
 	}
 }
 unsigned SceneNode::getCategory() const {
-	return Category::Scene;
+	return defaultCategoryType;
+}
+
+void SceneNode::setCategory(Category::Type type)
+{
+	defaultCategoryType = type;
 }
 
 void SceneNode::onCommand(const Command& command, sf::Time dt)
 {
+		
 	if (command.category & getCategory()) {
 		command.action(*this, dt); 
 	}

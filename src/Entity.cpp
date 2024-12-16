@@ -29,7 +29,7 @@ sf::FloatRect Entity::getBoundingRect() const
 	return sf::FloatRect();
 }
 
-Entity::Entity(){
+Entity::Entity(int hp): hp(hp){
 }
 
 void Entity::updateCurrent(sf::Time dt)
@@ -39,4 +39,34 @@ void Entity::updateCurrent(sf::Time dt)
 	move(velocity.x * dt.asSeconds(), velocity.y * dt.asSeconds());
 
 	return; 
+}
+
+int Entity::getHp() const
+{
+	return hp;
+}
+
+void Entity::heal(int hp)
+{
+	this->hp += hp;
+}
+
+void Entity::damage(int hp)
+{
+	this->hp -= hp;
+}
+
+void Entity::destroy()
+{
+	hp = 0;
+}
+
+void Entity::remove()
+{
+	destroy();
+}
+
+bool Entity::isDestroyed() const
+{
+	return hp <= 0;
 }

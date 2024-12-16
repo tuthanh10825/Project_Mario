@@ -1,11 +1,12 @@
 #include "Block.h"
 
-class MovableBlock : public Block {
+class MysteryBlock : public Block {
 public: 
-	explicit MovableBlock(sf::Texture& texture); 
+	explicit MysteryBlock(sf::Texture& texture); 
 	virtual unsigned getCategory() const override;
 	void setPosition(const sf::Vector2f& position); 
 	void setMove(float speed); 
+	void createPickup(SceneNode& node, TextureHolder& textures); 
 protected: 
 	virtual void updateCurrent(sf::Time dt); 
 

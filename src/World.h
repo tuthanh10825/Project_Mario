@@ -7,6 +7,9 @@
 #include "Block.h"
 #include "MovableBlock.h"
 #include "Entity.h"
+#include "Enemy.h"
+#include "Pickup.h"
+#include <vector>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 class World : private sf::NonCopyable {
@@ -21,17 +24,32 @@ public:
 private:
 	void adaptPlayerVelocity(); 
 	void loadTextures(); 
-	void handleCollisions(); 
+	void handlePlayerCollisions(); 
 	void adaptGravity(); 
+
+	void handleEnemyCollision();
+	void removeEnemies();
 
 	void updatePlayerView(sf::Time dt); 
 
 	void adjustChar(SceneNode& node, Collision::Direction direction); 
+	void adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction);
 private: 
 	enum Layer {
 		Background, 
 		Air, 
 		LayerCount
+	};
+
+	struct EnemyInfo
+	{
+		Enemy::Type type;
+		sf::Vector2f position;
+
+		bool operator>(const EnemyInfo& other) const
+		{
+			return position.x > other.position.x;
+		}
 	};
 private: 
 
@@ -49,6 +67,8 @@ private:
 	float scrollSpeed; 
 	Character* character; 
 	CommandQueue commandQueue; 
+	std::vector<EnemyInfo> enemyInfo;
+	std::vector<Enemy*> enemies;
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 
