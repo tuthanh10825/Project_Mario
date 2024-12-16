@@ -36,7 +36,7 @@ private:
 
 	bool moveLeft;
 	bool moveRight;
-	bool air;
+
 	Type type;
 	sf::RectangleShape sprite;
 	bool showDead;

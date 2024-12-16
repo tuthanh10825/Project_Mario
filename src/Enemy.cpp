@@ -36,7 +36,6 @@ Enemy::Enemy(Type type, TextureHolder& textures)
 	, mDead(textures.get(toTextureID(type, Enemy::die)))
 	, moveLeft(true)
 	, moveRight(false)
-	, air(true)
 	, showDead(true)
 {
 	sf::Texture& texture = textures.get(toTextureID(type, Enemy::alive));
@@ -116,12 +115,6 @@ void Enemy::updateCurrent(sf::Time dt)
 		this->setVelocity(0, 0);
 	}
 
-	if (air) {
-		this->setAcceleration(0,10000);
-	}
-	else {
-		this->setAcceleration(0, 0);
-	}
 	Entity::updateCurrent(dt);
 }
 

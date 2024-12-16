@@ -14,8 +14,12 @@ scrollSpeed(80.f)
 		Entity& entity = static_cast<Entity&> (s); 
 		sf::Vector2f accel = entity.getAcceleration();
 		sf::Vector2f velocity = entity.getVelocity(); 
+		
 		if (entity.isAir()) {
-			entity.setAcceleration(accel.x , 1000.f);
+			if (entity.getCategory() == Category::Enemy) {
+				entity.setAcceleration(accel.x, 12000.f); 
+			}
+			else entity.setAcceleration(accel.x , 1000.f);
 		}
 		else {
 			
