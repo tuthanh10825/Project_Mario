@@ -341,6 +341,8 @@ void World::handleCollisions()
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& enemy1 = static_cast<Enemy&>(*pair.first);
 			auto& enemy2 = static_cast<Enemy&>(*pair.second);
+			if (enemy1.isDestroyed()) continue;
+			if (enemy2.isDestroyed()) continue;
 
 			if (direction == Collision::Left) {
 				enemy1.setMoveLeft(true);
@@ -370,7 +372,6 @@ void World::handleCollisions()
 				enemy.setScale(1, 0.5);
 				enemy.move(0, 12);
 				enemy.destroy();
-
 			}
 		}
 		if (matchesCategories(pair, Category::Pickup, Category::MysteryBlock)) {
