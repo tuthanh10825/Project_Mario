@@ -23,6 +23,8 @@ void MysteryBlock::createPickup(SceneNode& node, TextureHolder& textures)
 	std::unique_ptr<Pickup> pickup(new Pickup(Pickup::Type::mushroom, textures));
 	sf::Vector2f position = getWorldPosition();
 	pickup->setPosition(position.x, position.y - 60.f);
+	sf::Vector2f vel = getVelocity(); 
+	pickup->setVelocity(vel.x, vel.y - 450.f); 
 	node.attachChild(std::move(pickup));
 }
 

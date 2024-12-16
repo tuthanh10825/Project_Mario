@@ -24,14 +24,13 @@ public:
 	bool isMoveRight() const; 
 	bool isJump() const; 
 
-	void setAir(bool isAir);
-	bool isAir() const;
+	
 private: 
 
 	bool moveLeft; 
 	bool moveRight; 
-	bool air; 
 	bool jump; 
+
 	Type type; 
 	sf::RectangleShape sprite; 
 	Animation mMovRight;

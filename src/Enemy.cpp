@@ -36,7 +36,6 @@ Enemy::Enemy(Type type, TextureHolder& textures)
 	, mDead(textures.get(toTextureID(type, Enemy::die)))
 	, moveLeft(true)
 	, moveRight(false)
-	, air(true)
 	, showDead(true)
 {
 	sf::Texture& texture = textures.get(toTextureID(type, Enemy::alive));
@@ -103,12 +102,13 @@ sf::FloatRect Enemy::getBoundingRect() const
 
 void Enemy::updateCurrent(sf::Time dt)
 {
+	sf::Vector2f currVelo = getVelocity();
 	if (moveRight && !moveLeft) {
-		this->setVelocity(100.f, 0);
+		this->setVelocity(80.f, currVelo.y);
 		mMovRight.update(dt);
 	}
 	else if (moveLeft) {
-		this->setVelocity(-100.f, 0);
+		this->setVelocity(-80.f, currVelo.y);
 		mMovLeft.update(dt);
 	}
 	else if (isDestroyed()) {
@@ -116,12 +116,6 @@ void Enemy::updateCurrent(sf::Time dt)
 		this->setVelocity(0, 0);
 	}
 
-	if (air) {
-		this->setAcceleration(0,10000);
-	}
-	else {
-		this->setAcceleration(0, 0);
-	}
 	Entity::updateCurrent(dt);
 }
 
@@ -145,15 +139,6 @@ bool Enemy::isMoveRight() const
 	return moveRight;
 }
 
-void Enemy::setAir(bool isAir)
-{
-	air = isAir;
-}
-
-bool Enemy::isAir() const
-{
-	return air;
-}
 
 void Enemy::remove()
 {

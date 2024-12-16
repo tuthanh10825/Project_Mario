@@ -29,7 +29,17 @@ sf::FloatRect Entity::getBoundingRect() const
 	return sf::FloatRect();
 }
 
-Entity::Entity(int hp): hp(hp){
+Entity::Entity(int hp): hp(hp), air(true) {
+}
+
+bool Entity::isAir() const
+{
+	return air;
+}
+
+void Entity::setAir(bool isAir)
+{
+	air = isAir; 
 }
 
 void Entity::updateCurrent(sf::Time dt)

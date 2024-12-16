@@ -24,10 +24,8 @@ public:
 private:
 	void adaptPlayerVelocity(); 
 	void loadTextures(); 
-	void handlePlayerCollisions(); 
-	void adaptGravity(); 
+	void handleCollisions(); 
 
-	void handleEnemyCollision();
 	void removeEnemies();
 
 	void updatePlayerView(sf::Time dt); 
@@ -69,6 +67,7 @@ private:
 	CommandQueue commandQueue; 
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
+	Command applyGravity; 
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

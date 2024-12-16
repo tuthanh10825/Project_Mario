@@ -15,7 +15,6 @@ Character::Character(Type type, TextureHolder& textures)
 	, moveLeft(false)
 	, moveRight(false)
 	, jump(false)
-	, air(true)
 {
 	sf::Texture& texture = textures.get(toTextureID(type)); 
 
@@ -97,17 +96,6 @@ void Character::setJump(bool isJump)
 {
 	this -> jump = isJump;
 }
-
-void Character::setAir(bool isAir) 
-{
-	this -> air = isAir; 
-}
-
-bool Character::isAir() const
-{
-	return this -> air;
-}
-
 bool Character::isMoveLeft() const
 {
 	return this -> moveLeft;
