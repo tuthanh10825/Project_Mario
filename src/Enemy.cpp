@@ -115,12 +115,6 @@ void Enemy::updateCurrent(sf::Time dt)
 		this->setVelocity(0, 0);
 	}
 
-	if (isAir()) {
-		this->setAcceleration(0,10000);
-	}
-	else {
-		this->setAcceleration(0, 0);
-	}
 	Entity::updateCurrent(dt);
 }
 
