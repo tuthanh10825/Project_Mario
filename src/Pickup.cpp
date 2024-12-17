@@ -4,8 +4,10 @@
 Pickup::Pickup(Type type, TextureHolder& textures)
 	: Entity(1)
 	, type(type)
-	, mov(true)
-	, animation(textures.get(Textures::Pickup))
+	, moveLeft(false)
+	, moveRight(false)
+	, mMovLeft(textures.get(Textures::Pickup))
+	, mMovRight(textures.get(Textures::Pickup))
 {
 	sf::Texture& texture = textures.get(Textures::Pickup);
 	sf::Vector2u boundaryRect = texture.getSize();
@@ -17,19 +19,34 @@ Pickup::Pickup(Type type, TextureHolder& textures)
 	sprite.setOutlineColor(sf::Color::Red);
 	sprite.setOutlineThickness(-2);
 #endif // _DEBUG
-	
-	animation.setFrameSize(sf::Vector2i(48, 48));
-	animation.setNumFrames(1);
-	animation.setDuration(sf::seconds(0.8));
-	animation.setRepeating(true);
 
-	centerOrigin(animation);
+	mMovRight.setFrameSize(sf::Vector2i(48, 48));
+	mMovRight.setNumFrames(1);
+	mMovRight.setDuration(sf::seconds(0.8));
+	mMovRight.setRepeating(true);
+
+	centerOrigin(mMovRight);
+
+	mMovLeft.setFrameSize(sf::Vector2i(48, 48));
+	mMovLeft.setNumFrames(1);
+	mMovLeft.setDuration(sf::seconds(0.8));
+	mMovLeft.setRepeating(true);
+
+	centerOrigin(mMovLeft);
 }
 
 void Pickup::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 { 
+	if (moveRight && !moveLeft)
+	{
+		target.draw(mMovRight, states);
+	}
+	else if (moveLeft && !moveRight)
+	{
+		target.draw(mMovLeft, states);
+	}
+	else
 	target.draw(sprite, states);
-
 }
 
 unsigned Pickup::getCategory() const
@@ -44,16 +61,28 @@ sf::FloatRect Pickup::getBoundingRect() const
 
 void Pickup::updateCurrent(sf::Time dt)
 {
-	if (mov) {
-		// set the position of the animation here
-		animation.update(dt);
+	sf::Vector2f curVecl = getVelocity();
+	if (moveRight && !moveLeft)
+	{
+		this->setVelocity(80.f, curVecl.y);
+		mMovRight.update(dt);
+	}
+	else if (moveLeft && !moveRight)
+	{
+		this->setVelocity(-80.f, curVecl.y);
+		mMovLeft.update(dt);
 	}
 	Entity::updateCurrent(dt);
 }
 
-void Pickup::setMove(bool isMove)
+void Pickup::setMoveRight(bool isMove)
 {
-	mov = isMove;
+	moveRight = isMove;
+}
+
+void Pickup::setMoveLeft(bool isMove)
+{
+	moveLeft = isMove;
 }
 
 void Pickup::apply(Character& character) const
@@ -62,6 +91,7 @@ void Pickup::apply(Character& character) const
 	switch (type)
 	{
 	case Pickup::mushroom:
+		character.heal(1);
 		break;
 	case Pickup::coin:
 		break;

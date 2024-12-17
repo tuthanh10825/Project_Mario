@@ -20,13 +20,12 @@ public:
 	CommandQueue& getCommandQueue(); 
 	void buildScene(json& info);
 	void setWorldBound(sf::FloatRect& rect); 
+	bool hasAlivePlayer() const;
 	
 private:
 	void adaptPlayerVelocity(); 
 	void loadTextures(); 
 	void handleCollisions(); 
-
-	void removeEnemies();
 
 	void updatePlayerView(sf::Time dt); 
 

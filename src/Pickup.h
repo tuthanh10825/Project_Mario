@@ -21,12 +21,15 @@ public:
 	virtual sf::FloatRect getBoundingRect() const;
 	virtual void updateCurrent(sf::Time dt);
 
-	void setMove(bool isMove);
+	void setMoveRight(bool isMove);
+	void setMoveLeft(bool isMove);
 
 	virtual void apply(Character& character) const;
 private:
 	Type type;
-	bool mov;
+	bool moveRight;
+	bool moveLeft;
 	sf::RectangleShape sprite;
-	Animation animation;
+	Animation mMovRight;
+	Animation mMovLeft;
 };
