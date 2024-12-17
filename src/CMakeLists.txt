@@ -3,7 +3,7 @@
 #
 #adding all file in the src directories. 
 # Add the executable
-add_executable(game main.cpp "MovableBlock.h" "MovableBlock.cpp")
+add_executable(game main.cpp "MovableBlock.h" "MovableBlock.cpp" "Hub.h" "Hub.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET game PROPERTY CXX_STANDARD 20)
@@ -33,4 +33,4 @@ target_sources(game PUBLIC "World.h" "World.cpp")
 target_sources(game PUBLIC "Command.h" "CommandQueue.h" "CommandQueue.cpp")
 target_sources(game PUBLIC "Player.h" "Player.cpp")
 target_sources(game PUBLIC "Block.h" "Block.cpp")
-target_sources(game PUBLIC "PauseState.h" "PauseState.cpp" "LevelSelectState.h" "LevelSelectState.cpp")
+target_sources(game PUBLIC "PauseState.h" "PauseState.cpp" "LevelSelectState.h" "LevelSelectState.cpp" "Hub.h" "Hub.cpp")

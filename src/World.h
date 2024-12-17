@@ -11,16 +11,22 @@
 #include "Pickup.h"
 #include <vector>
 #include <nlohmann/json.hpp>
+#include "Hub.h"
+
 using json = nlohmann::json;
 class World : private sf::NonCopyable {
 public: 
-	explicit World(sf::RenderWindow& window, TextureHolder& texture); 
+	explicit World(sf::RenderWindow& window, TextureHolder& texture, Hub& hub); 
 	void update(sf::Time dt); 
 	void draw(); 
 	CommandQueue& getCommandQueue(); 
 	void buildScene(json& info);
 	void setWorldBound(sf::FloatRect& rect); 
+
+	const sf::View& getView() const;
+
 	bool hasAlivePlayer() const;
+
 	
 private:
 	void adaptPlayerVelocity(); 
@@ -57,7 +63,6 @@ private:
 	SceneNode sceneGraph; 
 	std::array<SceneNode*, LayerCount> sceneLayers; 
 
-	
 	sf::Image tilesetImg;
 	std::map<json, sf::Texture> tileset; 
 	sf::FloatRect worldBounds; 
@@ -68,7 +73,12 @@ private:
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
 	Command applyGravity; 
+
+	Hub& hub; 
+	float time; 
+
 	Command setAir;
+
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

@@ -1,10 +1,12 @@
 #include "World.h"
 #include <iostream>
 #include <cassert>
-World::World(sf::RenderWindow& window, TextureHolder& textures) : window(window), worldView(window.getDefaultView()), textures(textures),
+World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub) : window(window), worldView(window.getDefaultView()), textures(textures),
 spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
 character(nullptr),
-scrollSpeed(80.f)
+scrollSpeed(80.f), 
+hub(hub),
+time(0)
 {
 	loadTextures();
 	worldView.setCenter(spawnPosition);
@@ -23,6 +25,7 @@ scrollSpeed(80.f)
 			if (velocity.y > 0)
 				entity.setVelocity(velocity.x, 0);
 		}
+
 		};
 
 	setAir.category = Category::Player | Category::Enemy | Category::Pickup;
@@ -47,6 +50,7 @@ void World::update(sf::Time dt) {
 
 	
 	//handle player input here. 
+	
 	commandQueue.push(applyGravity); 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
@@ -77,6 +81,8 @@ void World::update(sf::Time dt) {
 
 	////set Worldview here ? 
 	updatePlayerView(dt); 
+	hub.setTime((time += dt.asSeconds()));
+	hub.setHP(character->getHp()); 
 }
 void World::adaptPlayerVelocity()
 {
@@ -202,6 +208,7 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 		}
 	}
 	sort(enemyInfo.begin(), enemyInfo.end(), std::greater<EnemyInfo>());
+	hub.setHP(character->getHp()); 
 }
 
 void World::setWorldBound(sf::FloatRect& rect)
@@ -209,6 +216,9 @@ void World::setWorldBound(sf::FloatRect& rect)
 	worldBounds = rect; 
 }
 
+const sf::View& World::getView() const
+{
+	return worldView;
 bool World::hasAlivePlayer() const
 {
 	return !character->isDestroyed();
@@ -475,6 +485,7 @@ void World::updatePlayerView(sf::Time dt)
 	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return;
 	else worldView.move(sf::Vector2f(character->getVelocity().x * dt.asSeconds(), 0.f));
 
+	//TODO: refactoring
 	while (enemyInfo.size() && enemyInfo.back().position.x > after.x - windowSize.x / 2 && enemyInfo.back().position.x < after.x + windowSize.x / 2) {
 		EnemyInfo enemy = enemyInfo.back();
 		enemyInfo.pop_back();
