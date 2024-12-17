@@ -20,10 +20,12 @@ private:
 		Up, 
 		Down, 
 		None, 
+		Moved
 	};
 	MovingState movingState; 
 	float speed; 
 	sf::Vector2f origin; 
 	bool moving;
 	std::queue<Pickup::Type> itemsType;
+
 };

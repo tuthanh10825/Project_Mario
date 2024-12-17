@@ -183,7 +183,7 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 	//can be improved here, since the path to the tileset is existing. 
 
 	assert(tilesetImg.loadFromFile("textures/tilesets.png"));
-
+	//TODO: refactoring
 	for (auto& blockInfo : info["layerInstances"][0]["gridTiles"]) {
 		
 		if(tileset.find(blockInfo["src"]) == tileset.end()) {
@@ -233,7 +233,7 @@ void World::handleCollisions()
 	sf::Vector2f charVelocity = character->getVelocity();
 	sf::Vector2f charAccel = character->getAcceleration();
 	for (SceneNode::Pair pair : collisionPairs) {
-
+		//TODO: refactoring
 		if (matchesCategories(pair, Category::Player, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			adjustChar(*pair.second, direction);
@@ -497,6 +497,8 @@ void World::updatePlayerView(sf::Time dt)
 	}
 }
 
+
+//TODO: refactoring
 void World::adjustChar(SceneNode& node, Collision::Direction direction)
 {
 	sf::FloatRect charBox = character->getBoundingRect(); 
@@ -522,6 +524,7 @@ void World::adjustChar(SceneNode& node, Collision::Direction direction)
 	}
 }
 
+//TODO: refactoring
 void World::adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction) {
 	sf::FloatRect enemyBox = enemy.getBoundingRect();
 	sf::FloatRect nodeBox = node.getBoundingRect();
@@ -545,6 +548,7 @@ void World::adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction dire
 	}
 }
 
+//TODO: refactoring
 void World::adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction) {
 	sf::FloatRect pickupBox = pickup.getBoundingRect();
 	sf::FloatRect nodeBox = node.getBoundingRect();

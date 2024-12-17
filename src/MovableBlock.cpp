@@ -14,8 +14,11 @@ void MysteryBlock::setPosition(const sf::Vector2f& position)
 
 void MysteryBlock::setMove(float speed)
 {
-	this->speed = speed;
-	moving = true; 
+	if (movingState == MovingState::None)
+	{
+		this->speed = speed;
+		moving = true;
+	}
 }
 
 void MysteryBlock::createPickup(SceneNode& node, TextureHolder& textures)
@@ -57,7 +60,7 @@ void MysteryBlock::updateCurrent(sf::Time dt)
 			if (currentPosition.y >= origin.y) {
 				Block::setPosition(origin);
 				moving = false;
-				movingState = MovingState::None; 
+				movingState = MovingState::Moved; 
 				speed = 0; 
 				return;
 			}
