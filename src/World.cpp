@@ -374,8 +374,11 @@ void World::handleCollisions()
 			}
 		}
 		if (matchesCategories(pair, Category::Pickup, Category::MysteryBlock)) {
-			if (collisionType(*pair.first, *pair.second) == Collision::Up) {
-				static_cast<Pickup&>(*pair.first).setAir(false); 
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& pickup = static_cast<Pickup&>(*pair.first);
+			adjustPickup(pickup, *pair.second, direction);
+			if (direction == Collision::Up) {
+				pickup.setAir(false);
 			}
 		}
 
@@ -449,7 +452,29 @@ void World::adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction dire
 		if (direction == Collision::Up) offset *= -1;
 		enemy.move(0, offset);
 	}
+}
 
+void World::adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction) {
+	sf::FloatRect pickupBox = pickup.getBoundingRect();
+	sf::FloatRect nodeBox = node.getBoundingRect();
+
+	sf::Vector2f pickupCenter = pickupBox.getPosition() + pickupBox.getSize() / 2.f;
+	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f;
+
+	float dx = nodeCenter.x - pickupCenter.x;
+	float dy = nodeCenter.y - pickupCenter.y;
+
+	sf::Vector2f dv(dx, dy);
+	if (direction == Collision::Right || direction == Collision::Left) {
+		float offset = pickupBox.width / 2 + nodeBox.width / 2 - std::abs(dx);
+		if (direction == Collision::Left) offset *= -1;
+		pickup.move(offset, 0);
+	}
+	else if (direction == Collision::Up || direction == Collision::Down) {
+		float offset = pickupBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
+		if (direction == Collision::Up) offset *= -1;
+		pickup.move(0, offset);
+	}
 }
 
 void World::removeEnemies() {
