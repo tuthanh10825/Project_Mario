@@ -25,14 +25,13 @@ time(0)
 			if (velocity.y > 0)
 				entity.setVelocity(velocity.x, 0);
 		}
-
-		};
+	};
 
 	setAir.category = Category::Player | Category::Enemy | Category::Pickup;
 	setAir.action = [](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
 		entity.setAir(true);
-		};
+	};
 }
 void World::draw()
 {
@@ -196,6 +195,7 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 		if (blockInfo["src"][0] == 540) {
 			std::unique_ptr<MysteryBlock> block(new MysteryBlock(blockTexture)); 
 			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+			block->addItem(Pickup::Type::mushroom);
 			sceneLayers[Air]->attachChild(std::move(block));
 		}
 		else if (blockInfo["src"][0] == 600) {
@@ -219,6 +219,7 @@ void World::setWorldBound(sf::FloatRect& rect)
 const sf::View& World::getView() const
 {
 	return worldView;
+}
 bool World::hasAlivePlayer() const
 {
 	return !character->isDestroyed();
