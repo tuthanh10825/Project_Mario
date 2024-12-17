@@ -15,7 +15,7 @@ public:
 	void damage(int hp);
 	void destroy();
 	virtual void remove();
-	bool isDestroyed() const;
+	virtual bool isDestroyed() const;
 	Entity(int hp);
 
 	virtual bool isAir() const; 
