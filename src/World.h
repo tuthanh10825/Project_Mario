@@ -11,6 +11,8 @@
 #include "Pickup.h"
 #include <vector>
 #include <nlohmann/json.hpp>
+#include "Hub.h"
+
 using json = nlohmann::json;
 class World : private sf::NonCopyable {
 public: 
@@ -67,7 +69,7 @@ private:
 	CommandQueue commandQueue; 
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
-	Command applyGravity; 
+	Command applyGravity;  
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

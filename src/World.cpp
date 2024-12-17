@@ -4,7 +4,7 @@
 World::World(sf::RenderWindow& window, TextureHolder& textures) : window(window), worldView(window.getDefaultView()), textures(textures),
 spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
 character(nullptr),
-scrollSpeed(80.f)
+scrollSpeed(80.f) 
 {
 	loadTextures();
 	worldView.setCenter(spawnPosition);
