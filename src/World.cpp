@@ -387,7 +387,7 @@ void World::handleCollisions()
 			auto& pickup = static_cast<Pickup&>(*pair.first);
 			adjustPickup(pickup, *pair.second, direction);
 			if (direction == Collision::Up) {
-				if (pickup.getVelocity().y >= 0) {
+				if (pickup.getVelocity().y >= 0 && pickup.getVelocity().x == 0) {
 					pickup.setMoveRight(true);
 				}
 				pickup.setAir(false);
@@ -440,7 +440,6 @@ void World::handleCollisions()
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& pickup1 = static_cast<Pickup&>(*pair.first);
 			auto& pickup2 = static_cast<Pickup&>(*pair.second);
-			adjustPickup(pickup1, *pair.second, direction);
 			if (direction == Collision::Left) {
 				pickup1.setMoveLeft(true);
 				pickup1.setMoveRight(false);
@@ -453,6 +452,15 @@ void World::handleCollisions()
 				pickup2.setMoveLeft(true);
 				pickup2.setMoveRight(false);
 			}
+			if (direction == Collision::Up) {
+				pickup1.setAir(false);
+				adjustPickup(pickup1, *pair.second, direction);
+			}
+			else if (direction == Collision::Down) {
+				pickup2.setAir(false);
+				adjustPickup(pickup2, *pair.first, direction);
+			}
+			else adjustPickup(pickup1, *pair.second, direction);
 		}
 	}
 
