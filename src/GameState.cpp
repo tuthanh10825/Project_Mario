@@ -47,5 +47,5 @@ bool GameState::handleEvent(const sf::Event& event)
 
 void GameState::setLevel(Level level)
 {
-	world.buildScene(mapsConfig["levels"][level - 1]);
+	world.loadWorld(mapsConfig["levels"][level - 1]);
 }

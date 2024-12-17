@@ -20,25 +20,30 @@ public:
 	explicit World(sf::RenderWindow& window, TextureHolder& texture, Hub& hub, SoundPlayer& sounds); 
 	void update(sf::Time dt); 
 	void draw(); 
-	CommandQueue& getCommandQueue(); 
-	void buildScene(json& info);
-	void setWorldBound(sf::FloatRect& rect); 
 
+	CommandQueue& getCommandQueue();
+		
 	const sf::View& getView() const;
 
-	bool hasAlivePlayer() const;
+	void loadWorld(json& info);
+	void setWorldBound(sf::FloatRect& rect);
 
+	bool hasAlivePlayer() const;
 	
 private:
+
+
+	void buildScene();
 	void loadTextures();
 
 	void adaptPlayerVelocity(); 
 	void handleCollisions(); 
 	void updatePlayerView(sf::Time dt); 
 
-	void adjustChar(SceneNode& node, Collision::Direction direction); 
+
+	/*void adjustChar(SceneNode& node, Collision::Direction direction); 
 	void adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction);
-	void adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction);
+	void adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction);*/
 private: 
 	enum Layer {
 		Background, 
