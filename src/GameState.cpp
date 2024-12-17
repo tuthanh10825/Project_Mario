@@ -2,8 +2,9 @@
 #include <fstream>
 #include <iostream>
 
-GameState::GameState(StateStack& stack, Context context) : State(stack, context), world(*context.window, *context.textures), 
-	player(*context.player), hub(context)
+GameState::GameState(StateStack& stack, Context context) : State(stack, context), hub(context)
+    , world(*context.window, *context.textures, hub)
+	, player(*context.player)
 {
 	std::ifstream file("mapsConfig.ldtk", std::ios_base::binary);
 	assert(file.is_open()); 
@@ -21,7 +22,7 @@ void GameState::draw()
 bool GameState::update(sf::Time dt)
 {
 	world.update(dt); 
-	hub.update(dt); 
+	hub.updateView(world.getView()); 
 	return true; 
 }
 

@@ -16,12 +16,13 @@
 using json = nlohmann::json;
 class World : private sf::NonCopyable {
 public: 
-	explicit World(sf::RenderWindow& window, TextureHolder& texture); 
+	explicit World(sf::RenderWindow& window, TextureHolder& texture, Hub& hub); 
 	void update(sf::Time dt); 
 	void draw(); 
 	CommandQueue& getCommandQueue(); 
 	void buildScene(json& info);
 	void setWorldBound(sf::FloatRect& rect); 
+	const sf::View& getView() const;
 	
 private:
 	void adaptPlayerVelocity(); 
@@ -59,7 +60,6 @@ private:
 	SceneNode sceneGraph; 
 	std::array<SceneNode*, LayerCount> sceneLayers; 
 
-	
 	sf::Image tilesetImg;
 	std::map<json, sf::Texture> tileset; 
 	sf::FloatRect worldBounds; 
@@ -69,7 +69,9 @@ private:
 	CommandQueue commandQueue; 
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
-	Command applyGravity;  
+	Command applyGravity; 
+	Hub& hub; 
+	float time; 
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

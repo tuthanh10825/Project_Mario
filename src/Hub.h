@@ -4,22 +4,26 @@
 class Hub {
 private: 
 	State::Context context; 
-	sf::Font font;
+
 	sf::Text hpText; 
+	sf::Text hpCount; 
+	sf::Sprite heart;
+
 	sf::Text timeText; 
 	sf::Text timeCount; 
 
 	sf::Text pointText; 
 	sf::Text pointCount; 
-	sf::Sprite heart; 
+	
 
-	int hp;
-	float time; 
-	int point; 
 public: 
 	Hub(State::Context context); 
-	void setHP(int hp); 
 
-	void update(sf::Time dt); 
+	void setHP(int hp); 
+	void setTime(float time); 
+	void setPoint(int point); 
+
+	void updateView(const sf::View& worldView); 
 	void draw();
+
 };
