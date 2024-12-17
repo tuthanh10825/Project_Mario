@@ -30,6 +30,11 @@ public:
 	void checkSceneCollision(SceneNode& sceneGraph, std::set<Pair>& collisionPairs);
 
 	virtual sf::FloatRect getBoundingRect() const; 
+	virtual bool isMarkedForRemoval() const;
+	virtual bool isDestroyed() const;
+
+	void removeDestroyObjects();
+	
 private:
 	virtual	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const; 

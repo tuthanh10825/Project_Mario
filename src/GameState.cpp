@@ -22,20 +22,27 @@ void GameState::draw()
 bool GameState::update(sf::Time dt)
 {
 	world.update(dt); 
+
 	hub.updateView(world.getView()); 
-	return true; 
+
+	if (!world.hasAlivePlayer()) {
+		requestStackPush(States::Pause);
+	}
+
+	return false; 
 }
 
 bool GameState::handleEvent(const sf::Event& event)
 {
 	if (event.key.code == sf::Keyboard::Escape) {
 		requestStackPush(States::Pause);
-		return true; 
+		return false; 
 	}
 	CommandQueue& commands = world.getCommandQueue(); 
 	player.handleRealtimeInput(commands);
 	player.handleEvent(event, commands); 
-	return true; 
+	return false; 
+
 }
 
 void GameState::setLevel(Level level)

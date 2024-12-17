@@ -149,3 +149,26 @@ Collision::Direction collisionType(const SceneNode& lhs, const SceneNode& rhs)
 	else return Collision::None; 
 
 }
+
+bool SceneNode::isMarkedForRemoval() const
+{
+	return isDestroyed();
+}
+
+bool SceneNode::isDestroyed() const
+{
+	return false;
+}
+
+void SceneNode::removeDestroyObjects()
+{
+	for (auto it = children.begin(); it != children.end(); ) {
+		if ((*it)->isMarkedForRemoval() && (*it) ->getCategory() != Category::Player) {
+			it = children.erase(it);
+		}
+		else {
+			(*it)->removeDestroyObjects();
+			++it;
+		}
+	}
+}

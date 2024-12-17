@@ -22,19 +22,22 @@ public:
 	CommandQueue& getCommandQueue(); 
 	void buildScene(json& info);
 	void setWorldBound(sf::FloatRect& rect); 
+
 	const sf::View& getView() const;
+
+	bool hasAlivePlayer() const;
+
 	
 private:
 	void adaptPlayerVelocity(); 
 	void loadTextures(); 
 	void handleCollisions(); 
 
-	void removeEnemies();
-
 	void updatePlayerView(sf::Time dt); 
 
 	void adjustChar(SceneNode& node, Collision::Direction direction); 
 	void adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction);
+	void adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction);
 private: 
 	enum Layer {
 		Background, 
@@ -70,8 +73,12 @@ private:
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
 	Command applyGravity; 
+
 	Hub& hub; 
 	float time; 
+
+	Command setAir;
+
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 
