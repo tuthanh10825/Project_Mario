@@ -32,6 +32,7 @@ private:
 
 	void adjustChar(SceneNode& node, Collision::Direction direction); 
 	void adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction);
+	void adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction);
 private: 
 	enum Layer {
 		Background, 
@@ -68,6 +69,7 @@ private:
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
 	Command applyGravity; 
+	Command setAir;
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

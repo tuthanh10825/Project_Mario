@@ -14,20 +14,22 @@ scrollSpeed(80.f)
 		Entity& entity = static_cast<Entity&> (s); 
 		sf::Vector2f accel = entity.getAcceleration();
 		sf::Vector2f velocity = entity.getVelocity(); 
-		
+	
 		if (entity.isAir()) {
-			if (entity.getCategory() == Category::Enemy) {
-				entity.setAcceleration(accel.x, 1000.f); 
-			}
-			else entity.setAcceleration(accel.x , 1000.f);
+			entity.setAcceleration(accel.x, 1000.f);
 		}
 		else {
-			
 			entity.setAcceleration(accel.x, 0); 
 			if (velocity.y > 0) 
 				entity.setVelocity(velocity.x, 0); 
 		}
-		}; 
+	}; 
+
+	setAir.category = Category::Player | Category::Enemy | Category::Pickup;
+	setAir.action = [](SceneNode& s, sf::Time dt) {
+		Entity& entity = static_cast<Entity&> (s);
+		entity.setAir(true);
+	};
 
 }
 void World::draw()
@@ -56,6 +58,7 @@ void World::update(sf::Time dt) {
 
 	//this will handle the player velocity during the gameplay.  
 	adaptPlayerVelocity();
+	sceneGraph.onCommand(setAir, dt);
 	handleCollisions();
 	
 	sceneGraph.onCommand(applyGravity, dt);
@@ -213,9 +216,6 @@ void World::handleCollisions()
 	std::set<SceneNode::Pair> collisionPairs; 
 	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
 	bool isAir = true; 
-	for (Enemy* enemy : enemies) {
-		enemy->setAir(true);
-	}
 	sf::Vector2f charVelocity = character->getVelocity();
 	sf::Vector2f charAccel = character->getAcceleration();
 	for (SceneNode::Pair pair : collisionPairs) {
@@ -304,7 +304,6 @@ void World::handleCollisions()
 			adjustEnemy(enemy, *pair.second, direction);
 
 			if (direction == Collision::Left) {
-				std::cout << enemy.getPosition().x << " " << enemy.getPosition().y << std::endl;
 				enemy.setMoveLeft(true);
 				enemy.setMoveRight(false);
 			}
