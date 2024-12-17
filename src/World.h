@@ -12,11 +12,12 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 #include "Hub.h"
+#include "SoundNode.h" 
 
 using json = nlohmann::json;
 class World : private sf::NonCopyable {
 public: 
-	explicit World(sf::RenderWindow& window, TextureHolder& texture, Hub& hub); 
+	explicit World(sf::RenderWindow& window, TextureHolder& texture, Hub& hub, SoundPlayer& sounds); 
 	void update(sf::Time dt); 
 	void draw(); 
 	CommandQueue& getCommandQueue(); 
@@ -29,10 +30,10 @@ public:
 
 	
 private:
-	void adaptPlayerVelocity(); 
-	void loadTextures(); 
-	void handleCollisions(); 
+	void loadTextures();
 
+	void adaptPlayerVelocity(); 
+	void handleCollisions(); 
 	void updatePlayerView(sf::Time dt); 
 
 	void adjustChar(SceneNode& node, Collision::Direction direction); 
@@ -41,6 +42,7 @@ private:
 private: 
 	enum Layer {
 		Background, 
+		Sound,
 		Air, 
 		LayerCount
 	};
@@ -60,11 +62,14 @@ private:
 	sf::RenderWindow& window; 
 	sf::View worldView; 
 	TextureHolder& textures; 
+	SoundPlayer& sounds; 
+
 	SceneNode sceneGraph; 
 	std::array<SceneNode*, LayerCount> sceneLayers; 
 
 	sf::Image tilesetImg;
 	std::map<json, sf::Texture> tileset; 
+
 	sf::FloatRect worldBounds; 
 	sf::Vector2f spawnPosition; 
 	float scrollSpeed; 
@@ -72,12 +77,13 @@ private:
 	CommandQueue commandQueue; 
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
-	Command applyGravity; 
+	
 
 	Hub& hub; 
 	float time; 
 
 	Command setAir;
+	Command applyGravity;
 
 };
 

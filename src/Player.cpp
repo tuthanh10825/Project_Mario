@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "ID.h"
 #include "Character.h"
+
 #include <iostream>
 void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 {
@@ -57,16 +58,25 @@ void Player::handleRealtimeInput(CommandQueue& command)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 		Command jump;
 		jump.category = Category::Player;
-		jump.action = [=](SceneNode& s, sf::Time dt) {
+		jump.action = [&](SceneNode& s, sf::Time dt) {
 
 			Character& mainChar = static_cast<Character&> (s);
 			std::cout << "mainChar is on Air: " << mainChar.isAir() << std::endl;
 			if (!mainChar.isAir() && !mainChar.isJump())
 			{
 				mainChar.setJump(true);
+				Command jumpSound;
+				jumpSound.category = Category::SceneNodeSound;
+				jumpSound.action = [=](SceneNode& s, sf::Time dt) {
+					SoundNode& soundNode = static_cast<SoundNode&> (s);
+					soundNode.playSound(SoundEffect::Jump);
+					};
+				command.push(jumpSound);
 			}
 			};
 		std::cout << "Space is Enter" << std::endl;
 		command.push(jump);
+
+		
 	}
 }

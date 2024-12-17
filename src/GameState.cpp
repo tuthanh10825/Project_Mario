@@ -3,7 +3,7 @@
 #include <iostream>
 
 GameState::GameState(StateStack& stack, Context context) : State(stack, context), hub(context)
-    , world(*context.window, *context.textures, hub)
+    , world(*context.window, *context.textures, hub, *context.sounds)
 	, player(*context.player)
 {
 	std::ifstream file("mapsConfig.ldtk", std::ios_base::binary);

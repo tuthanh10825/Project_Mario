@@ -51,12 +51,13 @@ bool PauseState::handleEvent(const sf::Event& event)
 	if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Up) {
 		if (optionIndex) --optionIndex;
 		else optionIndex = options.size() - 1;
-
+		getContext().sounds->play(SoundEffect::ChangeOption);
 		updateOptionText();
 	}
 	else if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Down) {
 		if (optionIndex < options.size() - 1) ++optionIndex;
 		else optionIndex = 0;
+		getContext().sounds->play(SoundEffect::ChangeOption);
 		updateOptionText();
 	}
 	else if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {

@@ -5,7 +5,8 @@
 #include "GameState.h"
 #include "PauseState.h"
 #include "LevelSelectState.h"
-
+#include "MusicPlayer.h"
+#include "SoundPlayer.h"
 class Application {
 private: 
 
@@ -15,7 +16,8 @@ private:
 	TextureHolder textures;
 	FontHolder fonts;
 	Player player; 
-	
+	MusicPlayer musics; 
+	SoundPlayer sounds; 
 
 private:
 	void processInput(); 
@@ -27,4 +29,5 @@ private:
 public: 
 	void run(); 
 	Application(); 
+	~Application(); 
 };

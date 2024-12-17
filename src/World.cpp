@@ -1,14 +1,16 @@
 #include "World.h"
 #include <iostream>
 #include <cassert>
-World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub) : window(window), worldView(window.getDefaultView()), textures(textures),
-spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
-character(nullptr),
-scrollSpeed(80.f), 
-hub(hub),
+World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub, SoundPlayer& sounds) : 
+	window(window),  textures(textures), hub(hub), sounds(sounds),
+	worldView(window.getDefaultView()),
+	spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
+	character(nullptr),
+	scrollSpeed(80.f), 
+	
 time(0)
 {
-	loadTextures();
+	loadTextures(); 
 	worldView.setCenter(spawnPosition);
 
 	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup;
@@ -155,6 +157,7 @@ void World::loadTextures()
 	textures.load(Textures::Pickup, "textures/mushroom.png"); 
 }
 
+
 void World::buildScene(json& info) // we need to load the "front" world here.
 {
 	for (std::size_t i = 0; i < LayerCount; ++i) {
@@ -178,8 +181,11 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 	std::unique_ptr<Character> tempPlayer(new Character(Character::Character1, textures));
 	character = tempPlayer.get();
 	character->setPosition(spawnPosition);
-
 	sceneLayers[Air]->attachChild(std::move(tempPlayer));
+	
+	std::unique_ptr<SoundNode> tempSoundNode(new SoundNode(sounds)); 
+	sceneLayers[Sound]->attachChild(std::move(tempSoundNode)); 
+
 	//can be improved here, since the path to the tileset is existing. 
 
 	assert(tilesetImg.loadFromFile("textures/tilesets.png"));
@@ -228,7 +234,9 @@ bool World::hasAlivePlayer() const
 void World::handleCollisions()
 {
 	std::set<SceneNode::Pair> collisionPairs; 
-	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
+	//sceneGraph.checkSceneCollision(sceneGraph, collisionPairs);
+	sceneLayers[Air] -> checkSceneCollision(*sceneLayers[Air], collisionPairs);
+
 	bool isAir = true; 
 	sf::Vector2f charVelocity = character->getVelocity();
 	sf::Vector2f charAccel = character->getAcceleration();

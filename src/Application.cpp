@@ -52,7 +52,8 @@ void Application::run()
 }
 
 Application::Application() : window(sf::VideoMode(1000, 800), "Super Mario", sf::Style::Close | sf::Style::Titlebar),
-	textures(), fonts(), player(), stateStack(State::Context(window, textures, fonts, player))
+	textures(), fonts(), player(), musics(), sounds(), 
+	stateStack(State::Context(window, textures, fonts, player, musics, sounds))
 {
 	//window.setKeyRepeatEnabled(false);
 	window.setSize(window.getSize()); 
@@ -61,7 +62,12 @@ Application::Application() : window(sf::VideoMode(1000, 800), "Super Mario", sf:
 	fonts.load(Fonts::PixeloidMono, "fonts/PixeloidMono.ttf");
 	registerStates(); 
 	stateStack.pushState(States::Menu);
+	musics.play(Music::MenuTheme);
+}
 
+Application::~Application()
+{
+	musics.stop();
 }
 
 
