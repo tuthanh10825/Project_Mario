@@ -27,7 +27,7 @@ time(0)
 		}
 	};
 
-	setAir.category = Category::Player | Category::Enemy | Category::Pickup;
+	setAir.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
 	setAir.action = [](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
 		entity.setAir(true);
@@ -338,6 +338,9 @@ void World::handleCollisions()
 			if (direction == Collision::Up) {
 				enemy.setAir(false);
 			}
+			else if (direction == Collision::Down) {
+				enemy.setVelocity(enemy.getVelocity().x, 0);
+			}
 		}
 
 		// enemy and movable block collision
@@ -356,6 +359,9 @@ void World::handleCollisions()
 			}
 			if (direction == Collision::Up) {
 				enemy.setAir(false);
+			}
+			else if (direction == Collision::Down) {
+				enemy.setVelocity(enemy.getVelocity().x, 0);
 			}
 		}
 
@@ -381,7 +387,7 @@ void World::handleCollisions()
 			}
 			if (direction == Collision::Up) {
 				enemy1.setAir(false);
-				enemy2.setAir(false);
+				enemy2.setAir(true);
 			}
 		}
 
@@ -476,6 +482,30 @@ void World::handleCollisions()
 				adjustPickup(pickup2, *pair.first, direction);
 			}
 			else adjustPickup(pickup1, *pair.second, direction);
+		}
+
+		if (matchesCategories(pair, Category::Enemy, Category::Projectile)) {
+			auto& enemy = static_cast<Enemy&>(*pair.first);
+			auto& projectile = static_cast<Projectile&>(*pair.second);
+			enemy.damage(projectile.getDamage());
+			projectile.destroy();
+		}
+
+		if (matchesCategories(pair, Category::Projectile, Category::Block) || matchesCategories(pair, Category::Projectile, Category::MysteryBlock)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& projectile = static_cast<Projectile&>(*pair.first);
+			if (direction == Collision::Left) {
+				projectile.destroy();
+			}
+			else if (direction == Collision::Right) {
+				projectile.destroy();
+			}
+			else if (direction == Collision::Up) {
+				projectile.setAir(false);
+			}
+			else if (direction == Collision::Down) {
+				projectile.setVelocity(projectile.getVelocity().x, 0);
+			}
 		}
 	}
 

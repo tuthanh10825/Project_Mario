@@ -12,6 +12,7 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 #include "Hub.h"
+#include "Projectile.h"
 
 using json = nlohmann::json;
 class World : private sf::NonCopyable {

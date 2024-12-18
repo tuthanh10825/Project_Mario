@@ -53,7 +53,7 @@ Character::Character(Type type, TextureHolder& textures)
 	mFireCommand.action = [this, &textures](SceneNode& node, sf::Time dt) {
 		sf::Vector2f pos = getWorldPosition();
 		pos.y += 12.f;
-		createProjectile(node, textures, pos, Projectitle::CharBullet);
+		createProjectile(node, textures, pos, Projectile::CharBullet);
 		};
 }
 
@@ -124,9 +124,9 @@ bool Character::isJump() const
 	return this->jump;
 }
 
-void Character::createProjectile(SceneNode& node, TextureHolder& textures, sf::Vector2f pos, Projectitle::Type type)
+void Character::createProjectile(SceneNode& node, TextureHolder& textures, sf::Vector2f pos, Projectile::Type type)
 {
-	std::unique_ptr<Projectitle> projectile(new Projectitle(type, textures));
+	std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
 	projectile->setPosition(pos);
 	float sign = (isMoveRight()) ? 1.f : -1.f;
 	std::cout << "Sign: " << sign << std::endl;

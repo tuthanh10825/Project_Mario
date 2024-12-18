@@ -2,7 +2,7 @@
 #include "Entity.h"
 #include "ResourceHolder.h"
 #include "Animation.h"
-#include "Projectitle.h"
+#include "Projectile.h"
 
 class Character : public Entity {
 public: 
@@ -25,7 +25,7 @@ public:
 	bool isMoveRight() const; 
 	bool isJump() const; 
 
-	void createProjectile(SceneNode& node, TextureHolder& textures, sf::Vector2f pos, Projectitle::Type type);
+	void createProjectile(SceneNode& node, TextureHolder& textures, sf::Vector2f pos, Projectile::Type type);
 	
 	void setFire(bool fire);
 	bool isFire() const;

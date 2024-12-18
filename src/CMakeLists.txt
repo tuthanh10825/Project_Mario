@@ -19,7 +19,7 @@ add_custom_command(TARGET game POST_BUILD
 )
 target_link_libraries(game PRIVATE nlohmann_json::nlohmann_json)
 
-target_sources(game PUBLIC "Enemy.h" "Enemy.cpp" "Pickup.h" "Pickup.cpp" "Projectitle.h" "Projectitle.cpp") 
+target_sources(game PUBLIC "Enemy.h" "Enemy.cpp" "Pickup.h" "Pickup.cpp" "Projectile.h" "Projectile.cpp") 
 target_sources(game PUBLIC "Animation.h" "Animation.cpp" "Utility.h" "Utility.cpp") 
 target_sources(game PUBLIC "Application.cpp" "Application.h") 
 target_sources(game PUBLIC "ID.h")

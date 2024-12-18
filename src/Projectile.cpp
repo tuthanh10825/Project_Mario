@@ -1,11 +1,10 @@
-#include "Projectitle.h"
+#include "Projectile.h"
 #include <iostream>
 
-Projectitle::Projectitle(Type type, TextureHolder& textures)
+Projectile::Projectile(Type type, TextureHolder& textures)
 	: Entity(1)
 	, type(type)
 	, damage(1)
-	, isTouchGround(false)
 {
 	sf::Texture& texture = textures.get(Textures::Projectile);
 	sf::Vector2u boundaryRect = texture.getSize();
@@ -16,46 +15,44 @@ Projectitle::Projectitle(Type type, TextureHolder& textures)
 	sprite.setOutlineColor(sf::Color::Red);
 	sprite.setOutlineThickness(-2);
 #endif // _DEBUG
+	this->setAcceleration(0.f, 2000.f);
 }
 
-void Projectitle::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+void Projectile::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(sprite, states);
 }
 
-unsigned Projectitle::getCategory() const
+unsigned Projectile::getCategory() const
 {
 	return Category::Projectile;
 }
 
-sf::FloatRect Projectitle::getBoundingRect() const
+sf::FloatRect Projectile::getBoundingRect() const
 {
 	return getWorldTransform().transformRect(sprite.getGlobalBounds());
 }
 
-void Projectitle::updateCurrent(sf::Time dt)
+void Projectile::updateCurrent(sf::Time dt)
 {
 	sf::Vector2f currVecl = this->getVelocity();
-	if (isTouchGround) {
-		this->setVelocity(currVecl.x, currVecl.y * -1);
+	if (!isAir()) {
+		this->setVelocity(currVecl.x, -300.f);
 	}
+
 	Entity::updateCurrent(dt);
 }
 
-int Projectitle::getDamage() const
+int Projectile::getDamage() const
 {
 	return damage;
 }
 
-void Projectitle::setDamage(int damage)
+void Projectile::setDamage(int damage)
 {
 	this->damage = damage;
 }
 
-void Projectitle::setTouchGround(bool isTouch)
-{
-	isTouchGround = isTouch;
-}
 
 
 

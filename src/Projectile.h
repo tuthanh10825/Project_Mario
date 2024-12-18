@@ -3,14 +3,14 @@
 #include "ID.h"
 #include "ResourceHolder.h"
 
-class Projectitle : public Entity {
+class Projectile : public Entity {
 public:
 	enum Type {
 		CharBullet,
 		EnemyBullet,
 		TypeCount
 	};
-	Projectitle(Type type, TextureHolder& textures);
+	Projectile(Type type, TextureHolder& textures);
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual unsigned getCategory() const;
 
@@ -20,10 +20,8 @@ public:
 	int getDamage() const;
 	void setDamage(int damage);
 
-	void setTouchGround(bool isTouch);
 private:
 	sf::RectangleShape sprite;
 	int damage;
 	Type type;
-	bool isTouchGround;
 };
