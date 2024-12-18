@@ -25,7 +25,7 @@ public:
 		
 	const sf::View& getView() const;
 
-	void loadWorld(json& info);
+	void loadWorld(json& info, Characters character);
 	void setWorldBound(sf::FloatRect& rect);
 
 	bool hasAlivePlayer() const;
@@ -83,6 +83,7 @@ private:
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
 	
+	Character::Type characterType;
 
 	Hub& hub; 
 	float time; 
