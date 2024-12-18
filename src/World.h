@@ -40,7 +40,7 @@ private:
 	void handleCollisions(); 
 	void updatePlayerView(sf::Time dt); 
 
-
+	void spawnEnemies();
 	/*void adjustChar(SceneNode& node, Collision::Direction direction); 
 	void adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction);
 	void adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction);*/

@@ -116,6 +116,7 @@ void World::update(sf::Time dt) {
 
 	////set Worldview here ? 
 	updatePlayerView(dt); 
+	spawnEnemies();
 
 	hub.setTime((time += dt.asSeconds()));
 	hub.setHP(character->getHp()); 
@@ -307,6 +308,11 @@ void World::handleCollisions()
 
 			if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
+				enemy.setMoveRight(false);
+				enemy.setMoveLeft(false);
+				enemy.setScale(1, 0.5);
+				enemy.move(0, 12);
+				enemy.destroy();
 			}
 			else if (direction == Collision::Down && charVelocity.y < 0) {
 				charVelocity.y = 0;
@@ -395,18 +401,6 @@ void World::handleCollisions()
 			}
 		}
 
-		// enemy and player collision
-		if (matchesCategories(pair, Category::Enemy, Category::Player)) {
-			Collision::Direction direction = collisionType(*pair.first, *pair.second);
-			auto& enemy = static_cast<Enemy&>(*pair.first);
-			if (direction == Collision::Down) {
-				enemy.setMoveRight(false);
-				enemy.setMoveLeft(false);
-				enemy.setScale(1, 0.5);
-				enemy.move(0, 12);
-				enemy.destroy();
-			}
-		}
 		if (matchesCategories(pair, Category::Pickup, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& pickup = static_cast<Pickup&>(*pair.first);
@@ -499,15 +493,15 @@ void World::updatePlayerView(sf::Time dt)
 	sf::Vector2f after = character->getWorldPosition();
 	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return;
 	else worldView.move(sf::Vector2f(character->getVelocity().x * dt.asSeconds(), 0.f));
+}
 
-	//TODO: refactoring
-	while (enemyInfo.size() && enemyInfo.back().position.x > after.x - windowSize.x / 2 && enemyInfo.back().position.x < after.x + windowSize.x / 2) {
-		EnemyInfo enemy = enemyInfo.back();
+void World::spawnEnemies() {
+	while (!enemyInfo.empty() && enemyInfo.back().position.x < worldView.getCenter().x + worldView.getSize().x / 2) {
+		EnemyInfo info = enemyInfo.back();
 		enemyInfo.pop_back();
-		std::unique_ptr<Enemy> tempEnemy(new Enemy(enemy.type, textures));
-		tempEnemy->setPosition(enemy.position);
-		enemies.push_back(tempEnemy.get());
-		sceneLayers[Air]->attachChild(std::move(tempEnemy));
+		std::unique_ptr<Enemy> enemy(new Enemy(info.type, textures));
+		enemy->setPosition(info.position);
+		sceneLayers[Air]->attachChild(std::move(enemy));
 	}
 }
 
