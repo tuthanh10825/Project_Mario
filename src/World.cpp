@@ -65,6 +65,9 @@ void World::update(sf::Time dt) {
 	
 	sceneGraph.onCommand(applyGravity, dt);
 	//update first
+	if (character->canFire()) {
+		commandQueue.push(character->getFireCommand());
+	}
 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
@@ -153,6 +156,7 @@ void World::loadTextures()
 	textures.load(Textures::GoombaMovLeft, "textures/GoombaMovLeft.png");
 	textures.load(Textures::GoombaDead, "textures/GoombaDead.png");
 	textures.load(Textures::Pickup, "textures/mushroom.png"); 
+	textures.load(Textures::Projectile, "textures/Projectile.png");
 }
 
 void World::buildScene(json& info) // we need to load the "front" world here.

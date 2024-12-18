@@ -20,7 +20,8 @@ namespace Textures {
 		GoombaMovLeft,
 		GoombaDead,
 		Pickup,
-		Heart
+		Heart,
+		Projectile,
 	};
 }
 

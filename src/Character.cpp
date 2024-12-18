@@ -1,5 +1,6 @@
 #include "Character.h"
 #include "Utility.h"
+#include <iostream>
 
 static Textures::ID toTextureID(Character::Type type) {
 	switch (type) {
@@ -15,6 +16,8 @@ Character::Character(Type type, TextureHolder& textures)
 	, moveLeft(false)
 	, moveRight(false)
 	, jump(false)
+	, fire(false)
+	, mFireCountdown(sf::Time::Zero)
 {
 	sf::Texture& texture = textures.get(toTextureID(type)); 
 
@@ -45,6 +48,13 @@ Character::Character(Type type, TextureHolder& textures)
 	centerOrigin(mMovLeft);
 
 	this->setAcceleration(0, 200);
+
+	mFireCommand.category = Category::SceneNodeAir;
+	mFireCommand.action = [this, &textures](SceneNode& node, sf::Time dt) {
+		sf::Vector2f pos = getWorldPosition();
+		pos.y += 12.f;
+		createProjectile(node, textures, pos, Projectitle::CharBullet);
+		};
 }
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -78,7 +88,10 @@ void Character::updateCurrent(sf::Time dt)
 	else if (moveLeft) {
 		mMovLeft.update(dt);
 	}
-
+	if (mFireCountdown > sf::Time::Zero)
+		mFireCountdown -= dt;
+	if (mFireCountdown < sf::Time::Zero)
+		mFireCountdown = sf::Time::Zero;
 	Entity::updateCurrent(dt);
 }
 
@@ -111,4 +124,34 @@ bool Character::isJump() const
 	return this->jump;
 }
 
+void Character::createProjectile(SceneNode& node, TextureHolder& textures, sf::Vector2f pos, Projectitle::Type type)
+{
+	std::unique_ptr<Projectitle> projectile(new Projectitle(type, textures));
+	projectile->setPosition(pos);
+	int sign = (isMoveRight()) ? 1 : -1;
+	projectile->setVelocity(sign * 200.f, 0.f);
+	node.attachChild(std::move(projectile));
+}
 
+void Character::setFire(bool fire)
+{
+	this->fire = fire;
+}
+
+bool Character::isFire() const
+{
+	// cout mFireCountdown and fire
+	std::cout << mFireCountdown.asSeconds() << " " << fire << std::endl;
+	return fire;
+}
+
+Command Character::getFireCommand()
+{
+	mFireCountdown = sf::seconds(0.5);
+	fire = false;
+	return mFireCommand;
+}
+
+bool Character::canFire() const {
+	return fire && mFireCountdown == sf::Time::Zero;
+}

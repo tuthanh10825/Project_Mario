@@ -76,9 +76,7 @@ private:
 
 	Hub& hub; 
 	float time; 
-
 	Command setAir;
-
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 
