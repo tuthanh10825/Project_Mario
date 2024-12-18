@@ -16,4 +16,5 @@ private:
 	json mapsConfig; 
 	World world; 
 	Player& player;
+	Hub hub; 
 };

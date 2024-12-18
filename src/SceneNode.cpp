@@ -62,6 +62,31 @@ void SceneNode::checkSceneCollision(SceneNode& sceneGraph, std::set<Pair>& colli
 	}
 }
 
+void SceneNode::fixPosition(SceneNode& node, Collision::Direction direction)
+{
+	sf::FloatRect currBox = this->getBoundingRect();
+	sf::FloatRect nodeBox = node.getBoundingRect();
+
+	sf::Vector2f currCenter = currBox.getPosition() + currBox.getSize() / 2.f;
+	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f;
+
+	float dx = nodeCenter.x - currCenter.x;
+	float dy = nodeCenter.y - currCenter.y;
+
+	sf::Vector2f dv(dx, dy);
+	if (direction == Collision::Right || direction == Collision::Left) {
+		float offset = currBox.width / 2 + nodeBox.width / 2 - std::abs(dx);
+		if (direction == Collision::Left) offset *= -1;
+		this->move(offset, 0);
+	}
+	else if (direction == Collision::Up || direction == Collision::Down) {
+
+		float offset = currBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
+		if (direction == Collision::Up) offset *= -1;
+		this->move(0, offset);
+	}
+}
+
 sf::FloatRect SceneNode::getBoundingRect() const
 {
 	return sf::FloatRect();

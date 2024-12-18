@@ -45,9 +45,11 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 	mArrow.setOrigin(mArrow.getLocalBounds().width, mArrow.getLocalBounds().height / 2.f);
 	mArrow.setPosition(options[optionIndex].getPosition() - sf::Vector2f(80.f, 10.f));
 
-	updateOptionText();
-}
 
+	updateOptionText();
+	
+}
+ 
 void MenuState::draw()
 {
 	sf::RenderWindow& window = *getContext().window; 
@@ -72,12 +74,13 @@ bool MenuState::handleEvent(const sf::Event& event)
 	if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Up) {
 		if (optionIndex) --optionIndex;
 		else optionIndex = options.size() - 1; 
-
+		getContext().sounds->play(SoundEffect::ChangeOption);
 		updateOptionText(); 
 	}
 	else if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Down) {
 		if (optionIndex < options.size() - 1) ++optionIndex;
 		else optionIndex = 0; 
+		getContext().sounds->play(SoundEffect::ChangeOption);
 		updateOptionText(); 
 	}
 	if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {

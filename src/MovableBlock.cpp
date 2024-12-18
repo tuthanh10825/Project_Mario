@@ -1,5 +1,5 @@
 #include "MovableBlock.h"
-#include "Pickup.h"
+
 MysteryBlock::MysteryBlock(sf::Texture& texture) : Block(texture), moving(false), movingState(MovingState::None){}
 unsigned MysteryBlock::getCategory() const
 {
@@ -14,13 +14,21 @@ void MysteryBlock::setPosition(const sf::Vector2f& position)
 
 void MysteryBlock::setMove(float speed)
 {
-	this->speed = speed;
-	moving = true; 
+	if (movingState == MovingState::None)
+	{
+		this->speed = speed;
+		moving = true;
+	}
 }
 
 void MysteryBlock::createPickup(SceneNode& node, TextureHolder& textures)
 {
-	std::unique_ptr<Pickup> pickup(new Pickup(Pickup::Type::mushroom, textures));
+	if (!hasItem()) {
+		return;
+	}
+	Pickup::Type itemType = itemsType.front();
+	itemsType.pop();
+	std::unique_ptr<Pickup> pickup(new Pickup(itemType, textures));
 	sf::Vector2f position = getWorldPosition();
 	pickup->setPosition(position.x, position.y - 60.f);
 	sf::Vector2f vel = getVelocity(); 
@@ -52,11 +60,21 @@ void MysteryBlock::updateCurrent(sf::Time dt)
 			if (currentPosition.y >= origin.y) {
 				Block::setPosition(origin);
 				moving = false;
-				movingState = MovingState::None; 
+				movingState = MovingState::Moved; 
 				speed = 0; 
 				return;
 			}
 		}
 		move(0, speed * dt.asSeconds()); 
 	}
+}
+
+bool MysteryBlock::hasItem() const
+{
+	return !itemsType.empty();
+}
+
+void MysteryBlock::addItem(Pickup::Type item)
+{
+	itemsType.push(item);
 }

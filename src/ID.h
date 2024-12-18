@@ -23,6 +23,7 @@ namespace Textures {
 		GoombaMovLeft,
 		GoombaDead,
 		Pickup,
+		Heart
 		Char1Select,
 		Char2Select,
 	};
@@ -67,6 +68,8 @@ namespace Category {
 		MysteryBlock = 1 << 5,
 		Pickup = 1 << 6, 
 		SceneNodeAir =  1 << 7, 
+
+		SceneNodeSound = 1 << 9, 
 	};
 }
 enum Level {
@@ -89,5 +92,18 @@ namespace Collision {
 		Down = 1 << 1,
 		Left = 1 << 2,
 		Right = 1 << 3
+	};
+}
+namespace Music {
+	enum ID {
+		MenuTheme, 
+		MissionTheme, 
+	};
+}
+namespace SoundEffect {
+	enum ID {
+		Jump, 
+		Pause, 
+		ChangeOption, 
 	};
 }

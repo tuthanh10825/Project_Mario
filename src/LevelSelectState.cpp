@@ -144,11 +144,13 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 		if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Up) {
 			if (levelOptionIndex) --levelOptionIndex;
 			else levelOptionIndex = levelOptions.size() - 1;
+			getContext().sounds->play(SoundEffect::ChangeOption);
 			updateOption();
 		}
 		else if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Down) {
 			if (levelOptionIndex < levelOptions.size() - 1) ++levelOptionIndex;
 			else levelOptionIndex = 0;
+			getContext().sounds->play(SoundEffect::ChangeOption);
 			updateOption();
 		}
 		if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {
@@ -166,11 +168,13 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 		if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Up) {
 			if (charOptionIndex) --charOptionIndex;
 			else charOptionIndex = charOptions.size() - 1;
+			getContext().sounds->play(SoundEffect::ChangeOption);
 			updateOption();
 		}
 		else if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Down) {
 			if (charOptionIndex < charOptions.size() - 1) ++charOptionIndex;
 			else charOptionIndex = 0;
+			getContext().sounds->play(SoundEffect::ChangeOption);
 			updateOption();
 		}
 		if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {
