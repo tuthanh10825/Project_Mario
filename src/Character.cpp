@@ -128,8 +128,9 @@ void Character::createProjectile(SceneNode& node, TextureHolder& textures, sf::V
 {
 	std::unique_ptr<Projectitle> projectile(new Projectitle(type, textures));
 	projectile->setPosition(pos);
-	int sign = (isMoveRight()) ? 1 : -1;
-	projectile->setVelocity(sign * 200.f, 0.f);
+	float sign = (isMoveRight()) ? 1.f : -1.f;
+	std::cout << "Sign: " << sign << std::endl;
+	projectile->setVelocity(sign * 400.f, 0.f);
 	node.attachChild(std::move(projectile));
 }
 
@@ -140,8 +141,6 @@ void Character::setFire(bool fire)
 
 bool Character::isFire() const
 {
-	// cout mFireCountdown and fire
-	std::cout << mFireCountdown.asSeconds() << " " << fire << std::endl;
 	return fire;
 }
 

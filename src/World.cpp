@@ -11,7 +11,7 @@ time(0)
 	loadTextures();
 	worldView.setCenter(spawnPosition);
 
-	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup;
+	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
 	applyGravity.action = [](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
 		sf::Vector2f accel = entity.getAcceleration();

@@ -64,6 +64,7 @@ namespace Category {
 		MysteryBlock = 1 << 5,
 		Pickup = 1 << 6, 
 		SceneNodeAir =  1 << 7, 
+		Projectile = 1 << 8,
 	};
 }
 enum Level {
