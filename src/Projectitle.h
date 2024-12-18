@@ -25,6 +25,5 @@ private:
 	sf::RectangleShape sprite;
 	int damage;
 	Type type;
-	float maxHeight;
 	bool isTouchGround;
 };

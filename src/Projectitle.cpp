@@ -16,7 +16,6 @@ Projectitle::Projectitle(Type type, TextureHolder& textures)
 	sprite.setOutlineColor(sf::Color::Red);
 	sprite.setOutlineThickness(-2);
 #endif // _DEBUG
-	maxHeight = this->getPosition().y;
 }
 
 void Projectitle::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -26,12 +25,7 @@ void Projectitle::drawCurrent(sf::RenderTarget& target, sf::RenderStates states)
 
 unsigned Projectitle::getCategory() const
 {
-	if (type == CharBullet) {
-		return Category::Player;
-	}
-	else {
-		return Category::Enemy;
-	}
+	return Category::Projectile;
 }
 
 sf::FloatRect Projectitle::getBoundingRect() const
@@ -44,9 +38,6 @@ void Projectitle::updateCurrent(sf::Time dt)
 	sf::Vector2f currVecl = this->getVelocity();
 	if (isTouchGround) {
 		this->setVelocity(currVecl.x, currVecl.y * -1);
-	}
-	if (this->getPosition().y > maxHeight) {
-		this->setVelocity(currVecl.x, currVecl.y);
 	}
 	Entity::updateCurrent(dt);
 }
