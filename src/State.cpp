@@ -22,8 +22,8 @@ void State::requestStateClear()
 {
 	stack->clearStates(); 
 }
-void State::requestStackPushGame(Level level) {
-	stack->pushGameState(level); 
+void State::requestStackPushGame(Level level, Characters character) {
+	stack->pushGameState(level, character); 
 }
 State::Context State::getContext() const
 {

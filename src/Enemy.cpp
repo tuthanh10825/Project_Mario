@@ -17,7 +17,7 @@ static Textures::ID toTextureID(Enemy::Type type, Enemy::State state)
 		case Enemy::movLeft:
 			return Textures::GoombaMovLeft;
 			break;
-		case Enemy::die:
+		case Enemy::die: 
 			return Textures::GoombaDead;
 			break;
 		default:

@@ -11,15 +11,20 @@ namespace Textures {
 		Level3,
 		Back,
 		Arrow,
-		Character1, 
+		Character1,
+		Character2,
 		Block,
-		MovRight,
-		MovLeft,
+		Char1MovRight,
+		Char1MovLeft,
+		Char2MovRight,
+		Char2MovLeft,
 		Goomba,
 		GoombaMovRight,
 		GoombaMovLeft,
 		GoombaDead,
 		Pickup,
+		Char1Select,
+		Char2Select,
 	};
 }
 
@@ -69,7 +74,12 @@ enum Level {
 	Easy = 1, 
 	Medium = 2, 
 	Hard = 3,
+};
 
+enum Characters{
+	CharNone = 0,
+	Character1 = 1,
+	Character2 = 2,
 };
 
 namespace Collision {

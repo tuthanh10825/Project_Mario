@@ -27,7 +27,7 @@ protected:
 	void requestStackPush(States::ID stateId);
 	void requestStackPop();
 	void requestStateClear();
-	void requestStackPushGame(Level level);
+	void requestStackPushGame(Level level, Characters character);
 
 	Context getContext() const;
 

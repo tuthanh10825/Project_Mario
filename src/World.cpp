@@ -141,8 +141,11 @@ void World::loadTextures()
 {
 	textures.load(Textures::Background, "textures/background.jpg");
 	textures.load(Textures::Character1, "textures/idle.png");
-	textures.load(Textures::MovRight, "textures/movRight.png");
-	textures.load(Textures::MovLeft, "textures/movLeft.png");
+	textures.load(Textures::Char1MovRight, "textures/movRight.png");
+	textures.load(Textures::Char1MovLeft, "textures/movLeft.png");
+	textures.load(Textures::Character2, "textures/GiaBaoIdle.png");
+	textures.load(Textures::Char2MovRight, "textures/GiaBaoMovRight.png");
+	textures.load(Textures::Char2MovLeft, "textures/GiaBaoMovLeft.png");
 	textures.load(Textures::Goomba, "textures/Goomba.png");
 	textures.load(Textures::GoombaMovRight, "textures/GoombaMovLeft.png");
 	textures.load(Textures::GoombaMovLeft, "textures/GoombaMovLeft.png");
@@ -150,7 +153,7 @@ void World::loadTextures()
 	textures.load(Textures::Pickup, "textures/mushroom.png"); 
 }
 
-void World::buildScene(json& info) // we need to load the "front" world here.
+void World::buildScene(json& info, Characters character) // we need to load the "front" world here.
 {
 	for (std::size_t i = 0; i < LayerCount; ++i) {
 		SceneNode::Ptr layer(new SceneNode());
@@ -170,11 +173,20 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 	backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
 	sceneLayers[Background]->attachChild(std::move(backgroundSprite));
 
-	std::unique_ptr<Character> tempPlayer(new Character(Character::Character1, textures));
-	character = tempPlayer.get();
-	character->setPosition(spawnPosition);
+	std::unique_ptr<Character> tempPlayer;
 
-	sceneLayers[Air]->attachChild(std::move(tempPlayer));
+	if (character == Characters::Character1) {
+		tempPlayer = std::make_unique<Character>(Character::Character1, textures);
+	}
+
+	else if (character == Characters::Character2) {
+		tempPlayer = std::make_unique<Character>(Character::Character2, textures);
+	}
+
+	this->character = tempPlayer.get();
+	this->character->setPosition(spawnPosition);
+
+	sceneLayers[Air]->attachChild(std::move(tempPlayer));;
 	//can be improved here, since the path to the tileset is existing. 
 
 	assert(tilesetImg.loadFromFile("textures/tilesets.png"));
@@ -369,7 +381,7 @@ void World::handleCollisions()
 				enemy2.setAir(false);
 			}
 		}
-
+		 
 		// enemy and player collision
 		if (matchesCategories(pair, Category::Enemy, Category::Player)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);

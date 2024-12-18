@@ -18,7 +18,8 @@ public:
 	void update(sf::Time dt); 
 	void draw(); 
 	CommandQueue& getCommandQueue(); 
-	void buildScene(json& info);
+	void setCharacter(Characters character);
+	void buildScene(json& info, Characters character);
 	void setWorldBound(sf::FloatRect& rect); 
 	bool hasAlivePlayer() const;
 	

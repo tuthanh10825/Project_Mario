@@ -1,22 +1,59 @@
 #include "Character.h"
 #include "Utility.h"
 
-static Textures::ID toTextureID(Character::Type type) {
+static Textures::ID toTextureID(Character::Type type, Character::State state) {
 	switch (type) {
 	case Character::Character1:
+		switch (state)
+		{
+		case Character::alive:
+			return Textures::Character1;
+			break;
+		case Character::movRight:
+			return Textures::Char1MovRight;
+			break;
+		case Character::movLeft:
+			return Textures::Char1MovLeft;
+			break;
+		case Character::die:
+			return Textures::Character1;
+			break;
+		default:
+			break;
+		}
 		return Textures::Character1;
+	case Character::Character2:
+		switch (state)
+		{
+		case Character::alive:
+			return Textures::Character2;
+			break;
+		case Character::movRight:
+			return Textures::Char2MovRight;
+			break;
+		case Character::movLeft:
+			return Textures::Char2MovLeft;
+			break;
+		case Character::die:
+			return Textures::Character2;
+			break;
+		default:
+			break;
+		}
+		return Textures::Character2;
 	}
+
 }
 Character::Character(Type type, TextureHolder& textures) 
 	: Entity(1)
 	, type(type)
-	, mMovRight(textures.get(Textures::MovRight))
-	, mMovLeft(textures.get(Textures::MovLeft))
+	, mMovRight(textures.get(toTextureID(type, Character::movRight)))
+	, mMovLeft(textures.get(toTextureID(type, Character::movLeft)))
 	, moveLeft(false)
 	, moveRight(false)
 	, jump(false)
 {
-	sf::Texture& texture = textures.get(toTextureID(type)); 
+	sf::Texture& texture = textures.get(toTextureID(type, Character::alive)); 
 
 	sf::Vector2u boundaryRect = texture.getSize();
 

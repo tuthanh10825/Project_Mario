@@ -24,7 +24,7 @@ public:
 	void handleEvent(const sf::Event& event); 
 
 	void pushState(States::ID stateID);
-	void pushGameState(Level level); 
+	void pushGameState(Level level, Characters character); 
 	void popState();
 	void clearStates(); 
 	bool isEmpty() const; 
@@ -35,11 +35,16 @@ private:
 
 private: 
 	struct PendingChange {
-		explicit PendingChange(Action action, States::ID stateID = States::None, Level level = Level::None); 
+		explicit PendingChange
+		(Action action
+		,States::ID stateID = States::None
+		,Level level = Level::None
+		,Characters character = Characters::CharNone); 
 
 		Action action;
 		States::ID stateID;
 		Level level; 
+		Characters character;
 	};
 private: 
 	std::vector<State::Ptr> stack; 
