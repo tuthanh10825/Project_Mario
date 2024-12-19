@@ -6,6 +6,7 @@ namespace Textures {
 		Title,
 		PlayButton,
 		ExitButton,
+		ContinueButton,
 		Level1,
 		Level2,
 		Level3,

@@ -7,8 +7,9 @@ private:
 		Exit, 
 	};
 	sf::RectangleShape backgroundShape;
-	std::vector<sf::Text> options; 
+	std::vector<sf::Sprite> options;
 	std::size_t optionIndex; 
+	sf::Vector2i mButtonSize;
 public:
 	PauseState(StateStack& stateStack, Context context);
 	virtual void draw();
