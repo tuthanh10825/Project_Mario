@@ -11,10 +11,13 @@ namespace Textures {
 		Level3,
 		Back,
 		Arrow,
-		Character1, 
+		Character1,
+		Character2,
 		Block,
-		MovRight,
-		MovLeft,
+		Char1MovRight,
+		Char1MovLeft,
+		Char2MovRight,
+		Char2MovLeft,
 		Goomba,
 		GoombaMovRight,
 		GoombaMovLeft,
@@ -22,6 +25,8 @@ namespace Textures {
 		Pickup,
 		Heart,
 		Projectile,
+		Char1Select,
+		Char2Select,
 	};
 }
 
@@ -65,6 +70,7 @@ namespace Category {
 		Pickup = 1 << 6, 
 		SceneNodeAir =  1 << 7, 
 		Projectile = 1 << 8,
+		SceneNodeSound = 1 << 9, 
 	};
 }
 enum Level {
@@ -72,7 +78,12 @@ enum Level {
 	Easy = 1, 
 	Medium = 2, 
 	Hard = 3,
+};
 
+enum Characters{
+	CharNone = 0,
+	Character1 = 1,
+	Character2 = 2,
 };
 
 namespace Collision {
@@ -82,5 +93,18 @@ namespace Collision {
 		Down = 1 << 1,
 		Left = 1 << 2,
 		Right = 1 << 3
+	};
+}
+namespace Music {
+	enum ID {
+		MenuTheme, 
+		MissionTheme, 
+	};
+}
+namespace SoundEffect {
+	enum ID {
+		Jump, 
+		Pause, 
+		ChangeOption, 
 	};
 }

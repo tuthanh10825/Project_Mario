@@ -1,14 +1,17 @@
 #include "World.h"
 #include <iostream>
 #include <cassert>
-World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub) : window(window), worldView(window.getDefaultView()), textures(textures),
-spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
-character(nullptr),
-scrollSpeed(80.f), 
-hub(hub),
+World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub, SoundPlayer& sounds) :
+	window(window), textures(textures), hub(hub), sounds(sounds),
+	characterType(Character::Character1),
+	worldView(window.getDefaultView()),
+	spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
+	character(nullptr),
+	scrollSpeed(80.f), 
+	
 time(0)
 {
-	loadTextures();
+	loadTextures(); 
 	worldView.setCenter(spawnPosition);
 
 	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
@@ -42,6 +45,48 @@ void World::draw()
 CommandQueue& World::getCommandQueue()
 {
 	return commandQueue;
+}
+
+void World::loadWorld(json& info, Characters character)
+{
+	//can be improved here, since the path to the tileset is existing. 
+
+	if (character == Characters::Character1) {
+		characterType = Character::Character1;
+	}
+	else if (character == Characters::Character2) {
+		characterType = Character::Character2;
+	}
+
+	buildScene();
+
+	assert(tilesetImg.loadFromFile("textures/tilesets.png"));
+	//TODO: refactoring
+	for (auto& blockInfo : info["layerInstances"][0]["gridTiles"]) {
+
+		if (tileset.find(blockInfo["src"]) == tileset.end()) {
+			tileset[blockInfo["src"]].loadFromImage(tilesetImg, sf::IntRect(blockInfo["src"][0], blockInfo["src"][1], 60, 60));
+		}
+		sf::Texture& blockTexture = tileset[blockInfo["src"]];
+
+
+		if (blockInfo["src"][0] == 540) {
+			std::unique_ptr<MysteryBlock> block(new MysteryBlock(blockTexture));
+			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+			block->addItem(Pickup::Type::mushroom);
+			sceneLayers[Air]->attachChild(std::move(block));
+		}
+		else if (blockInfo["src"][0] == 600) {
+			enemyInfo.push_back({ Enemy::Goomba, sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]) });
+		}
+		else {
+			std::unique_ptr<Block> block(new Block(blockTexture));
+			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+			sceneLayers[Air]->attachChild(std::move(block));
+		}
+	}
+	sort(enemyInfo.begin(), enemyInfo.end(), std::greater<EnemyInfo>());
+	hub.setHP(this->character->getHp());
 }
 
 void World::update(sf::Time dt) {
@@ -83,6 +128,8 @@ void World::update(sf::Time dt) {
 
 	////set Worldview here ? 
 	updatePlayerView(dt); 
+	spawnEnemies();
+
 	hub.setTime((time += dt.asSeconds()));
 	hub.setHP(character->getHp()); 
 }
@@ -149,8 +196,11 @@ void World::loadTextures()
 {
 	textures.load(Textures::Background, "textures/background.jpg");
 	textures.load(Textures::Character1, "textures/idle.png");
-	textures.load(Textures::MovRight, "textures/movRight.png");
-	textures.load(Textures::MovLeft, "textures/movLeft.png");
+	textures.load(Textures::Char1MovRight, "textures/movRight.png");
+	textures.load(Textures::Char1MovLeft, "textures/movLeft.png");
+	textures.load(Textures::Character2, "textures/GiaBaoIdle.png");
+	textures.load(Textures::Char2MovRight, "textures/GiaBaoMovRight.png");
+	textures.load(Textures::Char2MovLeft, "textures/GiaBaoMovLeft.png");
 	textures.load(Textures::Goomba, "textures/Goomba.png");
 	textures.load(Textures::GoombaMovRight, "textures/GoombaMovLeft.png");
 	textures.load(Textures::GoombaMovLeft, "textures/GoombaMovLeft.png");
@@ -159,7 +209,7 @@ void World::loadTextures()
 	textures.load(Textures::Projectile, "textures/Projectile.png");
 }
 
-void World::buildScene(json& info) // we need to load the "front" world here.
+void World::buildScene() // we need to load the "front" world here.
 {
 	for (std::size_t i = 0; i < LayerCount; ++i) {
 		SceneNode::Ptr layer(new SceneNode());
@@ -179,41 +229,27 @@ void World::buildScene(json& info) // we need to load the "front" world here.
 	backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
 	sceneLayers[Background]->attachChild(std::move(backgroundSprite));
 
-	std::unique_ptr<Character> tempPlayer(new Character(Character::Character1, textures));
-	character = tempPlayer.get();
-	character->setPosition(spawnPosition);
+	std::unique_ptr<Character> tempPlayer;
 
-	sceneLayers[Air]->attachChild(std::move(tempPlayer));
-	//can be improved here, since the path to the tileset is existing. 
-
-	assert(tilesetImg.loadFromFile("textures/tilesets.png"));
-
-	for (auto& blockInfo : info["layerInstances"][0]["gridTiles"]) {
-		
-		if(tileset.find(blockInfo["src"]) == tileset.end()) {
-			tileset[blockInfo["src"]].loadFromImage(tilesetImg, sf::IntRect(blockInfo["src"][0], blockInfo["src"][1], 60, 60)); 
-		}
-		sf::Texture& blockTexture = tileset[blockInfo["src"]];
-	
-
-		if (blockInfo["src"][0] == 540) {
-			std::unique_ptr<MysteryBlock> block(new MysteryBlock(blockTexture)); 
-			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
-			block->addItem(Pickup::Type::mushroom);
-			sceneLayers[Air]->attachChild(std::move(block));
-		}
-		else if (blockInfo["src"][0] == 600) {
-			enemyInfo.push_back({ Enemy::Goomba, sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]) });
-		}
-		else {
-			std::unique_ptr<Block> block(new Block(blockTexture));
-			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
-			sceneLayers[Air]->attachChild(std::move(block));
-		}
+	/*if (character == Characters::Character1) {
+		tempPlayer = std::make_unique<Character>(Character::Character1, textures);
 	}
-	sort(enemyInfo.begin(), enemyInfo.end(), std::greater<EnemyInfo>());
-	hub.setHP(character->getHp()); 
-}
+
+	else if (character == Characters::Character2) {
+		tempPlayer = std::make_unique<Character>(Character::Character2, textures);
+	}*/
+
+	tempPlayer = std::make_unique<Character>(characterType, textures);
+
+	this->character = tempPlayer.get();
+	this->character->setPosition(spawnPosition);
+
+	sceneLayers[Air]->attachChild(std::move(tempPlayer));;
+	
+	std::unique_ptr<SoundNode> tempSoundNode(new SoundNode(sounds)); 
+	sceneLayers[Sound]->attachChild(std::move(tempSoundNode)); 
+
+	}
 
 void World::setWorldBound(sf::FloatRect& rect)
 {
@@ -232,15 +268,17 @@ bool World::hasAlivePlayer() const
 void World::handleCollisions()
 {
 	std::set<SceneNode::Pair> collisionPairs; 
-	sceneGraph.checkSceneCollision(sceneGraph, collisionPairs); 
+	//sceneGraph.checkSceneCollision(sceneGraph, collisionPairs);
+	sceneLayers[Air] -> checkSceneCollision(*sceneLayers[Air], collisionPairs);
+
 	bool isAir = true; 
 	sf::Vector2f charVelocity = character->getVelocity();
 	sf::Vector2f charAccel = character->getAcceleration();
 	for (SceneNode::Pair pair : collisionPairs) {
-
+		//TODO: refactoring
 		if (matchesCategories(pair, Category::Player, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
-			adjustChar(*pair.second, direction);
+			pair.first->fixPosition(*pair.second, direction);
 
 
 			if (direction == Collision::Down) {
@@ -270,7 +308,7 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Player, Category::Block)) {
 			//handle the collision
 			Collision::Direction direction = collisionType(*character, *pair.second);
-			adjustChar(*pair.second, direction);
+			pair.first->fixPosition(*pair.second, direction);
 
 			if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
@@ -292,11 +330,16 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Player, Category::Enemy)) {
 			//handle the collision
 			Collision::Direction direction = collisionType(*character, *pair.second);
-			adjustChar(*pair.second, direction);
+			pair.first->fixPosition(*pair.second, direction);
 			Enemy& enemy = static_cast<Enemy&>(*pair.second);
 
 			if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
+				enemy.setMoveRight(false);
+				enemy.setMoveLeft(false);
+				enemy.setScale(1, 0.5);
+				enemy.move(0, 12);
+				enemy.destroy();
 			}
 			else if (direction == Collision::Down && charVelocity.y < 0) {
 				charVelocity.y = 0;
@@ -325,7 +368,7 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Enemy, Category::Block)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& enemy = static_cast<Enemy&>(*pair.first);
-			adjustEnemy(enemy, *pair.second, direction);
+			pair.first->fixPosition(*pair.second, direction);
 
 			if (direction == Collision::Left) {
 				enemy.setMoveLeft(true);
@@ -347,7 +390,7 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Enemy, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& enemy = static_cast<Enemy&>(*pair.first);
-			adjustEnemy(enemy, *pair.second, direction);
+			pair.first->fixPosition(*pair.second, direction);
 
 			if (direction == Collision::Left) {
 				enemy.setMoveLeft(true);
@@ -391,22 +434,10 @@ void World::handleCollisions()
 			}
 		}
 
-		// enemy and player collision
-		if (matchesCategories(pair, Category::Enemy, Category::Player)) {
-			Collision::Direction direction = collisionType(*pair.first, *pair.second);
-			auto& enemy = static_cast<Enemy&>(*pair.first);
-			if (direction == Collision::Down) {
-				enemy.setMoveRight(false);
-				enemy.setMoveLeft(false);
-				enemy.setScale(1, 0.5);
-				enemy.move(0, 12);
-				enemy.destroy();
-			}
-		}
 		if (matchesCategories(pair, Category::Pickup, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& pickup = static_cast<Pickup&>(*pair.first);
-			adjustPickup(pickup, *pair.second, direction);
+			pair.first->fixPosition(*pair.second, direction);
 			if (direction == Collision::Up) {
 				if (pickup.getVelocity().y >= 0 && pickup.getVelocity().x == 0) {
 					pickup.setMoveRight(true);
@@ -425,7 +456,7 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Pickup, Category::Block)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& pickup = static_cast<Pickup&>(*pair.first);
-			adjustPickup(pickup, *pair.second, direction);
+			pair.first->fixPosition(*pair.second, direction);
 			if (direction == Collision::Up) {
 				pickup.setAir(false);
 			}
@@ -442,7 +473,7 @@ void World::handleCollisions()
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& pickup = static_cast<Pickup&>(*pair.first);
 			auto& enemy = static_cast<Enemy&>(*pair.second);
-			adjustPickup(pickup, *pair.second, direction);
+			pair.first->fixPosition(*pair.second, direction);
 			if (direction == Collision::Left) {
 				pickup.setMoveLeft(true);
 				pickup.setMoveRight(false);
@@ -475,13 +506,13 @@ void World::handleCollisions()
 			}
 			if (direction == Collision::Up) {
 				pickup1.setAir(false);
-				adjustPickup(pickup1, *pair.second, direction);
+				pair.first->fixPosition(*pair.second, direction);
 			}
 			else if (direction == Collision::Down) {
 				pickup2.setAir(false);
-				adjustPickup(pickup2, *pair.first, direction);
+				pair.first->fixPosition(*pair.second, direction); 
 			}
-			else adjustPickup(pickup1, *pair.second, direction);
+			else pair.first->fixPosition(*pair.second, direction);
 		}
 
 		if (matchesCategories(pair, Category::Enemy, Category::Projectile)) {
@@ -520,88 +551,92 @@ void World::updatePlayerView(sf::Time dt)
 	sf::Vector2f after = character->getWorldPosition();
 	if (after.x + windowSize.x / 2 > worldBounds.getSize().x || after.x - windowSize.x / 2 < 0) return;
 	else worldView.move(sf::Vector2f(character->getVelocity().x * dt.asSeconds(), 0.f));
+}
 
-	//TODO: refactoring
-	while (enemyInfo.size() && enemyInfo.back().position.x > after.x - windowSize.x / 2 && enemyInfo.back().position.x < after.x + windowSize.x / 2) {
-		EnemyInfo enemy = enemyInfo.back();
+void World::spawnEnemies() {
+	while (!enemyInfo.empty() && enemyInfo.back().position.x < worldView.getCenter().x + worldView.getSize().x / 2) {
+		EnemyInfo info = enemyInfo.back();
 		enemyInfo.pop_back();
-		std::unique_ptr<Enemy> tempEnemy(new Enemy(enemy.type, textures));
-		tempEnemy->setPosition(enemy.position);
-		enemies.push_back(tempEnemy.get());
-		sceneLayers[Air]->attachChild(std::move(tempEnemy));
+		std::unique_ptr<Enemy> enemy(new Enemy(info.type, textures));
+		enemy->setPosition(info.position);
+		sceneLayers[Air]->attachChild(std::move(enemy));
 	}
 }
 
-void World::adjustChar(SceneNode& node, Collision::Direction direction)
-{
-	sf::FloatRect charBox = character->getBoundingRect(); 
-	sf::FloatRect nodeBox = node.getBoundingRect(); 
-	
-	sf::Vector2f charCenter = charBox.getPosition() + charBox.getSize() / 2.f; 
-	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f; 
 
-	float dx = nodeCenter.x - charCenter.x; 
-	float dy = nodeCenter.y - charCenter.y; 
-	
-	sf::Vector2f dv(dx, dy);
-	if (direction == Collision::Right || direction == Collision::Left) {
-		float offset = charBox.width/ 2 + nodeBox.width / 2 - std::abs(dx);
-		if (direction == Collision::Left) offset *= -1; 
-		character->move(offset, 0); 
-	}
-	else if (direction == Collision::Up || direction == Collision::Down) {
-
-		float offset = charBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
-		if (direction == Collision::Up) offset *= -1; 
-		character->move(0, offset);
-	}
-}
-
-void World::adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction) {
-	sf::FloatRect enemyBox = enemy.getBoundingRect();
-	sf::FloatRect nodeBox = node.getBoundingRect();
-
-	sf::Vector2f enemyCenter = enemyBox.getPosition() + enemyBox.getSize() / 2.f;
-	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f;
-
-	float dx = nodeCenter.x - enemyCenter.x;
-	float dy = nodeCenter.y - enemyCenter.y;
-
-	sf::Vector2f dv(dx, dy);
-	if (direction == Collision::Right || direction == Collision::Left) {
-		float offset = enemyBox.width / 2 + nodeBox.width / 2 - std::abs(dx);
-		if (direction == Collision::Left) offset *= -1;
-		enemy.move(offset, 0);
-	}
-	else if (direction == Collision::Up || direction == Collision::Down) {
-		float offset = enemyBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
-		if (direction == Collision::Up) offset *= -1;
-		enemy.move(0, offset);
-	}
-}
-
-void World::adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction) {
-	sf::FloatRect pickupBox = pickup.getBoundingRect();
-	sf::FloatRect nodeBox = node.getBoundingRect();
-
-	sf::Vector2f pickupCenter = pickupBox.getPosition() + pickupBox.getSize() / 2.f;
-	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f;
-
-	float dx = nodeCenter.x - pickupCenter.x;
-	float dy = nodeCenter.y - pickupCenter.y;
-
-	sf::Vector2f dv(dx, dy);
-	if (direction == Collision::Right || direction == Collision::Left) {
-		float offset = pickupBox.width / 2 + nodeBox.width / 2 - std::abs(dx);
-		if (direction == Collision::Left) offset *= -1;
-		pickup.move(offset, 0);
-	}
-	else if (direction == Collision::Up || direction == Collision::Down) {
-		float offset = pickupBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
-		if (direction == Collision::Up) offset *= -1;
-		pickup.move(0, offset);
-	}
-}
+////TODO: refactoring
+//void World::adjustChar(SceneNode& node, Collision::Direction direction)
+//{
+//	sf::FloatRect charBox = character->getBoundingRect();
+//	sf::FloatRect nodeBox = node.getBoundingRect();
+//
+//	sf::Vector2f charCenter = charBox.getPosition() + charBox.getSize() / 2.f;
+//	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f;
+//
+//	float dx = nodeCenter.x - charCenter.x;
+//	float dy = nodeCenter.y - charCenter.y;
+//
+//	sf::Vector2f dv(dx, dy);
+//	if (direction == Collision::Right || direction == Collision::Left) {
+//		float offset = charBox.width / 2 + nodeBox.width / 2 - std::abs(dx);
+//		if (direction == Collision::Left) offset *= -1;
+//		character->move(offset, 0);
+//	}
+//	else if (direction == Collision::Up || direction == Collision::Down) {
+//
+//		float offset = charBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
+//		if (direction == Collision::Up) offset *= -1;
+//		character->move(0, offset);
+//	}
+//}
+//
+////TODO: refactoring
+//void World::adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction) {
+//	sf::FloatRect enemyBox = enemy.getBoundingRect();
+//	sf::FloatRect nodeBox = node.getBoundingRect();
+//
+//	sf::Vector2f enemyCenter = enemyBox.getPosition() + enemyBox.getSize() / 2.f;
+//	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f;
+//
+//	float dx = nodeCenter.x - enemyCenter.x;
+//	float dy = nodeCenter.y - enemyCenter.y;
+//
+//	sf::Vector2f dv(dx, dy);
+//	if (direction == Collision::Right || direction == Collision::Left) {
+//		float offset = enemyBox.width / 2 + nodeBox.width / 2 - std::abs(dx);
+//		if (direction == Collision::Left) offset *= -1;
+//		enemy.move(offset, 0);
+//	}
+//	else if (direction == Collision::Up || direction == Collision::Down) {
+//		float offset = enemyBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
+//		if (direction == Collision::Up) offset *= -1;
+//		enemy.move(0, offset);
+//	}
+//}
+//
+////TODO: refactoring
+//void World::adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction) {
+//	sf::FloatRect pickupBox = pickup.getBoundingRect();
+//	sf::FloatRect nodeBox = node.getBoundingRect();
+//
+//	sf::Vector2f pickupCenter = pickupBox.getPosition() + pickupBox.getSize() / 2.f;
+//	sf::Vector2f nodeCenter = nodeBox.getPosition() + nodeBox.getSize() / 2.f;
+//
+//	float dx = nodeCenter.x - pickupCenter.x;
+//	float dy = nodeCenter.y - pickupCenter.y;
+//
+//	sf::Vector2f dv(dx, dy);
+//	if (direction == Collision::Right || direction == Collision::Left) {
+//		float offset = pickupBox.width / 2 + nodeBox.width / 2 - std::abs(dx);
+//		if (direction == Collision::Left) offset *= -1;
+//		pickup.move(offset, 0);
+//	}
+//	else if (direction == Collision::Up || direction == Collision::Down) {
+//		float offset = pickupBox.height / 2 + nodeBox.height / 2 - std::abs(dy);
+//		if (direction == Collision::Up) offset *= -1;
+//		pickup.move(0, offset);
+//	}
+//}
 
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)

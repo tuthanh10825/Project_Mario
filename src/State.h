@@ -4,6 +4,8 @@
 #include <xutility>
 #include "ResourceHolder.h"
 #include "Player.h"
+#include "MusicPlayer.h"
+#include "SoundPlayer.h"
 class StateStack; 
 
 class State {
@@ -14,7 +16,9 @@ public:
 		TextureHolder* textures;
 		FontHolder* fonts;
 		Player* player;
-		Context(sf::RenderWindow&, TextureHolder&, FontHolder&, Player&);
+		MusicPlayer* musics; 
+		SoundPlayer* sounds; 
+		Context(sf::RenderWindow&, TextureHolder&, FontHolder&, Player&, MusicPlayer&, SoundPlayer&);
 	};
 public:
 	State(StateStack& stack, Context context);
@@ -27,7 +31,7 @@ protected:
 	void requestStackPush(States::ID stateId);
 	void requestStackPop();
 	void requestStateClear();
-	void requestStackPushGame(Level level);
+	void requestStackPushGame(Level level, Characters character);
 
 	Context getContext() const;
 

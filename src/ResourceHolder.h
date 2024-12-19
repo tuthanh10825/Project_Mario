@@ -5,6 +5,7 @@
 #include <exception>
 #include <sfml/Graphics/Texture.hpp>
 #include <sfml/Graphics/Font.hpp>
+#include <SFML/Audio.hpp>
 #include "ID.h"
 template<typename Resource, typename Identifier> 
 class ResourceHolder {
@@ -47,6 +48,6 @@ const Resource& ResourceHolder<Resource, Identifier>::get(Identifier id) const
 
 typedef ResourceHolder<sf::Texture, Textures::ID> TextureHolder;
 typedef ResourceHolder<sf::Font, Fonts::ID> FontHolder;
-
+typedef ResourceHolder<sf::SoundBuffer, SoundEffect::ID> SoundBufferHolder; 
 
 

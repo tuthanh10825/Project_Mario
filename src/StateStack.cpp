@@ -1,6 +1,6 @@
 #include "StateStack.h"
 
-StateStack::PendingChange::PendingChange(StateStack::Action action, States::ID stateID, Level level) : action(action), stateID(stateID), level(level) {}
+StateStack::PendingChange::PendingChange(StateStack::Action action, States::ID stateID, Level level, Characters character) : action(action), stateID(stateID), level(level), character(character) {}
 StateStack::StateStack(State::Context context) : context(context) {}
 
  
@@ -30,8 +30,8 @@ void StateStack::pushState(States::ID stateID)
 {
 	this->pendingList.push_back(PendingChange(Action::Push, stateID)); 
 }
-void StateStack::pushGameState(Level level) {
-	this->pendingList.push_back(PendingChange(Action::Push, States::Game, level));
+void StateStack::pushGameState(Level level, Characters character) {
+	this->pendingList.push_back(PendingChange(Action::Push, States::Game, level, character));
 }
 
 void StateStack::popState()
@@ -65,7 +65,7 @@ void StateStack::applyPendingChanges()
 		case Push: 
 			stack.push_back(createState(change.stateID));
 			if (change.stateID == States::Game) {
-				static_cast<GameState&>(*stack.back().get()).setLevel(change.level); 
+				static_cast<GameState&>(*stack.back().get()).setLevel(change.level, change.character); 
 			}
 			break; 
 		case Pop: 

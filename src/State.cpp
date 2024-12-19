@@ -1,8 +1,9 @@
 #include "State.h"
 #include "StateStack.h"
 State::Context::Context(sf::RenderWindow& window, TextureHolder& textureHolder,
-	FontHolder& fontHolder, Player& player) :
-	window(&window), textures(&textureHolder), fonts(&fontHolder), player(&player) {
+	FontHolder& fontHolder, Player& player, MusicPlayer& musics, SoundPlayer& sounds) :
+	window(&window), textures(&textureHolder), fonts(&fontHolder), player(&player), musics(&musics), sounds(&sounds)
+{
 
 }
 
@@ -22,8 +23,8 @@ void State::requestStateClear()
 {
 	stack->clearStates(); 
 }
-void State::requestStackPushGame(Level level) {
-	stack->pushGameState(level); 
+void State::requestStackPushGame(Level level, Characters character) {
+	stack->pushGameState(level, character); 
 }
 State::Context State::getContext() const
 {

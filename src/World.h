@@ -13,35 +13,42 @@
 #include <nlohmann/json.hpp>
 #include "Hub.h"
 #include "Projectile.h"
+#include "SoundNode.h" 
 
 using json = nlohmann::json;
 class World : private sf::NonCopyable {
 public: 
-	explicit World(sf::RenderWindow& window, TextureHolder& texture, Hub& hub); 
+	explicit World(sf::RenderWindow& window, TextureHolder& texture, Hub& hub, SoundPlayer& sounds); 
 	void update(sf::Time dt); 
 	void draw(); 
-	CommandQueue& getCommandQueue(); 
-	void buildScene(json& info);
-	void setWorldBound(sf::FloatRect& rect); 
 
+	CommandQueue& getCommandQueue();
+		
 	const sf::View& getView() const;
 
-	bool hasAlivePlayer() const;
+	void loadWorld(json& info, Characters character);
+	void setWorldBound(sf::FloatRect& rect);
 
+	bool hasAlivePlayer() const;
 	
 private:
-	void adaptPlayerVelocity(); 
-	void loadTextures(); 
-	void handleCollisions(); 
 
+
+	void buildScene();
+	void loadTextures();
+
+	void adaptPlayerVelocity(); 
+	void handleCollisions(); 
 	void updatePlayerView(sf::Time dt); 
 
-	void adjustChar(SceneNode& node, Collision::Direction direction); 
+	void spawnEnemies();
+	/*void adjustChar(SceneNode& node, Collision::Direction direction); 
 	void adjustEnemy(Enemy& enemy, SceneNode& node, Collision::Direction direction);
-	void adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction);
+	void adjustPickup(Pickup& pickup, SceneNode& node, Collision::Direction direction);*/
 private: 
 	enum Layer {
 		Background, 
+		Sound,
 		Air, 
 		LayerCount
 	};
@@ -61,11 +68,14 @@ private:
 	sf::RenderWindow& window; 
 	sf::View worldView; 
 	TextureHolder& textures; 
+	SoundPlayer& sounds; 
+
 	SceneNode sceneGraph; 
 	std::array<SceneNode*, LayerCount> sceneLayers; 
 
 	sf::Image tilesetImg;
 	std::map<json, sf::Texture> tileset; 
+
 	sf::FloatRect worldBounds; 
 	sf::Vector2f spawnPosition; 
 	float scrollSpeed; 
@@ -73,11 +83,13 @@ private:
 	CommandQueue commandQueue; 
 	std::vector<EnemyInfo> enemyInfo;
 	std::vector<Enemy*> enemies;
-	Command applyGravity; 
+	
+	Character::Type characterType;
 
 	Hub& hub; 
 	float time; 
 	Command setAir;
+	Command applyGravity;
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

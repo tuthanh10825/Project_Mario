@@ -7,13 +7,21 @@ private:
 		Level1,
 		Level2,
 		Level3,
-		Back
+		Character1,
+		Character2,
+		Back,
 	};
-	std::vector<sf::Sprite> options;
-	std::size_t optionIndex;
+	std::vector<sf::Sprite> levelOptions;
+	std::vector<sf::Sprite> charOptions;
+	std::size_t levelOptionIndex;
+	std::size_t charOptionIndex;
 	sf::Sprite backgroundSprite;
 	sf::Vector2i mButtonSize;
+	sf::Vector2i mCharSize;
 	sf::Sprite mArrow;
+	sf::Sprite mArrowChar;
+
+	bool mIsLevelSelected;
 
 public:
 

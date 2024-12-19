@@ -10,6 +10,13 @@ public:
 		Character1,
 		Character2,
 	};
+	enum State {
+		alive = 0,
+		movRight = 1,
+		movLeft = 2,
+		die = 3
+	};
+
 	explicit Character(Type type, TextureHolder& textures); 
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const; 
 	virtual unsigned getCategory() const; 

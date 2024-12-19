@@ -3,7 +3,7 @@
 #include <iostream>
 
 GameState::GameState(StateStack& stack, Context context) : State(stack, context), hub(context)
-    , world(*context.window, *context.textures, hub)
+    , world(*context.window, *context.textures, hub, *context.sounds)
 	, player(*context.player)
 {
 	std::ifstream file("mapsConfig.ldtk", std::ios_base::binary);
@@ -45,7 +45,8 @@ bool GameState::handleEvent(const sf::Event& event)
 
 }
 
-void GameState::setLevel(Level level)
+void GameState::setLevel(Level level, Characters character)
 {
-	world.buildScene(mapsConfig["levels"][level - 1]);
+	world.loadWorld(mapsConfig["levels"][level - 1], character);
 }
+
