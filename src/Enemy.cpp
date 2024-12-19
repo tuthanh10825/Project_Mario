@@ -78,14 +78,15 @@ void Enemy::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 	if (isDestroyed() && mDead.isFinished()) {
 		return;
 	}
+	if (isDestroyed() && showDead) {
+		target.draw(sprite, states);
+		return;
+	}
 	if (moveRight && !moveLeft) {
 		target.draw(mMovRight, states);
 	}
 	else if (moveLeft && !moveRight) {
 		target.draw(mMovLeft, states);
-	}
-	else if (isDestroyed() && showDead) {
-		target.draw(sprite, states);
 	}
 	else target.draw(sprite, states);
 }
@@ -103,7 +104,11 @@ sf::FloatRect Enemy::getBoundingRect() const
 void Enemy::updateCurrent(sf::Time dt)
 {
 	sf::Vector2f currVelo = getVelocity();
-	if (moveRight && !moveLeft) {
+	if (isDestroyed()) {
+		mDead.update(dt);
+		this->setVelocity(0, 0);
+	}
+	else if (moveRight && !moveLeft) {
 		this->setVelocity(80.f, currVelo.y);
 		mMovRight.update(dt);
 	}
@@ -111,11 +116,7 @@ void Enemy::updateCurrent(sf::Time dt)
 		this->setVelocity(-80.f, currVelo.y);
 		mMovLeft.update(dt);
 	}
-	else if (isDestroyed()) {
-		mDead.update(dt);
-		this->setVelocity(0, 0);
-	}
-
+	
 	Entity::updateCurrent(dt);
 }
 

@@ -14,7 +14,7 @@ time(0)
 	loadTextures(); 
 	worldView.setCenter(spawnPosition);
 
-	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup;
+	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
 	applyGravity.action = [](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
 		sf::Vector2f accel = entity.getAcceleration();
@@ -30,7 +30,7 @@ time(0)
 		}
 	};
 
-	setAir.category = Category::Player | Category::Enemy | Category::Pickup;
+	setAir.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
 	setAir.action = [](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
 		entity.setAir(true);
@@ -110,6 +110,9 @@ void World::update(sf::Time dt) {
 	
 	sceneGraph.onCommand(applyGravity, dt);
 	//update first
+	if (character->canFire()) {
+		commandQueue.push(character->getFireCommand());
+	}
 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
@@ -203,6 +206,7 @@ void World::loadTextures()
 	textures.load(Textures::GoombaMovLeft, "textures/GoombaMovLeft.png");
 	textures.load(Textures::GoombaDead, "textures/GoombaDead.png");
 	textures.load(Textures::Pickup, "textures/mushroom.png"); 
+	textures.load(Textures::Projectile, "textures/Projectile.png");
 }
 
 void World::buildScene() // we need to load the "front" world here.
@@ -377,6 +381,9 @@ void World::handleCollisions()
 			if (direction == Collision::Up) {
 				enemy.setAir(false);
 			}
+			else if (direction == Collision::Down) {
+				enemy.setVelocity(enemy.getVelocity().x, 0);
+			}
 		}
 
 		// enemy and movable block collision
@@ -395,6 +402,9 @@ void World::handleCollisions()
 			}
 			if (direction == Collision::Up) {
 				enemy.setAir(false);
+			}
+			else if (direction == Collision::Down) {
+				enemy.setVelocity(enemy.getVelocity().x, 0);
 			}
 		}
 
@@ -420,7 +430,7 @@ void World::handleCollisions()
 			}
 			if (direction == Collision::Up) {
 				enemy1.setAir(false);
-				enemy2.setAir(false);
+				enemy2.setAir(true);
 			}
 		}
 
@@ -503,6 +513,31 @@ void World::handleCollisions()
 				pair.first->fixPosition(*pair.second, direction); 
 			}
 			else pair.first->fixPosition(*pair.second, direction);
+		}
+
+		if (matchesCategories(pair, Category::Enemy, Category::Projectile)) {
+			auto& enemy = static_cast<Enemy&>(*pair.first);
+			auto& projectile = static_cast<Projectile&>(*pair.second);
+			enemy.damage(projectile.getDamage());
+			projectile.destroy();
+		}
+
+		if (matchesCategories(pair, Category::Projectile, Category::Block) || matchesCategories(pair, Category::Projectile, Category::MysteryBlock)) {
+			Collision::Direction direction = collisionType(*pair.first, *pair.second);
+			auto& projectile = static_cast<Projectile&>(*pair.first);
+			if (direction == Collision::Up) {
+				projectile.setAir(false);
+			}
+			else if (direction == Collision::Down) {
+				projectile.setVelocity(projectile.getVelocity().x, 0);
+			}
+			else if (direction == Collision::Left) {
+				projectile.destroy();
+			}
+			else if (direction == Collision::Right) {
+				projectile.destroy();
+			}
+			
 		}
 	}
 

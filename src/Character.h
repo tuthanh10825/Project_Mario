@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "ResourceHolder.h"
 #include "Animation.h"
+#include "Projectile.h"
 
 class Character : public Entity {
 public: 
@@ -31,7 +32,13 @@ public:
 	bool isMoveRight() const; 
 	bool isJump() const; 
 
+	void createProjectile(SceneNode& node, TextureHolder& textures, sf::Vector2f pos, Projectile::Type type);
 	
+	void setFire(bool fire);
+	bool isFire() const;
+	bool canFire() const;
+
+	Command getFireCommand();
 private: 
 
 	bool moveLeft; 
@@ -42,5 +49,7 @@ private:
 	sf::RectangleShape sprite; 
 	Animation mMovRight;
 	Animation mMovLeft;
-
+	bool fire;
+	sf::Time mFireCountdown;
+	Command mFireCommand;
 };

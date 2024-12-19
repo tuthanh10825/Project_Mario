@@ -12,6 +12,7 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 #include "Hub.h"
+#include "Projectile.h"
 #include "SoundNode.h" 
 
 using json = nlohmann::json;
@@ -87,10 +88,8 @@ private:
 
 	Hub& hub; 
 	float time; 
-
 	Command setAir;
 	Command applyGravity;
-
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

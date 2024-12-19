@@ -5,8 +5,6 @@
 #include <iostream>
 void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 {
-	
-
 	if (event.key.code == sf::Keyboard::Left) {
 		if (event.type == event.KeyPressed) {
 			Command moveLeft;
@@ -48,13 +46,10 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 			commands.push(stopRight);
 		}
 	}
-	
-	
 }
 
 void Player::handleRealtimeInput(CommandQueue& command)
 {
-
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 		Command jump;
 		jump.category = Category::Player;
@@ -73,10 +68,21 @@ void Player::handleRealtimeInput(CommandQueue& command)
 					};
 				command.push(jumpSound);
 			}
-			};
+		};
 		std::cout << "Space is Enter" << std::endl;
 		command.push(jump);
 
 		
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+		Command fire;
+		fire.category = Category::Player;
+		fire.action = [=](SceneNode& s, sf::Time dt) {
+			Character& mainChar = static_cast<Character&>(s);
+			if (!mainChar.isFire())
+				mainChar.setFire(true);
+		};
+		command.push(fire);
 	}
 }
