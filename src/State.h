@@ -20,6 +20,7 @@ public:
 		SoundPlayer* sounds; 
 		Context(sf::RenderWindow&, TextureHolder&, FontHolder&, Player&, MusicPlayer&, SoundPlayer&);
 	};
+	
 public:
 	State(StateStack& stack, Context context);
 	virtual ~State() {}

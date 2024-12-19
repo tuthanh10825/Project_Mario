@@ -45,8 +45,8 @@ bool GameState::handleEvent(const sf::Event& event)
 
 }
 
-void GameState::setLevel(Level level, Characters character)
+void GameState::setLevel(Level level, Character::Type type)
 {
-	world.loadWorld(mapsConfig["levels"][level - 1], character);
+	world.loadWorld(mapsConfig["levels"][level - 1], type);
 }
 

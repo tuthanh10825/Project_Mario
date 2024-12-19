@@ -3,7 +3,6 @@
 #include <cassert>
 World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub, SoundPlayer& sounds) :
 	window(window), textures(textures), hub(hub), sounds(sounds),
-	characterType(Character::Character1),
 	worldView(window.getDefaultView()),
 	spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
 	character(nullptr),
@@ -13,7 +12,7 @@ time(0)
 {
 	loadTextures(); 
 	worldView.setCenter(spawnPosition);
-
+	buildScene();
 	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
 	applyGravity.action = [](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
@@ -47,20 +46,26 @@ CommandQueue& World::getCommandQueue()
 	return commandQueue;
 }
 
-void World::loadWorld(json& info, Characters character)
+void World::loadWorld(json& info, Character::Type type)
 {
 	//can be improved here, since the path to the tileset is existing. 
 
-	if (character == Characters::Character1) {
-		characterType = Character::Character1;
+	std::unique_ptr<Character> tempPlayer(new Character(type, textures));
+
+	/*if (character == Characters::Character1) {
+		tempPlayer = std::make_unique<Character>(Character::Character1, textures);
 	}
+
 	else if (character == Characters::Character2) {
-		characterType = Character::Character2;
-	}
+		tempPlayer = std::make_unique<Character>(Character::Character2, textures);
+	}*/
 
-	buildScene();
 
-	assert(tilesetImg.loadFromFile("textures/tilesets.png"));
+	this->character = tempPlayer.get();
+	this->character->setPosition(spawnPosition);
+
+	sceneLayers[Air]->attachChild(std::move(tempPlayer));;
+
 	//TODO: refactoring
 	for (auto& blockInfo : info["layerInstances"][0]["gridTiles"]) {
 
@@ -230,23 +235,8 @@ void World::buildScene() // we need to load the "front" world here.
 	backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
 	sceneLayers[Background]->attachChild(std::move(backgroundSprite));
 
-	std::unique_ptr<Character> tempPlayer;
-
-	/*if (character == Characters::Character1) {
-		tempPlayer = std::make_unique<Character>(Character::Character1, textures);
-	}
-
-	else if (character == Characters::Character2) {
-		tempPlayer = std::make_unique<Character>(Character::Character2, textures);
-	}*/
-
-	tempPlayer = std::make_unique<Character>(characterType, textures);
-
-	this->character = tempPlayer.get();
-	this->character->setPosition(spawnPosition);
-
-	sceneLayers[Air]->attachChild(std::move(tempPlayer));;
 	
+	                   
 	std::unique_ptr<SoundNode> tempSoundNode(new SoundNode(sounds)); 
 	sceneLayers[Sound]->attachChild(std::move(tempSoundNode)); 
 
