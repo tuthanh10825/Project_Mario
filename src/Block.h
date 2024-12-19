@@ -6,6 +6,7 @@
 class Block : public Entity{
 public: 
 	explicit Block(sf::Texture &texture); 
+	explicit Block(sf::Texture& texture, const sf::IntRect& rectangle); 
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual unsigned getCategory() const; 
 
