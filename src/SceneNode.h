@@ -29,6 +29,8 @@ public:
 	void checkNodeCollision(SceneNode& node, std::set<Pair>& collisionPairs); 
 	void checkSceneCollision(SceneNode& sceneGraph, std::set<Pair>& collisionPairs);
 	void fixPosition(SceneNode& rhs, Collision::Direction direction); 
+	
+	void checkNodeIntersect(const sf::FloatRect& rect, std::vector<SceneNode*>& set);
 
 	virtual sf::FloatRect getBoundingRect() const; 
 	virtual bool isMarkedForRemoval() const;

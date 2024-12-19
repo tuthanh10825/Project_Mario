@@ -68,6 +68,7 @@ void World::loadWorld(json& info, Character::Type type)
 	
 	sf::IntRect textureRect(worldBounds);
 	background.setRepeated(true);
+	
 	std::unique_ptr<SpriteNode> backgroundSprite(
 		new SpriteNode(background, textureRect)
 	);
@@ -95,6 +96,7 @@ void World::loadWorld(json& info, Character::Type type)
 		else if (layerInstance["__identifier"] == "MysteryBlock") {
 			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
 				std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
+
 				mysBlock->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
 				//we can add the some property to create any pickup here. 
 				mysBlock->addItem(Pickup::Type::mushroom);
@@ -105,6 +107,12 @@ void World::loadWorld(json& info, Character::Type type)
 			sf::Texture& blockTileset = textures.get(Textures::BlockTileset); 
 			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
 				std::unique_ptr<Block> block(new Block(blockTileset, sf::IntRect(blockInfo["t"] * 36, 0, 36, 36)));
+
+				if (blockInfo["f"] == 0) block->setScale(1, 1);
+				else if (blockInfo["f"] == 1) block->setScale(-1, 1);
+				else if (blockInfo["f"] == 2) block->setScale(1, -1);
+				else if (blockInfo["f"] == 3) block->setScale(-1, -1); 
+
 				block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1])); 
 				sceneLayers[Air]->attachChild(std::move(block)); 
 			}
@@ -274,9 +282,20 @@ bool World::hasAlivePlayer() const
 
 void World::handleCollisions()
 {
+	std::vector<SceneNode*> checkingNodes; 
+
+	sceneLayers[Air]->checkNodeIntersect(sf::FloatRect(worldView.getCenter() - worldView.getSize() / 2.f, worldView.getSize()), checkingNodes);
+
 	std::set<SceneNode::Pair> collisionPairs; 
+	for (int i = 0; i < checkingNodes.size(); ++i) {
+		for (int j = i + 1; j < checkingNodes.size(); ++j) {
+			if (collision(*checkingNodes[i], *checkingNodes[j])) {
+				collisionPairs.insert(std::minmax(checkingNodes[i], checkingNodes[j])); 
+			}
+		}
+	}
 	//sceneGraph.checkSceneCollision(sceneGraph, collisionPairs);
-	sceneLayers[Air] -> checkSceneCollision(*sceneLayers[Air], collisionPairs);
+	//sceneLayers[Air] -> checkSceneCollision(*sceneLayers[Air], collisionPairs);
 
 	bool isAir = true; 
 	sf::Vector2f charVelocity = character->getVelocity();

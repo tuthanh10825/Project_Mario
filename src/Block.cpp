@@ -4,7 +4,7 @@ Block::Block(sf::Texture& texture) : Entity(1)
 {
 
 	sf::Vector2u boxSize = texture.getSize();
-	boundary.setOrigin(sf::Vector2f(boxSize.x / 2.f, boxSize.y / 2.f)); 
+	//boundary.setOrigin(sf::Vector2f(boxSize.x / 2.f, boxSize.y / 2.f)); 
 	
 	boundary.setSize(sf::Vector2f(boxSize.x, boxSize.y)); 
 	boundary.setTexture(&texture); 
