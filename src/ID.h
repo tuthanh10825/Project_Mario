@@ -56,7 +56,8 @@ namespace States {
 		Menu, 
 		LevelSelect,
 		Game, 
-		Pause
+		Pause,
+		Death,
 	};
 }
 namespace Category {

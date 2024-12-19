@@ -7,6 +7,7 @@
 #include "LevelSelectState.h"
 #include "MusicPlayer.h"
 #include "SoundPlayer.h"
+#include "DeathState.h"// *
 class Application {
 private: 
 
