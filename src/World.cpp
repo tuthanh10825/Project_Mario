@@ -77,10 +77,11 @@ void World::loadWorld(json& info, Characters character)
 			sceneLayers[Air]->attachChild(std::move(block));
 		}
 		else if (blockInfo["src"][0] == 600) {
-			enemyInfo.push_back({ Enemy::Goomba, sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]) });
+			enemyInfo.push_back({Enemy::Goomba, sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1])});
 		}
 		else {
 			std::unique_ptr<Block> block(new Block(blockTexture));
+
 			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
 			sceneLayers[Air]->attachChild(std::move(block));
 		}
