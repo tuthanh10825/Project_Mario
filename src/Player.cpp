@@ -63,7 +63,7 @@ void Player::handleRealtimeInput(CommandQueue& command)
 				mainChar.incrJump(); 
 				Command jumpSound;
 				jumpSound.category = Category::SceneNodeSound;
-				jumpSound.action = [=](SceneNode& s, sf::Time dt) {
+				jumpSound.action = [&](SceneNode& s, sf::Time dt) {
 					SoundNode& soundNode = static_cast<SoundNode&> (s);
 					soundNode.playSound(SoundEffect::Jump);
 					};
@@ -75,14 +75,22 @@ void Player::handleRealtimeInput(CommandQueue& command)
 
 		
 	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+	 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
 		Command fire;
 		fire.category = Category::Player;
-		fire.action = [=](SceneNode& s, sf::Time dt) {
+		fire.action = [&](SceneNode& s, sf::Time dt) {
 			Character& mainChar = static_cast<Character&>(s);
-			if (!mainChar.isFire())
+			if (!mainChar.isFire()) {
 				mainChar.setFire(true);
+				Command playFire; 
+				playFire.category = Category::SceneNodeSound; 
+				playFire.action = [&](SceneNode& s, sf::Time dt) {
+					SoundNode& soundNode = static_cast<SoundNode&> (s);
+					soundNode.playSound(SoundEffect::Fire);
+					};
+				command.push(playFire); 
+			}
 		};
 		command.push(fire);
 	}

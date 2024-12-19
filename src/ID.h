@@ -106,5 +106,6 @@ namespace SoundEffect {
 		Jump, 
 		Pause, 
 		ChangeOption, 
+		Fire, 
 	};
 }

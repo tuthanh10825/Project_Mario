@@ -5,6 +5,7 @@ SoundPlayer::SoundPlayer() : soundBuffers(), sounds()
 	soundBuffers.load(SoundEffect::ChangeOption, "music/change-option.wav"); 
 	soundBuffers.load(SoundEffect::Jump, "music/jump-small.wav"); 
 	soundBuffers.load(SoundEffect::Pause, "music/pause.wav"); 
+	soundBuffers.load(SoundEffect::Fire, "music/fireworks.wav"); 
 }
 void SoundPlayer::play(SoundEffect::ID effect) {
 	sounds.push_back(sf::Sound(soundBuffers.get(effect))); 
