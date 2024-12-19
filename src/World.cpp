@@ -293,6 +293,7 @@ void World::handleCollisions()
 			}
 			else if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
+				character->resetJump(); 
 			}
 			else if ((direction == Collision::Left) && charVelocity.x > 0) {
 				charVelocity.x = 0;
@@ -312,6 +313,7 @@ void World::handleCollisions()
 
 			if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
+				character->resetJump();
 			}
 			else if (direction == Collision::Down && charVelocity.y < 0) {
 				charVelocity.y = 0;

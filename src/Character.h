@@ -26,8 +26,12 @@ public:
 
 	void setMoveLeft(bool isMove); 
 	void setMoveRight(bool isMove); 
-	void setJump(bool isJump); 
-	
+	void setJump(bool isJump);
+
+	void incrJump(); 
+	short countJump(); 
+	void resetJump(); 
+
 	bool isMoveLeft() const; 
 	bool isMoveRight() const; 
 	bool isJump() const; 
@@ -44,6 +48,7 @@ private:
 	bool moveLeft; 
 	bool moveRight; 
 	bool jump; 
+	short jumpCount; 
 
 	Type type; 
 	sf::RectangleShape sprite; 

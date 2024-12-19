@@ -50,16 +50,17 @@ void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
 
 void Player::handleRealtimeInput(CommandQueue& command)
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 		Command jump;
 		jump.category = Category::Player;
 		jump.action = [&](SceneNode& s, sf::Time dt) {
 
 			Character& mainChar = static_cast<Character&> (s);
 			std::cout << "mainChar is on Air: " << mainChar.isAir() << std::endl;
-			if (!mainChar.isAir() && !mainChar.isJump())
+			if (mainChar.countJump() < 2)
 			{
 				mainChar.setJump(true);
+				mainChar.incrJump(); 
 				Command jumpSound;
 				jumpSound.category = Category::SceneNodeSound;
 				jumpSound.action = [=](SceneNode& s, sf::Time dt) {
@@ -75,7 +76,7 @@ void Player::handleRealtimeInput(CommandQueue& command)
 		
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 		Command fire;
 		fire.category = Category::Player;
 		fire.action = [=](SceneNode& s, sf::Time dt) {

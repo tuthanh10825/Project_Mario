@@ -53,6 +53,7 @@ Character::Character(Type type, TextureHolder& textures)
 	, moveLeft(false)
 	, moveRight(false)
 	, jump(false)
+	, jumpCount(0)
 	, fire(false)
 	, mFireCountdown(sf::Time::Zero)
 {
@@ -145,6 +146,18 @@ void Character::setMoveRight(bool isMove)
 void Character::setJump(bool isJump)
 {
 	this -> jump = isJump;
+}
+void Character::incrJump()
+{
+	++jumpCount;
+}
+short Character::countJump()
+{
+	return jumpCount; 
+}
+void Character::resetJump()
+{
+	jumpCount = 0; 
 }
 bool Character::isMoveLeft() const
 {
