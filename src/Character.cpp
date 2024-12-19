@@ -146,7 +146,7 @@ bool Character::isFire() const
 
 Command Character::getFireCommand()
 {
-	mFireCountdown = sf::seconds(0.5);
+	mFireCountdown = sf::seconds(1);
 	fire = false;
 	return mFireCommand;
 }

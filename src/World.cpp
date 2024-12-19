@@ -494,18 +494,19 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Projectile, Category::Block) || matchesCategories(pair, Category::Projectile, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& projectile = static_cast<Projectile&>(*pair.first);
-			if (direction == Collision::Left) {
-				projectile.destroy();
-			}
-			else if (direction == Collision::Right) {
-				projectile.destroy();
-			}
-			else if (direction == Collision::Up) {
+			if (direction == Collision::Up) {
 				projectile.setAir(false);
 			}
 			else if (direction == Collision::Down) {
 				projectile.setVelocity(projectile.getVelocity().x, 0);
 			}
+			else if (direction == Collision::Left) {
+				projectile.destroy();
+			}
+			else if (direction == Collision::Right) {
+				projectile.destroy();
+			}
+			
 		}
 	}
 

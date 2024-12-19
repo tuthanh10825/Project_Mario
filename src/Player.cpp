@@ -70,9 +70,9 @@ void Player::handleRealtimeInput(CommandQueue& command)
 		fire.category = Category::Player;
 		fire.action = [=](SceneNode& s, sf::Time dt) {
 			Character& mainChar = static_cast<Character&>(s);
-			mainChar.setFire(true);
+			if (!mainChar.isFire())
+				mainChar.setFire(true);
 		};
-		std::cout << "Fire is Enter" << std::endl;
 		command.push(fire);
 	}
 }
