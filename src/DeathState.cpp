@@ -29,6 +29,8 @@ DeathState::DeathState(StateStack& stateStack, Context context) : State(stateSta
     exitOption.setOrigin((bound2.left + bound2.width / 2.f), (bound2.top + bound2.height / 2.f));
     exitOption.setPosition(retryOption.getPosition() + sf::Vector2f(0.f, 100.f));
     options.push_back(exitOption);
+
+    
 }
 
 void DeathState::draw() {

@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "StateStack.h"
-#include <SFML/Graphics.hpp>
 
 class DeathState : public State {
 private:
@@ -13,6 +12,8 @@ private:
     std::vector<sf::Text> options;
     std::size_t optionIndex;
 
+    SoundPlayer die;
+    SoundPlayer gameOver;
 public:
     DeathState(StateStack& stateStack, Context context);
     virtual void draw();

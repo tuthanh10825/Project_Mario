@@ -103,6 +103,7 @@ namespace Music {
 	enum ID {
 		MenuTheme, 
 		MissionTheme, 
+		GameOverTheme,
 	};
 }
 namespace SoundEffect {
@@ -111,5 +112,6 @@ namespace SoundEffect {
 		Pause, 
 		ChangeOption, 
 		Fire, 
+		Die,
 	};
 }
