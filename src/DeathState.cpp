@@ -63,7 +63,7 @@ bool DeathState::handleEvent(const sf::Event& event) {
         if (optionIndex == Retry) {
             
            requestStateClear();
-           //ok
+           //ok djfldsf
            requestStackPushGame(level, character);
         }
         if (optionIndex == Exit) {
