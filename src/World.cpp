@@ -3,7 +3,6 @@
 #include <cassert>
 World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub, SoundPlayer& sounds) :
 	window(window), textures(textures), hub(hub), sounds(sounds),
-	characterType(Character::Character1),
 	worldView(window.getDefaultView()),
 	spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
 	character(nullptr),
@@ -13,6 +12,7 @@ time(0)
 {
 	loadTextures(); 
 	worldView.setCenter(spawnPosition);
+	buildScene();
 
 	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
 	applyGravity.action = [](SceneNode& s, sf::Time dt) {
@@ -47,44 +47,80 @@ CommandQueue& World::getCommandQueue()
 	return commandQueue;
 }
 
-void World::loadWorld(json& info, Characters character)
+void World::loadWorld(json& info, Character::Type type)
 {
 	//can be improved here, since the path to the tileset is existing. 
 
-	if (character == Characters::Character1) {
-		characterType = Character::Character1;
+	/*if (character == Characters::Character1) {
+		tempPlayer = std::make_unique<Character>(Character::Character1, textures);
 	}
+
 	else if (character == Characters::Character2) {
-		characterType = Character::Character2;
-	}
+		tempPlayer = std::make_unique<Character>(Character::Character2, textures);
+	}*/
+	
 
-	buildScene();
+	
 
-	assert(tilesetImg.loadFromFile("textures/tilesets.png"));
 	//TODO: refactoring
-	for (auto& blockInfo : info["layerInstances"][0]["gridTiles"]) {
+	
+	sf::Texture& background = textures.get(Textures::Background);
+	
+	sf::IntRect textureRect(worldBounds);
+	background.setRepeated(true);
+	
+	std::unique_ptr<SpriteNode> backgroundSprite(
+		new SpriteNode(background, textureRect)
+	);
+	backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
+	sceneLayers[Background]->attachChild(std::move(backgroundSprite));
 
-		if (tileset.find(blockInfo["src"]) == tileset.end()) {
-			tileset[blockInfo["src"]].loadFromImage(tilesetImg, sf::IntRect(blockInfo["src"][0], blockInfo["src"][1], 60, 60));
-		}
-		sf::Texture& blockTexture = tileset[blockInfo["src"]];
+	for (auto& layerInstance : info["layerInstances"]) {
+		if (layerInstance["__identifier"] == "Entities") {
+			for (auto& entity : layerInstance["entityInstances"]) {
+				if (entity["__identifier"] == "MC") {
+					std::unique_ptr<Character> MC(new Character(type, textures)); 
+					spawnPosition = sf::Vector2f(entity["__worldX"], entity["__worldY"]); 
+					character = MC.get();
+					MC.get()->setPosition(spawnPosition); 
+					sceneLayers[Air]->attachChild(std::move(MC)); 
+				}
+				else if (entity["__identifier"] == "Enemy1") {
+					//we can switch case of enemy in here. (Look at the json file)
+					enemyInfo.push_back({ Enemy::Goomba, sf::Vector2f(entity["px"][0], entity["px"][1]) });
+				}
 
+			}
 
-		if (blockInfo["src"][0] == 540) {
-			std::unique_ptr<MysteryBlock> block(new MysteryBlock(blockTexture));
-			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
-			block->addItem(Pickup::Type::mushroom);
-			sceneLayers[Air]->attachChild(std::move(block));
 		}
-		else if (blockInfo["src"][0] == 600) {
-			enemyInfo.push_back({ Enemy::Goomba, sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]) });
+		else if (layerInstance["__identifier"] == "MysteryBlock") {
+			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
+				std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
+
+				mysBlock->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+				//we can add the some property to create any pickup here. 
+				mysBlock->addItem(Pickup::Type::mushroom);
+				sceneLayers[Air]->attachChild(std::move(mysBlock));
+			}
 		}
-		else {
-			std::unique_ptr<Block> block(new Block(blockTexture));
-			block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
-			sceneLayers[Air]->attachChild(std::move(block));
+		else if (layerInstance["__identifier"] == "Block") {
+			sf::Texture& blockTileset = textures.get(Textures::BlockTileset); 
+			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
+				std::unique_ptr<Block> block(new Block(blockTileset, sf::IntRect(blockInfo["t"] * 36, 0, 36, 36)));
+
+				if (blockInfo["f"] == 0) block->setScale(1, 1);
+				else if (blockInfo["f"] == 1) block->setScale(-1, 1);
+				else if (blockInfo["f"] == 2) block->setScale(1, -1);
+				else if (blockInfo["f"] == 3) block->setScale(-1, -1); 
+
+				block->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1])); 
+				sceneLayers[Air]->attachChild(std::move(block)); 
+			}
+		
 		}
 	}
+
+
 	sort(enemyInfo.begin(), enemyInfo.end(), std::greater<EnemyInfo>());
 	hub.setHP(this->character->getHp());
 }
@@ -207,6 +243,8 @@ void World::loadTextures()
 	textures.load(Textures::GoombaDead, "textures/GoombaDead.png");
 	textures.load(Textures::Pickup, "textures/mushroom.png"); 
 	textures.load(Textures::Projectile, "textures/Projectile.png");
+	textures.load(Textures::BlockTileset, "textures/tilesets.png");
+	textures.load(Textures::MysteryBlock, "textures/MysteryBlock.png"); 
 }
 
 void World::buildScene() // we need to load the "front" world here.
@@ -219,33 +257,10 @@ void World::buildScene() // we need to load the "front" world here.
 	sceneLayers[Air]->setCategory(Category::SceneNodeAir);
 
 	//can be improved here, since the path to the background is existing. 
-	sf::Texture& background = textures.get(Textures::Background);
-	sf::IntRect textureRect(worldBounds);
-
-	background.setRepeated(true);
-	std::unique_ptr<SpriteNode> backgroundSprite(
-		new SpriteNode(background, textureRect)
-	);
-	backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
-	sceneLayers[Background]->attachChild(std::move(backgroundSprite));
-
-	std::unique_ptr<Character> tempPlayer;
-
-	/*if (character == Characters::Character1) {
-		tempPlayer = std::make_unique<Character>(Character::Character1, textures);
-	}
-
-	else if (character == Characters::Character2) {
-		tempPlayer = std::make_unique<Character>(Character::Character2, textures);
-	}*/
-
-	tempPlayer = std::make_unique<Character>(characterType, textures);
-
-	this->character = tempPlayer.get();
-	this->character->setPosition(spawnPosition);
-
-	sceneLayers[Air]->attachChild(std::move(tempPlayer));;
 	
+
+	
+	                   
 	std::unique_ptr<SoundNode> tempSoundNode(new SoundNode(sounds)); 
 	sceneLayers[Sound]->attachChild(std::move(tempSoundNode)); 
 
@@ -267,9 +282,20 @@ bool World::hasAlivePlayer() const
 
 void World::handleCollisions()
 {
+	std::vector<SceneNode*> checkingNodes; 
+
+	sceneLayers[Air]->checkNodeIntersect(sf::FloatRect(worldView.getCenter() - worldView.getSize() / 2.f, worldView.getSize()), checkingNodes);
+
 	std::set<SceneNode::Pair> collisionPairs; 
+	for (int i = 0; i < checkingNodes.size(); ++i) {
+		for (int j = i + 1; j < checkingNodes.size(); ++j) {
+			if (collision(*checkingNodes[i], *checkingNodes[j])) {
+				collisionPairs.insert(std::minmax(checkingNodes[i], checkingNodes[j])); 
+			}
+		}
+	}
 	//sceneGraph.checkSceneCollision(sceneGraph, collisionPairs);
-	sceneLayers[Air] -> checkSceneCollision(*sceneLayers[Air], collisionPairs);
+	//sceneLayers[Air] -> checkSceneCollision(*sceneLayers[Air], collisionPairs);
 
 	bool isAir = true; 
 	sf::Vector2f charVelocity = character->getVelocity();

@@ -188,7 +188,8 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 					requestStackPushGame(Level::Medium, Characters::Character1);
 				}
 				if (levelOptionIndex == Level3) {
-
+					requestStackPop();
+					requestStackPushGame(Level::Hard, Characters::Character1);
 				}
 			}
 			if (charOptionIndex + 3 == Character2) {
@@ -201,7 +202,8 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 					requestStackPushGame(Level::Medium, Characters::Character2);
 				}
 				if (levelOptionIndex == Level3) {
-
+					requestStackPop();
+					requestStackPushGame(Level::Hard, Characters::Character2);
 				}
 			}
 			if (charOptionIndex + 3 == Back) {

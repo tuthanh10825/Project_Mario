@@ -28,6 +28,8 @@ namespace Textures {
 		Projectile,
 		Char1Select,
 		Char2Select,
+		BlockTileset,
+		MysteryBlock, 
 	};
 }
 

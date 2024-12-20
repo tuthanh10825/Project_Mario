@@ -87,6 +87,14 @@ void SceneNode::fixPosition(SceneNode& node, Collision::Direction direction)
 	}
 }
 
+void SceneNode::checkNodeIntersect(const sf::FloatRect& rect, std::vector<SceneNode*> &list)
+{
+	if (rect.intersects(getBoundingRect())) list.push_back(this);
+	for (Ptr& child : children) {
+		child->checkNodeIntersect(rect, list); 
+	}
+}
+
 sf::FloatRect SceneNode::getBoundingRect() const
 {
 	return sf::FloatRect();

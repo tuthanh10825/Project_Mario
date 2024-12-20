@@ -11,7 +11,7 @@ public:
 	virtual void draw(); 
 	virtual bool update(sf::Time dt); 
 	virtual bool handleEvent(const sf::Event& event); 
-	void setLevel(Level level, Characters character);
+	void setLevel(Level level, Character::Type type);
 private: 
 	json mapsConfig; 
 	World world; 

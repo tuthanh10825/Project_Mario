@@ -2,7 +2,8 @@
 
 StateStack::PendingChange::PendingChange(StateStack::Action action, States::ID stateID, Level level, Characters character) : action(action), stateID(stateID), level(level), character(character) {}
 StateStack::StateStack(State::Context context) : context(context) {}
-
+class Character; 
+enum Character::Type; 
  
 void StateStack::update(sf::Time dt)
 {
@@ -65,7 +66,18 @@ void StateStack::applyPendingChanges()
 		case Push: 
 			stack.push_back(createState(change.stateID));
 			if (change.stateID == States::Game) {
-				static_cast<GameState&>(*stack.back().get()).setLevel(change.level, change.character); 
+				assert(change.character != Characters::CharNone);
+				switch (change.character) {
+				case Characters::Character1: 
+						static_cast<GameState&>(*stack.back().get()).setLevel(change.level, Character::Character1);
+						break; 
+				case Characters::Character2: 
+						static_cast<GameState&>(*stack.back().get()).setLevel(change.level, Character::Character2);
+						break; 
+				default: 
+					throw; 
+				}
+				
 			}
 			break; 
 		case Pop: 

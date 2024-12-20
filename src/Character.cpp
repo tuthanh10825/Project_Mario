@@ -69,7 +69,7 @@ Character::Character(Type type, TextureHolder& textures)
 	sprite.setOutlineThickness(-2);
 #endif // _DEBUG
 
-	mMovRight.setFrameSize(sf::Vector2i(60, 120));
+	mMovRight.setFrameSize(sf::Vector2i(36, 72));
 	mMovRight.setNumFrames(5);
 	mMovRight.setDuration(sf::seconds(0.8));
 	mMovRight.setRepeating(true);
@@ -78,7 +78,7 @@ Character::Character(Type type, TextureHolder& textures)
 
 	centerOrigin(mMovRight);
 
-	mMovLeft.setFrameSize(sf::Vector2i(60, 120));
+	mMovLeft.setFrameSize(sf::Vector2i(36, 72));
 	mMovLeft.setNumFrames(5);
 	mMovLeft.setDuration(sf::seconds(0.8));
 	mMovLeft.setRepeating(true);
