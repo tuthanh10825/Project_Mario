@@ -26,7 +26,7 @@ bool GameState::update(sf::Time dt)
 	hub.updateView(world.getView()); 
 
 	if (!world.hasAlivePlayer()) {
-		requestStackPush(States::Pause);
+		requestStackPush(States::Death);
 	}
 
 	return false; 

@@ -182,28 +182,40 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 				if (levelOptionIndex == Level1) {
 					requestStackPop();
 					requestStackPushGame(Level::Easy, Characters::Character1);
+					//updateLevel(Level::Easy);
+					//updateCharacter(Characters::Character1);
 				}
 				if (levelOptionIndex == Level2) {
 					requestStackPop();
 					requestStackPushGame(Level::Medium, Characters::Character1);
+					//updateLevel(Level::Medium);
+					//updateCharacter(Characters::Character1);
 				}
 				if (levelOptionIndex == Level3) {
 					requestStackPop();
 					requestStackPushGame(Level::Hard, Characters::Character1);
+					//updateLevel(Level::Hard);
+					//updateCharacter(Characters::Character1);
 				}
 			}
 			if (charOptionIndex + 3 == Character2) {
 				if (levelOptionIndex == Level1) {
 					requestStackPop();
 					requestStackPushGame(Level::Easy, Characters::Character2);
+					updateLevel(Level::Easy);
+					updateCharacter(Characters::Character2);
 				}
 				if (levelOptionIndex == Level2) {
 					requestStackPop();
 					requestStackPushGame(Level::Medium, Characters::Character2);
+					updateLevel(Level::Medium);
+					updateCharacter(Characters::Character2);
 				}
 				if (levelOptionIndex == Level3) {
 					requestStackPop();
 					requestStackPushGame(Level::Hard, Characters::Character2);
+					updateLevel(Level::Hard);
+					updateCharacter(Characters::Character2);
 				}
 			}
 			if (charOptionIndex + 3 == Back) {

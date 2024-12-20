@@ -1,5 +1,5 @@
 ﻿#include "DeathState.h"
-
+#include <iostream>
 DeathState::DeathState(StateStack& stateStack, Context context) : State(stateStack, context), optionIndex(0) {
     sf::RenderWindow& window = *getContext().window;
 
@@ -50,18 +50,24 @@ bool DeathState::handleEvent(const sf::Event& event) {
         else optionIndex = options.size() - 1;
         getContext().sounds->play(SoundEffect::ChangeOption);
         updateOptionText();
+
     }
     else if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Down) {
         if (optionIndex < options.size() - 1) ++optionIndex;
         else optionIndex = 0;
         getContext().sounds->play(SoundEffect::ChangeOption);
         updateOptionText();
+
     }
     else if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {
         if (optionIndex == Retry) {
-            requestStackPop(); // Retry the level or restart
+            
+           requestStateClear();
+
+           requestStackPushGame(level, character);
         }
         if (optionIndex == Exit) {
+            
             requestStateClear();
             requestStackPush(States::LevelSelect); // Go to the level selection screen
         }
