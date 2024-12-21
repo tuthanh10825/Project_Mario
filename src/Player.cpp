@@ -81,7 +81,7 @@ void Player::handleRealtimeInput(CommandQueue& command)
 		fire.category = Category::Player;
 		fire.action = [&](SceneNode& s, sf::Time dt) {
 			Character& mainChar = static_cast<Character&>(s);
-			if (!mainChar.isFire()) {
+			if (mainChar.isFire()) {
 				mainChar.setFire(true);
 				Command playFire; 
 				playFire.category = Category::SceneNodeSound; 

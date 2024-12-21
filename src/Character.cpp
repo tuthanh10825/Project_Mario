@@ -92,6 +92,8 @@ Character::Character(Type type, TextureHolder& textures)
 		sf::Vector2f pos = getWorldPosition();
 		pos.y += 12.f;
 		createProjectile(node, textures, pos, Projectile::CharBullet);
+		fire = false;
+		mFireCountdown = sf::seconds(1.f);
 		};
 }
 
@@ -126,10 +128,11 @@ void Character::updateCurrent(sf::Time dt)
 	else if (moveLeft) {
 		mMovLeft.update(dt);
 	}
-	if (mFireCountdown > sf::Time::Zero)
-		mFireCountdown -= dt;
-	if (mFireCountdown < sf::Time::Zero)
+	
+	if (mFireCountdown <= sf::Time::Zero)
 		mFireCountdown = sf::Time::Zero;
+	else if (mFireCountdown > sf::Time::Zero)
+		mFireCountdown -= dt;
 	Entity::updateCurrent(dt);
 }
 
@@ -191,16 +194,14 @@ void Character::setFire(bool fire)
 
 bool Character::isFire() const
 {
-	return fire;
+	return (fire == 0) && mFireCountdown == sf::Time::Zero;
 }
 
 Command Character::getFireCommand()
 {
-	mFireCountdown = sf::seconds(1);
-	fire = false;
 	return mFireCommand;
 }
 
 bool Character::canFire() const {
-	return fire && mFireCountdown == sf::Time::Zero;
+	return (fire == 1) && (mFireCountdown == sf::Time::Zero);
 }
