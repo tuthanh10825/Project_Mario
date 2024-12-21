@@ -5,7 +5,7 @@ class SoundPlayer : private sf::NonCopyable {
 public: 
 	SoundPlayer(); 
 	void play(SoundEffect::ID effect); 
-	
+	void setVolume(int volumeLevel);
 	void removeStoppedSounds();
 
 private: 

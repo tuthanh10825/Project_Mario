@@ -1,5 +1,7 @@
 #include "Application.h"
 
+
+Application* Application::instance = nullptr;
 const sf::Time Application::timePerFrame = sf::seconds(1.f / 60.f);
 void Application::processInput()
 {

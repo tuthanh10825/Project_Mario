@@ -17,3 +17,10 @@ void SoundPlayer::removeStoppedSounds() {
 		return s.getStatus() == sf::Sound::Stopped;
 		});
 }
+
+void SoundPlayer::setVolume(int volumeLevel) {
+	volumeLevel = std::clamp(volumeLevel, 0, 100);
+	for (sf::Sound& sound : sounds) {
+		sound.setVolume(static_cast<float>(volumeLevel));
+	}
+}
