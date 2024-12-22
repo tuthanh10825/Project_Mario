@@ -8,7 +8,7 @@
 #include "MusicPlayer.h"
 #include "SoundPlayer.h"
 #include "DeathState.h"// *
-class Application {
+class Application : sf::NonCopyable {
 private: 
 
 	static const sf::Time timePerFrame; 
@@ -19,7 +19,6 @@ private:
 	Player player; 
 	MusicPlayer musics; 
 	SoundPlayer sounds; 
-	static Application* instance;
 
 private:
 	void processInput(); 
@@ -31,14 +30,6 @@ private:
 public: 
 	void run(); 
 	Application(); 
-	MusicPlayer& music() {
-		return musics;
-	}
-	static Application* getInstance() {
-		if (instance == nullptr) {
-			instance = new Application();
-		}
-		return instance;
-	}
+
 	~Application(); 
 };

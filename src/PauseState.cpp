@@ -136,12 +136,12 @@ void PauseState::decreaseVolume() {
     volumeLevel = std::max(0.0f, volumeLevel - 1.0f);
     sliderHandle.setPosition(sliderBar.getPosition() + sf::Vector2f(sliderBar.getSize().x * (volumeLevel / 100.f), 0.f));
     std::cout << volumeLevel << std::endl;
-    Application::getInstance()->music().setVolume(volumeLevel);
+    getContext().musics->setVolume(volumeLevel); 
 }
 
 void PauseState::increaseVolume() {
     volumeLevel = std::min(100.0f, volumeLevel + 1.0f);
     sliderHandle.setPosition(sliderBar.getPosition() + sf::Vector2f(sliderBar.getSize().x * (volumeLevel / 100.f), 0.f));
     std::cout << volumeLevel << std::endl;
-    Application::getInstance()->music().setVolume(volumeLevel);
+    getContext().musics->setVolume(volumeLevel);
 }

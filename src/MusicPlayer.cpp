@@ -26,4 +26,10 @@ void MusicPlayer::setPaused(bool paused) {
 void MusicPlayer::setVolume(float volume)
 {
 	this->volume = volume;
+	music.setVolume(volume); 
+}
+
+float MusicPlayer::getVolume() const
+{
+	return volume;
 }

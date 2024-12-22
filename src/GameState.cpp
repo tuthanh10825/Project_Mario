@@ -26,6 +26,11 @@ bool GameState::update(sf::Time dt)
 	hub.updateView(world.getView()); 
 
 	if (!world.hasAlivePlayer()) {
+		getContext().musics->setPaused(true); 
+		getContext().sounds->play(SoundEffect::Die); 
+		sf::sleep(sf::seconds(3)); 
+		getContext().musics->setPaused(false); 
+
 		requestStackPush(States::Death);
 	}
 
