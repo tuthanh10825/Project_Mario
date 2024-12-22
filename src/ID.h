@@ -34,6 +34,7 @@ namespace Textures {
 		Bird,
 		BirdMovRight,
 		BirdMovLeft,
+		Win
 	};
 }
 
@@ -65,6 +66,7 @@ namespace States {
 		Game, 
 		Pause,
 		Death,
+		Win, 
 	};
 }
 namespace Category {
@@ -106,8 +108,6 @@ namespace Collision {
 namespace Music {
 	enum ID {
 		MenuTheme, 
-		MissionTheme, 
-		GameOverTheme,
 	};
 }
 namespace SoundEffect {
@@ -117,5 +117,6 @@ namespace SoundEffect {
 		ChangeOption, 
 		Fire, 
 		Die,
+		Win,
 	};
 }

@@ -34,6 +34,14 @@ bool GameState::update(sf::Time dt)
 		requestStackPushDeath(currLevel, currChar);
 	}
 
+	if (world.playerReachBound()) // winning condition
+	{
+		getContext().musics->setPaused(true);
+		getContext().sounds->play(SoundEffect::Win);
+		sf::sleep(sf::seconds(5));
+		getContext().musics->setPaused(false); 
+		requestStackPush(States::Win); 
+	}
 	return false; 
 }
 

@@ -35,6 +35,13 @@ time(0)
 		Entity& entity = static_cast<Entity&> (s);
 		entity.setAir(true);
 	};
+	markingRemove.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
+	markingRemove.action = [&](SceneNode& s, sf::Time dt) {
+		Entity& entity = static_cast<Entity&>(s);
+		if (entity.getWorldPosition().y >= worldBounds.getPosition().y + worldBounds.getSize().y + 200) {
+			entity.destroy();
+		}
+		}; 
 }
 void World::draw()
 {
@@ -155,7 +162,7 @@ void World::update(sf::Time dt) {
 	if (character->canFire()) {
 		commandQueue.push(character->getFireCommand());
 	}
-
+	sceneGraph.onCommand(markingRemove, dt); 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
 	}
@@ -288,6 +295,11 @@ const sf::View& World::getView() const
 bool World::hasAlivePlayer() const
 {
 	return !character->isDestroyed();
+}
+
+bool World::playerReachBound() const
+{
+	return character->getPosition().x >= (worldBounds.getPosition().x + worldBounds.getSize().x);
 }
 
 void World::handleCollisions()
