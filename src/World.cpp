@@ -105,7 +105,7 @@ void World::loadWorld(json& info, Character::Type type)
 
 				mysBlock->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
 				//we can add the some property to create any pickup here. 
-				mysBlock->addItem(Pickup::Type::mushroom);
+				mysBlock->addItem(Pickup::Type::Mushroom);
 				sceneLayers[Air]->attachChild(std::move(mysBlock));
 			}
 		}
@@ -246,7 +246,9 @@ void World::loadTextures()
 	textures.load(Textures::Goomba, "textures/Goomba.png");
 	textures.load(Textures::GoombaMove, "textures/GoombaMove.png");
 	textures.load(Textures::GoombaDead, "textures/GoombaDead.png");
-	textures.load(Textures::Pickup, "textures/mushroom.png"); 
+	textures.load(Textures::Mushroom, "textures/Mushroom.png");
+	textures.load(Textures::FireFlower, "textures/FireFlower.png");
+	textures.load(Textures::Coin, "textures/Coin.png");
 	textures.load(Textures::Projectile, "textures/Projectile.png");
 	textures.load(Textures::BlockTileset, "textures/tilesets.png");
 	textures.load(Textures::MysteryBlock, "textures/MysteryBlock.png"); 

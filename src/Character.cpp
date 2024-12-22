@@ -205,3 +205,23 @@ Command Character::getFireCommand()
 bool Character::canFire() const {
 	return (fire == 1) && (mFireCountdown == sf::Time::Zero);
 }
+
+void Character::incrPoint(int point)
+{
+	this->point += point;
+}
+
+int Character::getPoint() const
+{
+	return point;
+}
+
+bool Character::hasFire() const
+{
+	return hasFireFlower;
+}
+
+void Character::setHasFireFlower(bool hasFire)
+{
+	hasFireFlower = hasFire;
+}

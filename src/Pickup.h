@@ -9,9 +9,10 @@ class Pickup : public Entity
 public: 
 	enum Type 
 	{
-		mushroom,
-		coin,
-		fireFlower,
+		Mushroom,
+		Coin,
+		FireFlower,
+		TypeCount
 	};
 public:
 	explicit Pickup(Type type, TextureHolder& textures);
@@ -30,6 +31,4 @@ private:
 	bool moveRight;
 	bool moveLeft;
 	sf::RectangleShape sprite;
-	Animation mMovRight;
-	Animation mMovLeft;
 };

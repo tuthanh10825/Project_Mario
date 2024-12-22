@@ -1,5 +1,8 @@
 #include "DataTable.h"
 #include "Enemy.h"
+#include "Pickup.h"
+#include "Character.h"
+
 
 std::vector<EnemyData> initializeEnemyData()
 {
@@ -35,6 +38,22 @@ std::vector<EnemyData> initializeEnemyData()
 	data[Enemy::Bird].isFly = true;
 	data[Enemy::Bird].frameSize = sf::Vector2i(36.f, 36.f);
 
+
+	return data;
+}
+
+std::vector<PickupData> initializePickupData()
+{
+	std::vector<PickupData> data(Pickup::TypeCount);
+
+	data[Pickup::Coin].action = [](Character& c) { c.incrPoint(100); };
+	data[Pickup::Coin].texture = Textures::Coin;
+
+	data[Pickup::Mushroom].action = [](Character& c) { c.heal(1); };
+	data[Pickup::Mushroom].texture = Textures::Mushroom;
+
+	data[Pickup::FireFlower].action = [](Character& c) { c.incrPoint(100); c.setHasFireFlower(true); };
+	data[Pickup::FireFlower].texture = Textures::FireFlower;
 
 	return data;
 }

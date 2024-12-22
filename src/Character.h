@@ -42,6 +42,12 @@ public:
 	bool isFire() const;
 	bool canFire() const;
 
+	void incrPoint(int point);
+	int getPoint() const;
+
+	bool hasFire() const;
+	void setHasFireFlower(bool hasFireFlower);
+
 	Command getFireCommand();
 private: 
 
@@ -49,6 +55,8 @@ private:
 	bool moveRight; 
 	bool jump; 
 	short jumpCount; 
+	int point;
+	bool hasFireFlower;
 
 	Type type; 
 	sf::RectangleShape sprite; 

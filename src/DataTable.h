@@ -8,6 +8,8 @@
 
 #include "ID.h"
 
+class Character;
+
 struct EnemyData {
 	int hp;
 	Textures::ID movLU;
@@ -20,4 +22,10 @@ struct EnemyData {
 	sf::Vector2i frameSize;
 };
 
+struct PickupData {
+	std::function<void(Character&)> action;
+	Textures::ID texture;
+};
+
 std::vector<EnemyData> initializeEnemyData();
+std::vector<PickupData> initializePickupData();
