@@ -73,8 +73,6 @@ private:
 	SceneNode sceneGraph; 
 	std::array<SceneNode*, LayerCount> sceneLayers; 
 
-	sf::Image tilesetImg;
-	std::map<json, sf::Texture> tileset; 
 
 	sf::FloatRect worldBounds; 
 	sf::Vector2f spawnPosition; 
