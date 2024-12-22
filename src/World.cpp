@@ -305,17 +305,20 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Player, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			pair.first->fixPosition(*pair.second, direction);
+			auto& mysteryBlock = static_cast<MysteryBlock&>(*pair.second);
 
 
 			if (direction == Collision::Down) {
 				charVelocity.y = 0;
-				static_cast<MysteryBlock&>(*pair.second).setMove(-character->getVelocity().y);
-				Command createPickupCommand; 
-				createPickupCommand.category = Category::SceneNodeAir; 
-				createPickupCommand.action = [pair, this](SceneNode& node, sf::Time) {
-					static_cast<MysteryBlock&>(*pair.second).createPickup(node, textures);
-				};
-				commandQueue.push(createPickupCommand);
+				if (mysteryBlock.hasItem()) {
+					mysteryBlock.setMove(character->getVelocity().y);
+					Command createPickupCommand;
+					createPickupCommand.category = Category::SceneNodeAir;
+					createPickupCommand.action = [pair, this](SceneNode& node, sf::Time) {
+						static_cast<MysteryBlock&>(*pair.second).createPickup(node, textures);
+						};
+					commandQueue.push(createPickupCommand);
+				}
 			}
 			else if (direction == Collision::Up && charVelocity.y >= -10) {
 				isAir = false;
@@ -396,6 +399,7 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Enemy, Category::Block)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& enemy = static_cast<Enemy&>(*pair.first);
+			auto& block = static_cast<Block&>(*pair.second);
 			pair.first->fixPosition(*pair.second, direction);
 
 			if (direction == Collision::Left) {
@@ -408,6 +412,11 @@ void World::handleCollisions()
 			}
 			if (direction == Collision::Up) {
 				enemy.setAir(false);
+				if (block.getVelocity().y != 0) {
+					enemy.setMoveRight(false);
+					enemy.setMoveLeft(false);
+					enemy.destroy();
+				}
 			}
 			else if (direction == Collision::Down) {
 				enemy.setVelocity(enemy.getVelocity().x, 0);
@@ -418,6 +427,7 @@ void World::handleCollisions()
 		if (matchesCategories(pair, Category::Enemy, Category::MysteryBlock)) {
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& enemy = static_cast<Enemy&>(*pair.first);
+			auto& block = static_cast<MysteryBlock&>(*pair.second);
 			pair.first->fixPosition(*pair.second, direction);
 
 			if (direction == Collision::Left) {
@@ -430,6 +440,11 @@ void World::handleCollisions()
 			}
 			if (direction == Collision::Up) {
 				enemy.setAir(false);
+				if (block.getVelocity().y != 0) {
+					enemy.setMoveRight(false);
+					enemy.setMoveLeft(false);
+					enemy.destroy();
+				}
 			}
 			else if (direction == Collision::Down) {
 				enemy.setVelocity(enemy.getVelocity().x, 0);
@@ -460,6 +475,10 @@ void World::handleCollisions()
 				enemy1.setAir(false);
 				enemy2.setAir(true);
 			}
+			else if (direction == Collision::Down) {
+				enemy1.setAir(true);
+				enemy2.setAir(false);
+			}
 		}
 
 		if (matchesCategories(pair, Category::Pickup, Category::MysteryBlock)) {
@@ -486,6 +505,9 @@ void World::handleCollisions()
 			auto& pickup = static_cast<Pickup&>(*pair.first);
 			pair.first->fixPosition(*pair.second, direction);
 			if (direction == Collision::Up) {
+				if (pickup.getVelocity().y >= 0 && pickup.getVelocity().x == 0) {
+					pickup.setMoveRight(true);
+				}
 				pickup.setAir(false);
 			}
 			if (direction == Collision::Right) {
@@ -514,6 +536,15 @@ void World::handleCollisions()
 				enemy.setMoveRight(false);
 				enemy.setMoveLeft(true);
 			}
+			if (direction == Collision::Up) {
+				if (pickup.getVelocity().y >= 0 && pickup.getVelocity().x == 0) {
+					pickup.setMoveRight(true);
+				}
+				pickup.setAir(false);
+			}
+			else if (direction == Collision::Down) {
+				enemy.setAir(false);
+			}
 		}
 
 		if (matchesCategories(pair, Category::Pickup, Category::Pickup)) {
@@ -534,13 +565,13 @@ void World::handleCollisions()
 			}
 			if (direction == Collision::Up) {
 				pickup1.setAir(false);
-				pair.first->fixPosition(*pair.second, direction);
+				pickup1.fixPosition(pickup2, direction);
 			}
 			else if (direction == Collision::Down) {
 				pickup2.setAir(false);
-				pair.first->fixPosition(*pair.second, direction); 
+				pickup2.fixPosition(pickup1, direction); 
 			}
-			else pair.first->fixPosition(*pair.second, direction);
+			pickup1.fixPosition(pickup2, direction);
 		}
 
 		if (matchesCategories(pair, Category::Enemy, Category::Projectile)) {
