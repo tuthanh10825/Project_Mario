@@ -12,6 +12,7 @@ public:
 	void setPaused(bool paused); 
 	void setVolume(float volume); 
 
+	float getVolume() const; 
 private: 
 	sf::Music music; 
 	std::map<Music::ID, std::string> filenames; 

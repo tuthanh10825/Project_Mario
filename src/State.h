@@ -27,18 +27,15 @@ public:
 	virtual void draw() = 0;
 	virtual bool update(sf::Time dt) = 0;
 	virtual bool handleEvent(const sf::Event& event) = 0;
-	static void updateLevel(Level mLevel);
-	static void updateCharacter(Characters mCharacter);
 
 protected:
 	void requestStackPush(States::ID stateId);
 	void requestStackPop();
 	void requestStateClear();
 	void requestStackPushGame(Level level, Characters character);
+	void requestStackPushDeath(Level, Characters character); 
 
 	Context getContext() const;
-	static Level level;
-	static Characters character;
 private:
 	StateStack* stack;
 	Context context;

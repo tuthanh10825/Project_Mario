@@ -5,6 +5,7 @@
 #include "ID.h"
 #include "State.h"
 #include "GameState.h"
+#include "DeathState.h"
 
 class StateStack :private sf::NonCopyable {
 public: 
@@ -25,6 +26,7 @@ public:
 
 	void pushState(States::ID stateID);
 	void pushGameState(Level level, Characters character); 
+	void pushDeathState(Level level, Characters character); 
 	void popState();
 	void clearStates(); 
 	bool isEmpty() const; 

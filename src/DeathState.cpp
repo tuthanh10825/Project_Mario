@@ -65,7 +65,8 @@ bool DeathState::handleEvent(const sf::Event& event) {
         if (optionIndex == Retry) {
             
            requestStateClear();
-           requestStackPushGame(level, character);
+           requestStackPushGame(lastLevel, lastChar); 
+            
         }
         if (optionIndex == Exit) {
             
@@ -75,6 +76,13 @@ bool DeathState::handleEvent(const sf::Event& event) {
     }
     return false;
 }
+
+void DeathState::setLevel(Level level, Characters character)
+{
+    lastLevel = level; 
+    lastChar = character; 
+}
+
 
 void DeathState::updateOptionText() {
     if (options.empty()) return;

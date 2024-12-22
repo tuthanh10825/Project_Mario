@@ -35,6 +35,11 @@ void StateStack::pushGameState(Level level, Characters character) {
 	this->pendingList.push_back(PendingChange(Action::Push, States::Game, level, character));
 }
 
+void StateStack::pushDeathState(Level level, Characters character)
+{
+	this->pendingList.push_back(PendingChange(Action::Push, States::Death, level, character)); 
+}
+
 void StateStack::popState()
 {
 	this->pendingList.push_back(PendingChange(Action::Pop)); 
@@ -77,8 +82,12 @@ void StateStack::applyPendingChanges()
 				default: 
 					throw; 
 				}
-				
 			}
+			else if (change.stateID == States::Death) {
+				assert(change.character != Characters::CharNone);
+				static_cast<DeathState&>(*stack.back().get()).setLevel(change.level, change.character);
+			}
+
 			break; 
 		case Pop: 
 			stack.pop_back(); 
