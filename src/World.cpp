@@ -83,7 +83,7 @@ void World::loadWorld(json& info, Character::Type type)
 					spawnPosition = sf::Vector2f(entity["__worldX"], entity["__worldY"]); 
 					character = MC.get();
 					MC.get()->setPosition(spawnPosition); 
-					sceneLayers[Air]->attachChild(std::move(MC)); 
+					sceneLayers[Entities]->attachChild(std::move(MC)); 
 				}
 				else if (entity["__identifier"] == "Enemy1") {
 					//we can switch case of enemy in here. (Look at the json file)
@@ -295,6 +295,7 @@ void World::handleCollisions()
 	std::vector<SceneNode*> checkingNodes; 
 
 	sceneLayers[Air]->checkNodeIntersect(sf::FloatRect(worldView.getCenter() - worldView.getSize() / 2.f, worldView.getSize()), checkingNodes);
+	sceneLayers[Entities]->checkNodeIntersect(sf::FloatRect(worldView.getCenter() - worldView.getSize() / 2.f, worldView.getSize()), checkingNodes);
 
 	std::set<SceneNode::Pair> collisionPairs; 
 	for (int i = 0; i < checkingNodes.size(); ++i) {
@@ -637,7 +638,7 @@ void World::spawnEnemies() {
 		enemyInfo.pop_back();
 		std::unique_ptr<Enemy> enemy(new Enemy(info.type, textures));
 		enemy->setPosition(info.position);
-		sceneLayers[Air]->attachChild(std::move(enemy));
+		sceneLayers[Entities]->attachChild(std::move(enemy));
 	}
 }
 

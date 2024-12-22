@@ -49,6 +49,7 @@ private:
 	enum Layer {
 		Background, 
 		Sound,
+		Entities,
 		Air, 
 		LayerCount
 	};
