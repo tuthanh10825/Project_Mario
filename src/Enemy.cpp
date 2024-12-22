@@ -1,44 +1,23 @@
 #include "Enemy.h"
 #include "Utility.h"
+#include "DataTable.h"
+#include <iostream>
 
-static Textures::ID toTextureID(Enemy::Type type, Enemy::State state)
-{
-	switch (type)
-	{
-	case Enemy::Goomba:
-		switch (state)
-		{
-		case Enemy::alive:
-			return Textures::Goomba;
-			break;
-		case Enemy::movRight:
-			return Textures::GoombaMovRight;
-			break;
-		case Enemy::movLeft:
-			return Textures::GoombaMovLeft;
-			break;
-		case Enemy::die: 
-			return Textures::GoombaDead;
-			break;
-		default:
-			break;
-		}
-		break;
-	}
-	return Textures::Goomba;
+namespace {
+	const std::vector<EnemyData> Table = initializeEnemyData();
 }
 
 Enemy::Enemy(Type type, TextureHolder& textures)
-	: Entity(1)
+	: Entity(Table[type].hp)
 	, type(type)
-	, mMovLeft(textures.get(toTextureID(type, Enemy::movLeft)))
-	, mMovRight(textures.get(toTextureID(type, Enemy::movRight)))
-	, mDead(textures.get(toTextureID(type, Enemy::die)))
-	, moveLeft(true)
-	, moveRight(false)
+	, mMovLU(textures.get(Table[type].movLU))
+	, mMovRD(textures.get(Table[type].movRD))
+	, mDead(textures.get(Table[type].dead))
+	, moveLU(true)
+	, moveRD(false)
 	, showDead(true)
 {
-	sf::Texture& texture = textures.get(toTextureID(type, Enemy::alive));
+	sf::Texture& texture = textures.get(Table[type].texture);
 
 	sf::Vector2u boundaryRect = texture.getSize();
 
@@ -51,26 +30,27 @@ Enemy::Enemy(Type type, TextureHolder& textures)
 	sprite.setOutlineThickness(-2);
 #endif // _DEBUG
 
-	mMovRight.setFrameSize(sf::Vector2i(48, 48));
-	mMovRight.setNumFrames(2);
-	mMovRight.setDuration(sf::seconds(0.8));
-	mMovRight.setRepeating(true);
+	mMovRD.setFrameSize(Table[type].frameSize);
+	mMovRD.setNumFrames(2);
+	mMovRD.setDuration(sf::seconds(0.8));
+	mMovRD.setRepeating(true);
 
-	centerOrigin(mMovRight);
+	centerOrigin(mMovRD);
 
-	mMovLeft.setFrameSize(sf::Vector2i(48, 48));
-	mMovLeft.setNumFrames(2);
-	mMovLeft.setDuration(sf::seconds(0.8));
-	mMovLeft.setRepeating(true);
+	mMovLU.setFrameSize(Table[type].frameSize);
+	mMovLU.setNumFrames(2);
+	mMovLU.setDuration(sf::seconds(0.8));
+	mMovLU.setRepeating(true);
 
-	centerOrigin(mMovLeft);
+	centerOrigin(mMovLU);
 
-	mDead.setFrameSize(sf::Vector2i(48, 24));
+	mDead.setFrameSize(Table[type].frameSize);
 	mDead.setNumFrames(1);
-	mDead.setDuration(sf::seconds(0.1));
+	mDead.setDuration(sf::seconds(0.2));
 	mDead.setRepeating(false);
 
 	centerOrigin(mDead);
+	this->setVelocity(Table[type].speed);
 }
 
 void Enemy::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -82,11 +62,11 @@ void Enemy::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(sprite, states);
 		return;
 	}
-	if (moveRight && !moveLeft) {
-		target.draw(mMovRight, states);
+	if (moveRD && !moveLU) {
+		target.draw(mMovRD, states);
 	}
-	else if (moveLeft && !moveRight) {
-		target.draw(mMovLeft, states);
+	else if (moveLU && !moveRD) {
+		target.draw(mMovLU, states);
 	}
 	else target.draw(sprite, states);
 }
@@ -104,17 +84,38 @@ sf::FloatRect Enemy::getBoundingRect() const
 void Enemy::updateCurrent(sf::Time dt)
 {
 	sf::Vector2f currVelo = getVelocity();
+	sf::Vector2f pos = getWorldPosition();
 	if (isDestroyed()) {
 		mDead.update(dt);
 		this->setVelocity(0, 0);
+		Entity::updateCurrent(dt);
+		return;
 	}
-	else if (moveRight && !moveLeft) {
-		this->setVelocity(80.f, currVelo.y);
-		mMovRight.update(dt);
+	if (Table[type].isFly) {
+		this->setAcceleration(0.f, 0.f);
+		if (pos.y < origin.y - Table[type].range.y || pos.x < origin.x - Table[type].range.x) {
+			std::cout << pos.y << " " << origin.y - Table[type].range.y << " " << pos.x << " " << origin.x - Table[type].range.x << std::endl;
+			this->setVelocity(-Table[type].speed.x, -Table[type].speed.y);
+			moveRD = true;
+			moveLU = false;
+		}
+		else if (pos.y > origin.y + Table[type].range.y || pos.x > origin.x + Table[type].range.x) {
+			this->setVelocity(Table[type].speed.x, Table[type].speed.y);
+			moveLU = true;
+			moveRD = false;
+		}
+		mMovRD.update(dt);
+		mMovLU.update(dt);
 	}
-	else if (moveLeft) {
-		this->setVelocity(-80.f, currVelo.y);
-		mMovLeft.update(dt);
+	else {
+		if (moveRD && !moveLU) {
+			this->setVelocity(Table[type].speed.x, currVelo.y);
+			mMovRD.update(dt);
+		}
+		else if (moveLU) {
+			this->setVelocity(-Table[type].speed.x, currVelo.y);
+			mMovLU.update(dt);
+		}
 	}
 	
 	Entity::updateCurrent(dt);
@@ -122,24 +123,23 @@ void Enemy::updateCurrent(sf::Time dt)
 
 void Enemy::setMoveLeft(bool isMove)
 {
-	moveLeft = isMove;
+	moveLU = isMove;
 }
 
 void Enemy::setMoveRight(bool isMove)
 {
-	moveRight = isMove;
+	moveRD = isMove;
 }
 
 bool Enemy::isMoveLeft() const
 {
-	return moveLeft;
+	return moveLU;
 }
 
 bool Enemy::isMoveRight() const
 {
-	return moveRight;
+	return moveRD;
 }
-
 
 void Enemy::remove()
 {
@@ -150,4 +150,15 @@ void Enemy::remove()
 bool Enemy::isMarkedForRemoval() const
 {
 	return isDestroyed() && mDead.isFinished();
+}
+
+void Enemy::setPosition(sf::Vector2f pos)
+{
+	origin = pos;
+	Entity::setPosition(pos);
+}
+
+Enemy::Type Enemy::getType()
+{
+	return type;
 }

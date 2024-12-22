@@ -20,8 +20,7 @@ namespace Textures {
 		Char2MovRight,
 		Char2MovLeft,
 		Goomba,
-		GoombaMovRight,
-		GoombaMovLeft,
+		GoombaMove,
 		GoombaDead,
 		Pickup,
 		Heart,
@@ -30,6 +29,11 @@ namespace Textures {
 		Char2Select,
 		BlockTileset,
 		MysteryBlock, 
+		PlantMove,
+		Plant,
+		Bird,
+		BirdMovRight,
+		BirdMovLeft,
 	};
 }
 

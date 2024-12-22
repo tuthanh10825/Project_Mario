@@ -7,15 +7,9 @@ class Enemy : public Entity {
 public:
 	enum Type {
 		Goomba,
-		Koopa,
 		Plant,
-	};
-	enum State
-	{
-		alive = 0,
-		movRight = 1,
-		movLeft = 2,
-		die = 3
+		Bird,
+		TypeCount
 	};
 	explicit Enemy(Type type, TextureHolder& textures);
 	virtual void drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -32,15 +26,19 @@ public:
 
 	void remove();
 	bool isMarkedForRemoval() const;
+
+	void setPosition(sf::Vector2f pos);
+	Enemy::Type getType();
 private:
 
-	bool moveLeft;
-	bool moveRight;
+	bool moveLU;
+	bool moveRD;
 
 	Type type;
 	sf::RectangleShape sprite;
 	bool showDead;
+	sf::Vector2f origin;
 	Animation mDead;
-	Animation mMovRight;
-	Animation mMovLeft;
+	Animation mMovLU; 
+	Animation mMovRD;
 };

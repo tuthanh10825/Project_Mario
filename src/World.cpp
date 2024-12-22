@@ -89,7 +89,13 @@ void World::loadWorld(json& info, Character::Type type)
 					//we can switch case of enemy in here. (Look at the json file)
 					enemyInfo.push_back({ Enemy::Goomba, sf::Vector2f(entity["px"][0], entity["px"][1]) });
 				}
-
+				else if (entity["__identifier"] == "Plant") {
+					enemyInfo.push_back({ Enemy::Plant, sf::Vector2f(entity["px"][0], entity["px"][1]) });
+				}
+				else if (entity["__identifier"] == "Bird") {
+					std::cout << 323232323;
+					enemyInfo.push_back({ Enemy::Bird, sf::Vector2f(entity["px"][0], entity["px"][1]) });
+				}
 			}
 
 		}
@@ -238,13 +244,17 @@ void World::loadTextures()
 	textures.load(Textures::Char2MovRight, "textures/GiaBaoMovRight.png");
 	textures.load(Textures::Char2MovLeft, "textures/GiaBaoMovLeft.png");
 	textures.load(Textures::Goomba, "textures/Goomba.png");
-	textures.load(Textures::GoombaMovRight, "textures/GoombaMovLeft.png");
-	textures.load(Textures::GoombaMovLeft, "textures/GoombaMovLeft.png");
+	textures.load(Textures::GoombaMove, "textures/GoombaMove.png");
 	textures.load(Textures::GoombaDead, "textures/GoombaDead.png");
 	textures.load(Textures::Pickup, "textures/mushroom.png"); 
 	textures.load(Textures::Projectile, "textures/Projectile.png");
 	textures.load(Textures::BlockTileset, "textures/tilesets.png");
 	textures.load(Textures::MysteryBlock, "textures/MysteryBlock.png"); 
+	textures.load(Textures::Plant, "textures/Plant.png");
+	textures.load(Textures::PlantMove, "textures/PlantMove.png");
+	textures.load(Textures::Bird, "textures/Bird.png");
+	textures.load(Textures::BirdMovRight, "textures/BirdMovRight.png");
+	textures.load(Textures::BirdMovLeft, "textures/BirdMovLeft.png");
 }
 
 void World::buildScene() // we need to load the "front" world here.
@@ -365,12 +375,18 @@ void World::handleCollisions()
 			Enemy& enemy = static_cast<Enemy&>(*pair.second);
 
 			if (direction == Collision::Up && charVelocity.y >= -10) {
-				isAir = false;
-				enemy.setMoveRight(false);
-				enemy.setMoveLeft(false);
-				enemy.setScale(1, 0.5);
-				enemy.move(0, 12);
-				enemy.destroy();
+				if (enemy.getType() == Enemy::Plant) {
+					character->damage(enemy.getHp());
+				}
+				else {
+					isAir = false;
+					character->resetJump();
+					enemy.setMoveRight(false);
+					enemy.setMoveLeft(false);
+					enemy.setScale(1, 0.5);
+					enemy.move(0, 12);
+					enemy.destroy();
+				}
 			}
 			else if (direction == Collision::Down && charVelocity.y < 0) {
 				charVelocity.y = 0;
@@ -400,6 +416,9 @@ void World::handleCollisions()
 			Collision::Direction direction = collisionType(*pair.first, *pair.second);
 			auto& enemy = static_cast<Enemy&>(*pair.first);
 			auto& block = static_cast<Block&>(*pair.second);
+			if (enemy.getType() == Enemy::Plant) continue;
+
+
 			pair.first->fixPosition(*pair.second, direction);
 
 			if (direction == Collision::Left) {
