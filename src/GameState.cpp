@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 
-GameState::GameState(StateStack& stack, Context context) : State(stack, context), hub(context)
+GameState::GameState(StateStack& stack, Context context) : State(stack, context), hub(context), currLevel(Level::None), currChar(Characters::CharNone)
     , world(*context.window, *context.textures, hub, *context.sounds)
 	, player(*context.player)
 {
@@ -31,7 +31,7 @@ bool GameState::update(sf::Time dt)
 		sf::sleep(sf::seconds(3)); 
 		getContext().musics->setPaused(false); 
 
-		requestStackPush(States::Death);
+		requestStackPushDeath(currLevel, currChar);
 	}
 
 	return false; 
@@ -52,6 +52,10 @@ bool GameState::handleEvent(const sf::Event& event)
 
 void GameState::setLevel(Level level, Character::Type type)
 {
+	currLevel = level; 
+	if (type == Character::Character1) currChar = Characters::Character1;
+	else if (type == Character::Character2) currChar = Characters::Character2; 
+
 	world.loadWorld(mapsConfig["levels"][level - 1], type);
 }
 

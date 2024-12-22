@@ -17,4 +17,7 @@ private:
 	World world; 
 	Player& player;
 	Hub hub; 
+
+	Level currLevel; 
+	Characters currChar; 
 };
