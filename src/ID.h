@@ -67,6 +67,7 @@ namespace States {
 		Pause,
 		Death,
 		Win, 
+		Continue, 
 	};
 }
 namespace Category {

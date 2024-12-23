@@ -9,6 +9,8 @@
 #include "SoundPlayer.h"
 #include "DeathState.h"
 #include "WinState.h"
+#include "ContinueState.h"
+
 class Application : sf::NonCopyable {
 private: 
 

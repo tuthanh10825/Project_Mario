@@ -99,6 +99,10 @@ bool MenuState::handleEvent(const sf::Event& event)
 			requestStackPop(); 
 			requestStackPush(States::LevelSelect);
 		}
+		if (optionIndex == Continue) { 
+			requestStackPop(); 
+			requestStackPush(States::Continue); 
+		}
 		if (optionIndex == Exit)
 			requestStateClear(); 
 	}

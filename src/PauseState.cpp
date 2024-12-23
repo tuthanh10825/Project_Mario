@@ -46,7 +46,7 @@ PauseState::PauseState(StateStack& stateStack, Context context)
     // Slider bar
     sliderBar.setSize(sf::Vector2f(200.f, 10.f));
     sliderBar.setFillColor(sf::Color(100, 100, 100));
-    sliderBar.setPosition(window.getView().getCenter() + sf::Vector2f(-100.f, 50.f));
+    sliderBar.setPosition(window.getView().getCenter() + sf::Vector2f(-100.f, 200.f));
 
     // Slider handle
     sliderHandle.setSize(sf::Vector2f(20.f, 20.f));

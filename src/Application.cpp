@@ -33,6 +33,7 @@ void Application::registerStates()
 	stateStack.registerState<LevelSelectState>(States::LevelSelect);
 	stateStack.registerState<DeathState>(States::Death);
 	stateStack.registerState<WinState>(States::Win); 
+	stateStack.registerState<ContinueState>(States::Continue); 
 }
 
 void Application::run()
