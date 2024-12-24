@@ -2,6 +2,7 @@
 
 MusicPlayer::MusicPlayer() : music(), filenames(), volume(75.f) {
 	filenames[Music::MenuTheme] = "music/SuperMarioBros.ogg"; 
+	
 }
 void MusicPlayer::play(Music::ID theme) {
 	std::string filename = filenames[theme]; 

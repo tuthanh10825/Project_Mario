@@ -30,6 +30,7 @@ public:
 	void setWorldBound(sf::FloatRect& rect);
 
 	bool hasAlivePlayer() const;
+	bool playerReachBound() const; 
 	
 private:
 
@@ -49,6 +50,7 @@ private:
 	enum Layer {
 		Background, 
 		Sound,
+		Entities,
 		Air, 
 		LayerCount
 	};
@@ -87,6 +89,7 @@ private:
 	float time; 
 	Command setAir;
 	Command applyGravity;
+	Command markingRemove; 
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

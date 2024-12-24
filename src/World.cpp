@@ -35,6 +35,13 @@ time(0)
 		Entity& entity = static_cast<Entity&> (s);
 		entity.setAir(true);
 	};
+	markingRemove.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
+	markingRemove.action = [&](SceneNode& s, sf::Time dt) {
+		Entity& entity = static_cast<Entity&>(s);
+		if (entity.getWorldPosition().y >= worldBounds.getPosition().y + worldBounds.getSize().y + 200) {
+			entity.destroy();
+		}
+		}; 
 }
 void World::draw()
 {
@@ -83,7 +90,7 @@ void World::loadWorld(json& info, Character::Type type)
 					spawnPosition = sf::Vector2f(entity["__worldX"], entity["__worldY"]); 
 					character = MC.get();
 					MC.get()->setPosition(spawnPosition); 
-					sceneLayers[Air]->attachChild(std::move(MC)); 
+					sceneLayers[Entities]->attachChild(std::move(MC)); 
 				}
 				else if (entity["__identifier"] == "Enemy1") {
 					//we can switch case of enemy in here. (Look at the json file)
@@ -155,7 +162,7 @@ void World::update(sf::Time dt) {
 	if (character->canFire()) {
 		commandQueue.push(character->getFireCommand());
 	}
-
+	sceneGraph.onCommand(markingRemove, dt); 
 	while (!commandQueue.isEmpty()) {
 		sceneGraph.onCommand(commandQueue.pop(), dt);
 	}
@@ -292,11 +299,17 @@ bool World::hasAlivePlayer() const
 	return !character->isDestroyed();
 }
 
+bool World::playerReachBound() const
+{
+	return character->getPosition().x >= (worldBounds.getPosition().x + worldBounds.getSize().x);
+}
+
 void World::handleCollisions()
 {
 	std::vector<SceneNode*> checkingNodes; 
 
 	sceneLayers[Air]->checkNodeIntersect(sf::FloatRect(worldView.getCenter() - worldView.getSize() / 2.f, worldView.getSize()), checkingNodes);
+	sceneLayers[Entities]->checkNodeIntersect(sf::FloatRect(worldView.getCenter() - worldView.getSize() / 2.f, worldView.getSize()), checkingNodes);
 
 	std::set<SceneNode::Pair> collisionPairs; 
 	for (int i = 0; i < checkingNodes.size(); ++i) {
@@ -639,7 +652,7 @@ void World::spawnEnemies() {
 		enemyInfo.pop_back();
 		std::unique_ptr<Enemy> enemy(new Enemy(info.type, textures));
 		enemy->setPosition(info.position);
-		sceneLayers[Air]->attachChild(std::move(enemy));
+		sceneLayers[Entities]->attachChild(std::move(enemy));
 	}
 }
 
