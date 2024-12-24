@@ -1,14 +1,12 @@
 #include "Character.h"
 #include "Utility.h"
+#include "DataTable.h"
 #include <iostream>
 
 namespace {
 	const std::vector<CharacterData> Table = initializeCharacterData();
-		}
-		return Textures::Character2;
-	}
-
 }
+
 Character::Character(Type type, TextureHolder& textures) 
 	: Entity(1)
 	, type(type)
@@ -20,6 +18,7 @@ Character::Character(Type type, TextureHolder& textures)
 	, jumpCount(0)
 	, fire(false)
 	, mFireCountdown(sf::Time::Zero)
+	, direction(1)
 {
 	sf::Texture& texture = textures.get(Table[type].texture);
 
@@ -86,10 +85,17 @@ void Character::updateCurrent(sf::Time dt)
 {
 	//Handle Animation
 	if (moveRight && !moveLeft) {
-
+		if (direction == -1) {
+			sprite.scale(-1.f, 1.f);
+			direction = 1;
+		}
 		mMovRight.update(dt);
 	}
 	else if (moveLeft) {
+		if (direction == 1) {
+			sprite.scale(-1.f, 1.f);
+			direction = -1;
+		}
 		mMovLeft.update(dt);
 	}
 	
@@ -145,9 +151,7 @@ void Character::createProjectile(SceneNode& node, TextureHolder& textures, sf::V
 {
 	std::unique_ptr<Projectile> projectile(new Projectile(type, textures));
 	projectile->setPosition(pos);
-	float sign = (isMoveRight()) ? 1.f : -1.f;
-	std::cout << "Sign: " << sign << std::endl;
-	projectile->setVelocity(sign * 400.f, 0.f);
+	projectile->setVelocity(400.f * direction, 0.f);
 	node.attachChild(std::move(projectile));
 }
 

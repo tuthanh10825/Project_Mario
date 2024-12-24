@@ -9,6 +9,7 @@ public:
 	enum Type {
 		Character1,
 		Character2,
+		TypeCount
 	};
 	enum State {
 		alive = 0,
@@ -57,6 +58,7 @@ private:
 	short jumpCount; 
 	int point;
 	bool hasFireFlower;
+	int direction;
 
 	Type type; 
 	sf::RectangleShape sprite; 
