@@ -27,5 +27,15 @@ struct PickupData {
 	Textures::ID texture;
 };
 
+struct CharacterData {
+	int hp;
+	Textures::ID texture;
+	Textures::ID movRight;
+	Textures::ID movLeft;
+	Textures::ID die;
+ 	sf::Vector2i frameSize;
+};
+
 std::vector<EnemyData> initializeEnemyData();
 std::vector<PickupData> initializePickupData();
+std::vector<CharacterData> initializeCharacterData();

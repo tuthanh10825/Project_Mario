@@ -57,3 +57,25 @@ std::vector<PickupData> initializePickupData()
 
 	return data;
 }
+
+std::vector<CharacterData> initializeCharacterData()
+{
+	std::vector<CharacterData> data(Character::TypeCount);
+
+	data[Character::Character1].hp = 1;
+	data[Character::Character1].texture = Textures::Character1;
+	data[Character::Character1].movRight = Textures::Char1MovRight;
+	data[Character::Character1].movLeft = Textures::Char1MovLeft;
+	data[Character::Character1].die = Textures::Character1;
+	data[Character::Character1].frameSize = sf::Vector2i(36, 72);
+
+
+	data[Character::Character2].hp = 1;
+	data[Character::Character2].texture = Textures::Character2;
+	data[Character::Character2].movRight = Textures::Char2MovRight;
+	data[Character::Character2].movLeft = Textures::Char2MovLeft;
+	data[Character::Character2].die = Textures::Character2;
+	data[Character::Character2].frameSize = sf::Vector2i(36, 72);
+
+	return data;
+}

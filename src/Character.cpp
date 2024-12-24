@@ -2,44 +2,8 @@
 #include "Utility.h"
 #include <iostream>
 
-static Textures::ID toTextureID(Character::Type type, Character::State state) {
-	switch (type) {
-	case Character::Character1:
-		switch (state)
-		{
-		case Character::alive:
-			return Textures::Character1;
-			break;
-		case Character::movRight:
-			return Textures::Char1MovRight;
-			break;
-		case Character::movLeft:
-			return Textures::Char1MovLeft;
-			break;
-		case Character::die:
-			return Textures::Character1;
-			break;
-		default:
-			break;
-		}
-		return Textures::Character1;
-	case Character::Character2:
-		switch (state)
-		{
-		case Character::alive:
-			return Textures::Character2;
-			break;
-		case Character::movRight:
-			return Textures::Char2MovRight;
-			break;
-		case Character::movLeft:
-			return Textures::Char2MovLeft;
-			break;
-		case Character::die:
-			return Textures::Character2;
-			break;
-		default:
-			break;
+namespace {
+	const std::vector<CharacterData> Table = initializeCharacterData();
 		}
 		return Textures::Character2;
 	}
@@ -48,8 +12,8 @@ static Textures::ID toTextureID(Character::Type type, Character::State state) {
 Character::Character(Type type, TextureHolder& textures) 
 	: Entity(1)
 	, type(type)
-	, mMovRight(textures.get(toTextureID(type, Character::movRight)))
-	, mMovLeft(textures.get(toTextureID(type, Character::movLeft)))
+	, mMovRight(textures.get(Table[type].movRight))
+	, mMovLeft(textures.get(Table[type].movLeft))
 	, moveLeft(false)
 	, moveRight(false)
 	, jump(false)
@@ -57,7 +21,7 @@ Character::Character(Type type, TextureHolder& textures)
 	, fire(false)
 	, mFireCountdown(sf::Time::Zero)
 {
-	sf::Texture& texture = textures.get(toTextureID(type, Character::alive)); 
+	sf::Texture& texture = textures.get(Table[type].texture);
 
 	sf::Vector2u boundaryRect = texture.getSize();
 
