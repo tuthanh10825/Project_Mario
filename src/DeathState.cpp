@@ -65,22 +65,23 @@ bool DeathState::handleEvent(const sf::Event& event) {
         if (optionIndex == Retry) {
             
            requestStateClear();
-           requestStackPushGame(lastLevel, lastChar); 
+           requestStackPushGame(World::Snapshot(lastChar, lastLevel)); 
             
         }
         if (optionIndex == Exit) {
             
             requestStateClear();
-            requestStackPush(States::LevelSelect); // Go to the level selection screen
+            requestStackPush(States::Menu);
+            requestStackPush(States::LevelSelect); 
         }
     }
     return false;
 }
 
-void DeathState::setLevel(Level level, Characters character)
+void DeathState::applySnapshot(World::Snapshot snapshot)
 {
-    lastLevel = level; 
-    lastChar = character; 
+    lastLevel = snapshot.getLevel(); 
+    lastChar = snapshot.getCharacterType(); 
 }
 
 

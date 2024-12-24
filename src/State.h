@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "MusicPlayer.h"
 #include "SoundPlayer.h"
+#include "World.h"
 class StateStack; 
 
 class State {
@@ -32,8 +33,8 @@ protected:
 	void requestStackPush(States::ID stateId);
 	void requestStackPop();
 	void requestStateClear();
-	void requestStackPushGame(Level level, Characters character);
-	void requestStackPushDeath(Level, Characters character); 
+	void requestStackPushGame(World::Snapshot snapshot);
+	void requestStackPushDeath(World::Snapshot snapshot); 
 
 	Context getContext() const;
 private:

@@ -23,12 +23,12 @@ void State::requestStateClear()
 {
 	stack->clearStates(); 
 }
-void State::requestStackPushGame(Level level, Characters character) {
-	stack->pushGameState(level, character); 
+void State::requestStackPushGame(World::Snapshot snapshot) {
+	stack->pushGameState(snapshot); 
 }
-void State::requestStackPushDeath(Level level, Characters character)
+void State::requestStackPushDeath(World::Snapshot snapshot)
 {
-	stack->pushDeathState(level, character); 
+	stack->pushDeathState(snapshot); 
 }
 State::Context State::getContext() const
 {

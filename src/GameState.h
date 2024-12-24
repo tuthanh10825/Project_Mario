@@ -11,13 +11,11 @@ public:
 	virtual void draw(); 
 	virtual bool update(sf::Time dt); 
 	virtual bool handleEvent(const sf::Event& event); 
-	void setLevel(Level level, Character::Type type);
+	void applySnapshot(World::Snapshot snapshot); 
 private: 
 	json mapsConfig; 
 	World world; 
 	Player& player;
-	Hub hub; 
 
-	Level currLevel; 
-	Characters currChar; 
+
 };
