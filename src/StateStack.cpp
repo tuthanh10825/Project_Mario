@@ -40,6 +40,11 @@ void StateStack::pushDeathState(World::Snapshot snapshot)
 	this->pendingList.push_back(PendingChange(Action::Push, States::Death, snapshot)); 
 }
 
+void StateStack::pushPauseState(World::Snapshot snapshot)
+{
+	this->pendingList.push_back(PendingChange(Action::Push, States::Pause, snapshot)); 
+}
+
 void StateStack::popState()
 {
 	this->pendingList.push_back(PendingChange(Action::Pop)); 
@@ -75,6 +80,9 @@ void StateStack::applyPendingChanges()
 			}
 			else if (change.stateID == States::Death) {
 				static_cast<DeathState&>(*stack.back().get()).applySnapshot(change.snapshot); 
+			}
+			else if (change.stateID == States::Pause) {
+				static_cast<PauseState&>(*stack.back().get()).applySnapshot(change.snapshot); 
 			}
 
 			break; 

@@ -6,6 +6,7 @@
 #include "State.h"
 #include "GameState.h"
 #include "DeathState.h"
+#include "PauseState.h"
 
 class StateStack :private sf::NonCopyable {
 public: 
@@ -27,6 +28,7 @@ public:
 	void pushState(States::ID stateID);
 	void pushGameState(World::Snapshot snapshot); 
 	void pushDeathState(World::Snapshot snapshot); 
+	void pushPauseState(World::Snapshot snapshot); 
 	void popState();
 	void clearStates(); 
 	bool isEmpty() const; 

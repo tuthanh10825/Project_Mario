@@ -23,6 +23,7 @@ public:
 		Characters character; 
 		Level level; 
 	public: 
+		Snapshot(); 
 		Snapshot(Characters character, Level level, sf::Vector2f pos = sf::Vector2f()); 
 		sf::Vector2f getPlayerPos() const; 
 		Characters getCharacterType() const; 

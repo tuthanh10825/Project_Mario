@@ -55,8 +55,8 @@ void Application::run()
 }
 
 Application::Application() : window(sf::VideoMode(1000, 800), "Super Mario", sf::Style::Close | sf::Style::Titlebar),
-	textures(), fonts(), player(), musics(), sounds(), 
-	stateStack(State::Context(window, textures, fonts, player, musics, sounds))
+	textures(), fonts(), player(), musics(), sounds(), caretaker(),
+	stateStack(State::Context(window, textures, fonts, player, musics, sounds, caretaker))
 {
 	//window.setKeyRepeatEnabled(false);
 	window.setSize(window.getSize()); 

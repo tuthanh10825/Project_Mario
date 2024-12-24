@@ -10,7 +10,7 @@
 #include "DeathState.h"
 #include "WinState.h"
 #include "ContinueState.h"
-
+#include "Caretaker.h"
 class Application : sf::NonCopyable {
 private: 
 
@@ -22,6 +22,7 @@ private:
 	Player player; 
 	MusicPlayer musics; 
 	SoundPlayer sounds; 
+	Caretaker caretaker; 
 
 private:
 	void processInput(); 

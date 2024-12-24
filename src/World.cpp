@@ -93,7 +93,16 @@ void World::loadWorld(json& info, Snapshot snapshot)
 				if (entity["__identifier"] == "MC") {
 					spawnPosition = sf::Vector2f(entity["__worldX"], entity["__worldY"]); 
 					character = MC.get();
-					MC.get()->setPosition(spawnPosition); 
+					MC.get()->setPosition(snapshot.getPlayerPos()); 
+					if (snapshot.getPlayerPos() == sf::Vector2f())
+						MC.get()->setPosition(spawnPosition); 
+					sf::Vector2f currPos = MC.get()->getPosition(); 
+
+					if (currPos.x > worldView.getSize().x / 2.f) {
+						worldView.setCenter(currPos.x, worldView.getSize().y / 2.f); 
+					}
+					if (currPos.x > worldBounds.getSize().x - worldView.getSize().x / 2.f)
+						worldView.setCenter(worldBounds.getSize().x - worldView.getSize().x / 2.f, spawnPosition.y); 
 					sceneLayers[Entities]->attachChild(std::move(MC)); 
 				}
 				else if (entity["__identifier"] == "Enemy1") {
@@ -753,6 +762,10 @@ bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Categor
 		return true;
 	}
 	else return false; 
+}
+
+World::Snapshot::Snapshot() : character(Characters::CharNone), level(Level::None)
+{
 }
 
 World::Snapshot::Snapshot(Characters character, Level level, sf::Vector2f pos) : character(character), level(level)

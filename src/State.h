@@ -7,6 +7,7 @@
 #include "MusicPlayer.h"
 #include "SoundPlayer.h"
 #include "World.h"
+#include "Caretaker.h"
 class StateStack; 
 
 class State {
@@ -19,7 +20,8 @@ public:
 		Player* player;
 		MusicPlayer* musics; 
 		SoundPlayer* sounds; 
-		Context(sf::RenderWindow&, TextureHolder&, FontHolder&, Player&, MusicPlayer&, SoundPlayer&);
+		Caretaker* caretaker; 
+		Context(sf::RenderWindow&, TextureHolder&, FontHolder&, Player&, MusicPlayer&, SoundPlayer&, Caretaker& caretaker);
 	};
 	
 public:
@@ -35,6 +37,7 @@ protected:
 	void requestStateClear();
 	void requestStackPushGame(World::Snapshot snapshot);
 	void requestStackPushDeath(World::Snapshot snapshot); 
+	void requestStackPushPause(World::Snapshot snapshot); 
 
 	Context getContext() const;
 private:

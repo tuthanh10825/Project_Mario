@@ -9,12 +9,19 @@ ContinueState::ContinueState(StateStack& stateStack, Context context) : State(st
 	for (int i = 0; i < 5; ++i) {
 		sf::Text option; 
 		option.setFont(getContext().fonts->get(Fonts::PixeloidMono)); 
+		option.setString(std::to_string(i)); 
 		option.setCharacterSize(60); 
-		std::string optionString = (std::to_string(i) + "i"); 
-		option.setString(optionString); 
 		option.setOrigin(option.getLocalBounds().getSize() / 2.f); 
 		option.setPosition(500, 200 + 90 * i); 
 		options.push_back(std::move(option)); 
+	}
+	for (int i = 0; i < getContext().caretaker->size(); ++i) {
+		World::Snapshot snapshot = getContext().caretaker->getSnapshot(i); 
+		std::string optionString = "Level: " + std::to_string(snapshot.getLevel()) + ", " + "Character: " + std::to_string(snapshot.getCharacterType()); 
+		options[i].setString(optionString); 
+		options[i].setCharacterSize(40); 
+		options[i].setOrigin(options[i].getLocalBounds().getSize() / 2.f);
+		options[i].setPosition(500, 200 + 90 * i); 
 	}
 	sf::Text back;
 	back.setFont(getContext().fonts->get(Fonts::PixeloidMono));
@@ -55,7 +62,10 @@ bool ContinueState::handleEvent(const sf::Event& event)
     else if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {
 		if (optionIndex == options.size() - 1) {
 			requestStackPop(); 
-			requestStackPush(States::Menu); 
+		}
+		else {
+			if (optionIndex < getContext().caretaker->size())
+				requestStackPushGame(getContext().caretaker->getSnapshot(optionIndex)); 
 		}
 	}
 	return false;

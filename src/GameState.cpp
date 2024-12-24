@@ -46,7 +46,7 @@ bool GameState::update(sf::Time dt)
 bool GameState::handleEvent(const sf::Event& event)
 {
 	if (event.key.code == sf::Keyboard::Escape) {
-		requestStackPush(States::Pause);
+		requestStackPushPause(world.createSnapshot()); 
 		return false; 
 	}
 	CommandQueue& commands = world.getCommandQueue(); 
