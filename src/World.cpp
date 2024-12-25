@@ -109,7 +109,6 @@ void World::loadWorld(json& info, Character::Type type)
 		else if (layerInstance["__identifier"] == "MysteryBlock") {
 			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
 				std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
-
 				mysBlock->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
 				//we can add the some property to create any pickup here. 
 				mysBlock->addItem(Pickup::Type::Mushroom);
