@@ -8,6 +8,7 @@ Block::Block(sf::Texture& texture) : Entity(1)
 	
 	boundary.setSize(sf::Vector2f(boxSize.x, boxSize.y)); 
 	boundary.setTexture(&texture); 
+	boundary.setOrigin(sf::Vector2f(boxSize.x / 2.f, boxSize.y / 2.f));
 #ifdef _DEBUG
 	boundary.setOutlineColor(sf::Color::Red);
 	boundary.setOutlineThickness(-1);
@@ -17,6 +18,7 @@ Block::Block(sf::Texture& texture, const sf::IntRect& intrect) : Entity(1) {
 	boundary.setTexture(&texture); 
 	boundary.setSize(sf::Vector2f(intrect.getSize().x, intrect.getSize().y));
 	boundary.setTextureRect(intrect);
+	boundary.setOrigin(sf::Vector2f(intrect.getSize().x / 2.f, intrect.getSize().y / 2.f));
 #ifdef _DEBUG
 	boundary.setOutlineColor(sf::Color::Red);
 	boundary.setOutlineThickness(-1);
