@@ -260,7 +260,7 @@ void World::adaptPlayerVelocity()
 		}
 	}
 	if (character->isJump()) {
-		charVelocity.y = -500.f; 
+		charVelocity.y = -400.f; 
 		character->setJump(false); 
 	}
 	character -> setVelocity(charVelocity);
