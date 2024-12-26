@@ -58,7 +58,10 @@ void MysteryBlock::updateCurrent(sf::Time dt)
 			if (currentPosition.y >= origin.y) {
 				Block::setPosition(origin);
 				moving = false;
-				movingState = MovingState::Moved;
+				if (hasItem())
+					movingState = MovingState::None;
+				else 
+					movingState = MovingState::Moved;
 				this->setVelocity(0, 0);
 			}
 		}

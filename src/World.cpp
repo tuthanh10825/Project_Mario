@@ -1,6 +1,9 @@
 #include "World.h"
 #include <iostream>
 #include <cassert>
+#include <algorithm>
+#include <random>
+
 World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub, SoundPlayer& sounds) :
 	window(window), textures(textures), hub(hub), sounds(sounds),
 	worldView(window.getDefaultView()),
@@ -65,9 +68,9 @@ void World::loadWorld(json& info, Character::Type type)
 	else if (character == Characters::Character2) {
 		tempPlayer = std::make_unique<Character>(Character::Character2, textures);
 	}*/
-	
-
-	
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<long long> dist1(1, LLONG_MAX);
 
 	//TODO: refactoring
 	
@@ -114,7 +117,10 @@ void World::loadWorld(json& info, Character::Type type)
 					std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
 					mysBlock->setPosition(sf::Vector2f(entity["px"][0], entity["px"][1]));
 					//we can add the some property to create any pickup here. 
-					mysBlock->addItem(Pickup::Type::Coin);
+
+					int coinCount = dist1(gen) % 5 + 1;
+					while (coinCount--)
+						mysBlock->addItem(Pickup::Type::Coin);
 					sceneLayers[Air]->attachChild(std::move(mysBlock));
 				}
 				else if (entity["__identifier"] == "FireFlower") {
