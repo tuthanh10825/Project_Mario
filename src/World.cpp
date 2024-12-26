@@ -90,7 +90,7 @@ void World::loadWorld(json& info, Character::Type type)
 			for (auto& entity : layerInstance["entityInstances"]) {
 				if (entity["__identifier"] == "MC") {
 					std::unique_ptr<Character> MC(new Character(type, textures)); 
-					spawnPosition = sf::Vector2f(entity["__worldX"], entity["__worldY"]); 
+					spawnPosition = sf::Vector2f(entity["px"][0], entity["px"][1]);
 					character = MC.get();
 					MC.get()->setPosition(spawnPosition); 
 					sceneLayers[Entities]->attachChild(std::move(MC)); 
@@ -145,7 +145,7 @@ void World::loadWorld(json& info, Character::Type type)
 		else if (layerInstance["__identifier"] == "Block") {
 			sf::Texture& blockTileset = textures.get(Textures::BlockTileset); 
 			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
-				std::unique_ptr<Block> block(new Block(blockTileset, sf::IntRect(blockInfo["t"] * 36, 0, 36, 36)));
+				std::unique_ptr<Block> block(new Block(blockTileset, sf::IntRect(blockInfo["src"][0], blockInfo["src"][1], 36, 36)));
 
 				if (blockInfo["f"] == 0) block->setScale(1, 1);
 				else if (blockInfo["f"] == 1) block->setScale(-1, 1);
