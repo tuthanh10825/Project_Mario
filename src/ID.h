@@ -3,6 +3,7 @@ namespace Textures {
 	enum ID {
 		Background, 
 		TitleBackground,
+		SaveGameBackground,
 		Title,
 		PlayButton,
 		ExitButton,
