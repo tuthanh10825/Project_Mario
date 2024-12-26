@@ -162,6 +162,7 @@ void World::loadWorld(json& info, Character::Type type)
 
 	sort(enemyInfo.begin(), enemyInfo.end(), std::greater<EnemyInfo>());
 	hub.setHP(this->character->getHp());
+	hub.setPoint(this->character->getPoint());
 }
 
 void World::update(sf::Time dt) {
@@ -207,6 +208,7 @@ void World::update(sf::Time dt) {
 
 	hub.setTime((time += dt.asSeconds()));
 	hub.setHP(character->getHp()); 
+	hub.setPoint(character->getPoint());
 }
 void World::adaptPlayerVelocity()
 {
@@ -362,6 +364,9 @@ void World::handleCollisions()
 			if (direction == Collision::Down) {
 				charVelocity.y = 0;
 				if (mysteryBlock.hasItem()) {
+					if (mysteryBlock.getItem() == Pickup::Type::Coin) {
+						character->incrPoint(10);
+					}
 					mysteryBlock.setMove(character->getVelocity().y);
 					Command createPickupCommand;
 					createPickupCommand.category = Category::SceneNodeAir;
@@ -427,6 +432,7 @@ void World::handleCollisions()
 					enemy.setScale(1, 0.5);
 					enemy.move(0, 12);
 					enemy.destroy();
+					character->incrPoint(10);
 				}
 			}
 			else if (direction == Collision::Down && charVelocity.y < 0) {
