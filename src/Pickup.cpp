@@ -54,6 +54,10 @@ void Pickup::updateCurrent(sf::Time dt)
 			this->setVelocity(-80.f, curVecl.y);
 		}
 	}
+	if (type == Pickup::Type::Coin && this->getVelocity().y > 0)
+	{
+		this->remove();
+	}
 	
 	Entity::updateCurrent(dt);
 }
