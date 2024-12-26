@@ -20,7 +20,7 @@ Character::Character(Type type, TextureHolder& textures)
 	, mFireCountdown(sf::Time::Zero)
 	, direction(1)
 	, point(0)
-	, hasFireFlower(false)
+	, hasFireFlower(true)
 {
 	sf::Texture& texture = textures.get(Table[type].texture);
 

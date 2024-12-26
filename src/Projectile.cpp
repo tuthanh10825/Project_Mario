@@ -15,7 +15,6 @@ Projectile::Projectile(Type type, TextureHolder& textures)
 	sprite.setOutlineColor(sf::Color::Red);
 	sprite.setOutlineThickness(-2);
 #endif // _DEBUG
-	this->setAcceleration(0.f, 2000.f);
 }
 
 void Projectile::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const

@@ -14,7 +14,7 @@ time(0)
 	worldView.setCenter(spawnPosition);
 	buildScene();
 
-	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
+	applyGravity.category = Category::Player | Category::Enemy | Category::Pickup;
 	applyGravity.action = [](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
 		sf::Vector2f accel = entity.getAcceleration();
@@ -30,7 +30,7 @@ time(0)
 		}
 	};
 
-	setAir.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
+	setAir.category = Category::Player | Category::Enemy | Category::Pickup;
 	setAir.action = [](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
 		entity.setAir(true);
