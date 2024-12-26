@@ -1,6 +1,6 @@
 #include "StateStack.h"
 
-StateStack::PendingChange::PendingChange(StateStack::Action action, States::ID stateID, Level level, Characters character) : action(action), stateID(stateID), level(level), character(character) {}
+StateStack::PendingChange::PendingChange(StateStack::Action action, States::ID stateID, World::Snapshot snapshot) : action(action), stateID(stateID), snapshot(snapshot){}
 StateStack::StateStack(State::Context context) : context(context) {}
 class Character; 
 enum Character::Type; 
@@ -31,13 +31,18 @@ void StateStack::pushState(States::ID stateID)
 {
 	this->pendingList.push_back(PendingChange(Action::Push, stateID)); 
 }
-void StateStack::pushGameState(Level level, Characters character) {
-	this->pendingList.push_back(PendingChange(Action::Push, States::Game, level, character));
+void StateStack::pushGameState(World::Snapshot snapshot) {
+	this->pendingList.push_back(PendingChange(Action::Push, States::Game, snapshot));
 }
 
-void StateStack::pushDeathState(Level level, Characters character)
+void StateStack::pushDeathState(World::Snapshot snapshot)
 {
-	this->pendingList.push_back(PendingChange(Action::Push, States::Death, level, character)); 
+	this->pendingList.push_back(PendingChange(Action::Push, States::Death, snapshot)); 
+}
+
+void StateStack::pushPauseState(World::Snapshot snapshot)
+{
+	this->pendingList.push_back(PendingChange(Action::Push, States::Pause, snapshot)); 
 }
 
 void StateStack::popState()
@@ -71,21 +76,13 @@ void StateStack::applyPendingChanges()
 		case Push: 
 			stack.push_back(createState(change.stateID));
 			if (change.stateID == States::Game) {
-				assert(change.character != Characters::CharNone);
-				switch (change.character) {
-				case Characters::Character1: 
-						static_cast<GameState&>(*stack.back().get()).setLevel(change.level, Character::Character1);
-						break; 
-				case Characters::Character2: 
-						static_cast<GameState&>(*stack.back().get()).setLevel(change.level, Character::Character2);
-						break; 
-				default: 
-					throw; 
-				}
+				static_cast<GameState&>(*stack.back().get()).applySnapshot(change.snapshot);
 			}
 			else if (change.stateID == States::Death) {
-				assert(change.character != Characters::CharNone);
-				static_cast<DeathState&>(*stack.back().get()).setLevel(change.level, change.character);
+				static_cast<DeathState&>(*stack.back().get()).applySnapshot(change.snapshot); 
+			}
+			else if (change.stateID == States::Pause) {
+				static_cast<PauseState&>(*stack.back().get()).applySnapshot(change.snapshot); 
 			}
 
 			break; 

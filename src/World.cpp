@@ -3,9 +3,9 @@
 #include <cassert>
 #include <algorithm>
 #include <random>
-
-World::World(sf::RenderWindow& window, TextureHolder& textures, Hub& hub, SoundPlayer& sounds) :
-	window(window), textures(textures), hub(hub), sounds(sounds),
+World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts,  SoundPlayer& sounds) :
+	window(window), textures(textures), sounds(sounds),
+	hub(window, textures, fonts), 
 	worldView(window.getDefaultView()),
 	spawnPosition(worldView.getSize().x / 2.f, worldView.getSize().y / 2.f),
 	character(nullptr),
@@ -50,6 +50,7 @@ void World::draw()
 {
 	window.setView(worldView);
 	window.draw(sceneGraph);
+	hub.draw(); 
 }
 
 CommandQueue& World::getCommandQueue()
@@ -57,21 +58,28 @@ CommandQueue& World::getCommandQueue()
 	return commandQueue;
 }
 
-void World::loadWorld(json& info, Character::Type type)
+void World::loadWorld(json& info, Snapshot snapshot)
 {
 	//can be improved here, since the path to the tileset is existing. 
 
-	/*if (character == Characters::Character1) {
-		tempPlayer = std::make_unique<Character>(Character::Character1, textures);
+	std::unique_ptr<Character> MC; 
+	if (snapshot.getCharacterType() == Characters::Character1) {
+		MC = std::make_unique<Character>(Character::Character1, textures);
 	}
 
-	else if (character == Characters::Character2) {
-		tempPlayer = std::make_unique<Character>(Character::Character2, textures);
-	}*/
+	else if (snapshot.getCharacterType() == Characters::Character2) {
+		MC = std::make_unique<Character>(Character::Character2, textures);
+	}
+	
+	info = info[snapshot.getLevel() - 1];
+
+	currLevel = snapshot.getLevel(); 
+	currChar = snapshot.getCharacterType(); 
+
+
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<long long> dist1(1, LLONG_MAX);
-
 	//TODO: refactoring
 	
 	sf::Texture& background = textures.get(Textures::Background);
@@ -89,10 +97,18 @@ void World::loadWorld(json& info, Character::Type type)
 		if (layerInstance["__identifier"] == "Entities") {
 			for (auto& entity : layerInstance["entityInstances"]) {
 				if (entity["__identifier"] == "MC") {
-					std::unique_ptr<Character> MC(new Character(type, textures)); 
 					spawnPosition = sf::Vector2f(entity["__worldX"], entity["__worldY"]); 
 					character = MC.get();
-					MC.get()->setPosition(spawnPosition); 
+					MC.get()->setPosition(snapshot.getPlayerPos()); 
+					if (snapshot.getPlayerPos() == sf::Vector2f())
+						MC.get()->setPosition(spawnPosition); 
+					sf::Vector2f currPos = MC.get()->getPosition(); 
+
+					if (currPos.x > worldView.getSize().x / 2.f) {
+						worldView.setCenter(currPos.x, worldView.getSize().y / 2.f); 
+					}
+					if (currPos.x > worldBounds.getSize().x - worldView.getSize().x / 2.f)
+						worldView.setCenter(worldBounds.getSize().x - worldView.getSize().x / 2.f, spawnPosition.y); 
 					sceneLayers[Entities]->attachChild(std::move(MC)); 
 				}
 				else if (entity["__identifier"] == "Enemy1") {
@@ -208,6 +224,7 @@ void World::update(sf::Time dt) {
 
 	hub.setTime((time += dt.asSeconds()));
 	hub.setHP(character->getHp()); 
+	hub.updateView(worldView); 
 	hub.setPoint(character->getPoint());
 }
 void World::adaptPlayerVelocity()
@@ -330,6 +347,11 @@ bool World::hasAlivePlayer() const
 bool World::playerReachBound() const
 {
 	return character->getPosition().x >= (worldBounds.getPosition().x + worldBounds.getSize().x);
+}
+
+World::Snapshot World::createSnapshot()
+{
+	return World::Snapshot(currChar, currLevel, character -> getWorldPosition());
 }
 
 void World::handleCollisions()
@@ -778,3 +800,28 @@ bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Categor
 	}
 	else return false; 
 }
+
+World::Snapshot::Snapshot() : character(Characters::CharNone), level(Level::None)
+{
+}
+
+World::Snapshot::Snapshot(Characters character, Level level, sf::Vector2f pos) : character(character), level(level)
+	, playerPos(pos)
+{
+}
+
+sf::Vector2f World::Snapshot::getPlayerPos() const
+{
+	return playerPos;
+}
+
+Characters World::Snapshot::getCharacterType() const
+{
+	return character;
+}
+
+Level World::Snapshot::getLevel() const
+{
+	return level;
+}
+

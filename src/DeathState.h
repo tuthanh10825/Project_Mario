@@ -21,7 +21,7 @@ public:
     virtual bool update(sf::Time dt);
     virtual bool handleEvent(const sf::Event& event);
 
-    void setLevel(Level level, Characters character); 
+    void applySnapshot(World::Snapshot snapshot); 
     
 private:
     void updateOptionText();

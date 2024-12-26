@@ -1,9 +1,12 @@
 #pragma once
 #include <sfml/Graphics.hpp>
-#include "State.h"
+#include "ResourceHolder.h"
 class Hub {
 private: 
-	State::Context context; 
+
+	sf::RenderWindow& window; 
+	FontHolder& fonts; 
+	TextureHolder& textures; 
 
 	sf::Text hpText; 
 	sf::Text hpCount; 
@@ -17,7 +20,7 @@ private:
 	
 
 public: 
-	Hub(State::Context context); 
+	Hub(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts); 
 
 	void setHP(int hp); 
 	void setTime(float time); 

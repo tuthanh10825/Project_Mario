@@ -18,7 +18,20 @@
 using json = nlohmann::json;
 class World : private sf::NonCopyable {
 public: 
-	explicit World(sf::RenderWindow& window, TextureHolder& texture, Hub& hub, SoundPlayer& sounds); 
+	class Snapshot {
+		sf::Vector2f playerPos; 
+		Characters character; 
+		Level level; 
+	public: 
+		Snapshot(); 
+		Snapshot(Characters character, Level level, sf::Vector2f pos = sf::Vector2f()); 
+		sf::Vector2f getPlayerPos() const; 
+		Characters getCharacterType() const; 
+		Level getLevel() const; 
+	};
+
+
+	explicit World(sf::RenderWindow& window, TextureHolder& texture, FontHolder& fonts ,SoundPlayer& sounds); 
 	void update(sf::Time dt); 
 	void draw(); 
 
@@ -26,12 +39,13 @@ public:
 		
 	const sf::View& getView() const;
 
-	void loadWorld(json& info, Character::Type type);
+	void loadWorld(json& info, Snapshot snapshot);
 	void setWorldBound(sf::FloatRect& rect);
 
 	bool hasAlivePlayer() const;
 	bool playerReachBound() const; 
-	
+
+	Snapshot createSnapshot(); 
 private:
 
 
@@ -85,11 +99,14 @@ private:
 	std::vector<Enemy*> enemies;
 	
 
-	Hub& hub; 
+	Hub hub; 
 	float time; 
 	Command setAir;
 	Command applyGravity;
 	Command markingRemove; 
+
+	Level currLevel; 
+	Characters currChar; 
 };
 
 bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2); 

@@ -5,6 +5,7 @@ class MenuState : public State {
 private: 
 	enum OptionNames {
 		Play, 
+		Continue, 
 		Exit
 	};
 	std::vector<sf::Sprite> options; 
