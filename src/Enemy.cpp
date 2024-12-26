@@ -94,28 +94,22 @@ void Enemy::updateCurrent(sf::Time dt)
 	if (Table[type].isFly) {
 		this->setAcceleration(0.f, 0.f);
 		if (pos.y < origin.y - Table[type].range.y || pos.x < origin.x - Table[type].range.x) {
-			std::cout << pos.y << " " << origin.y - Table[type].range.y << " " << pos.x << " " << origin.x - Table[type].range.x << std::endl;
-			this->setVelocity(-Table[type].speed.x, -Table[type].speed.y);
 			moveRD = true;
 			moveLU = false;
 		}
 		else if (pos.y > origin.y + Table[type].range.y || pos.x > origin.x + Table[type].range.x) {
-			this->setVelocity(Table[type].speed.x, Table[type].speed.y);
 			moveLU = true;
 			moveRD = false;
 		}
-		mMovRD.update(dt);
-		mMovLU.update(dt);
 	}
-	else {
-		if (moveRD && !moveLU) {
-			this->setVelocity(Table[type].speed.x, currVelo.y);
-			mMovRD.update(dt);
-		}
-		else if (moveLU) {
-			this->setVelocity(-Table[type].speed.x, currVelo.y);
-			mMovLU.update(dt);
-		}
+	
+	if (moveRD && !moveLU) {
+		this->setVelocity(Table[type].speed.x, (Table[type].speed.y == 0)? currVelo.y:Table[type].speed.y);
+		mMovRD.update(dt);
+	}
+	else if (moveLU) {
+		this->setVelocity(-Table[type].speed.x, (Table[type].speed.y == 0)? currVelo.y:-Table[type].speed.y);
+		mMovLU.update(dt);
 	}
 	
 	Entity::updateCurrent(dt);

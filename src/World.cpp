@@ -569,7 +569,7 @@ void World::handleCollisions()
 				enemy.setMoveRight(false);
 				enemy.setMoveLeft(true);
 			}
-			if (direction == Collision::Up) {
+			else if (direction == Collision::Up) {
 				if (pickup.getVelocity().y >= 0 && pickup.getVelocity().x == 0) {
 					pickup.setMoveRight(true);
 				}
@@ -596,7 +596,7 @@ void World::handleCollisions()
 				pickup2.setMoveLeft(true);
 				pickup2.setMoveRight(false);
 			}
-			if (direction == Collision::Up) {
+			else if (direction == Collision::Up) {
 				pickup1.setAir(false);
 				pickup1.fixPosition(pickup2, direction);
 			}

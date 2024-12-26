@@ -23,7 +23,7 @@ std::vector<EnemyData> initializeEnemyData()
 	data[Enemy::Plant].movRD = Textures::PlantMove;
 	data[Enemy::Plant].dead = Textures::Plant;
 	data[Enemy::Plant].texture = Textures::Plant;
-	data[Enemy::Plant].speed = sf::Vector2f(0.f, -30.f);
+	data[Enemy::Plant].speed = sf::Vector2f(0.f, 30.f);
 	data[Enemy::Plant].range = sf::Vector2f(0.f, 30.f);
 	data[Enemy::Plant].isFly = true;
 	data[Enemy::Plant].frameSize = sf::Vector2i(36.f, 54.f);
@@ -33,7 +33,7 @@ std::vector<EnemyData> initializeEnemyData()
 	data[Enemy::Bird].movRD = Textures::BirdMovRight;
 	data[Enemy::Bird].dead = Textures::Bird;
 	data[Enemy::Bird].texture = Textures::Bird;
-	data[Enemy::Bird].speed = sf::Vector2f(-80.f, 0.f);
+	data[Enemy::Bird].speed = sf::Vector2f(80.f, 0.f);
 	data[Enemy::Bird].range = sf::Vector2f(80.f, 0.f);
 	data[Enemy::Bird].isFly = true;
 	data[Enemy::Bird].frameSize = sf::Vector2i(36.f, 36.f);
