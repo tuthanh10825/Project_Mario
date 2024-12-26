@@ -103,18 +103,39 @@ void World::loadWorld(json& info, Character::Type type)
 					std::cout << 323232323;
 					enemyInfo.push_back({ Enemy::Bird, sf::Vector2f(entity["px"][0], entity["px"][1]) });
 				}
+				else if (entity["__identifier"] == "Mushroom") {
+					std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
+					mysBlock->setPosition(sf::Vector2f(entity["px"][0], entity["px"][1]));
+					//we can add the some property to create any pickup here. 
+					mysBlock->addItem(Pickup::Type::Mushroom);
+					sceneLayers[Air]->attachChild(std::move(mysBlock));
+				}
+				else if (entity["__identifier"] == "Coin") {
+					std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
+					mysBlock->setPosition(sf::Vector2f(entity["px"][0], entity["px"][1]));
+					//we can add the some property to create any pickup here. 
+					mysBlock->addItem(Pickup::Type::Coin);
+					sceneLayers[Air]->attachChild(std::move(mysBlock));
+				}
+				else if (entity["__identifier"] == "FireFlower") {
+					std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
+					mysBlock->setPosition(sf::Vector2f(entity["px"][0], entity["px"][1]));
+					//we can add the some property to create any pickup here. 
+					mysBlock->addItem(Pickup::Type::FireFlower);
+					sceneLayers[Air]->attachChild(std::move(mysBlock));
+				}
 			}
 
 		}
-		else if (layerInstance["__identifier"] == "MysteryBlock") {
-			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
-				std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
-				mysBlock->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
-				//we can add the some property to create any pickup here. 
-				mysBlock->addItem(Pickup::Type::Mushroom);
-				sceneLayers[Air]->attachChild(std::move(mysBlock));
-			}
-		}
+		//else if (layerInstance["__identifier"] == "MysteryBlock") {
+		//	for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
+		//		std::unique_ptr<MysteryBlock> mysBlock(new MysteryBlock(textures.get(Textures::MysteryBlock)));
+		//		mysBlock->setPosition(sf::Vector2f(blockInfo["px"][0], blockInfo["px"][1]));
+		//		//we can add the some property to create any pickup here. 
+		//		mysBlock->addItem(Pickup::Type::Mushroom);
+		//		sceneLayers[Air]->attachChild(std::move(mysBlock));
+		//	}
+		//}
 		else if (layerInstance["__identifier"] == "Block") {
 			sf::Texture& blockTileset = textures.get(Textures::BlockTileset); 
 			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
