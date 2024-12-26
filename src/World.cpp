@@ -420,7 +420,7 @@ void World::handleCollisions()
 			pair.first->fixPosition(*pair.second, direction);
 			Enemy& enemy = static_cast<Enemy&>(*pair.second);
 
-			if (direction == Collision::Up && charVelocity.y >= -10) {
+			if (direction == Collision::Up) {
 				if (enemy.getType() == Enemy::Plant) {
 					character->damage(enemy.getHp());
 				}
@@ -435,16 +435,16 @@ void World::handleCollisions()
 					character->incrPoint(10);
 				}
 			}
-			else if (direction == Collision::Down && charVelocity.y < 0) {
+			else if (direction == Collision::Down) {
 				charVelocity.y = 0;
 				character->damage(enemy.getHp());
 			}
-			else if ((direction == Collision::Left) && charVelocity.x > 0) {
+			else if (direction == Collision::Left)  {
 				charVelocity.x = 0;
 				charAccel.x = 0;
 				character->damage(enemy.getHp());
 			}
-			else if ((direction == Collision::Right) && charVelocity.x < 0) {
+			else if (direction == Collision::Right) {
 				charVelocity.x = 0;
 				charAccel.x = 0;
 				character->damage(enemy.getHp());
