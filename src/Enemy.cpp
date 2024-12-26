@@ -91,6 +91,14 @@ void Enemy::updateCurrent(sf::Time dt)
 		Entity::updateCurrent(dt);
 		return;
 	}
+
+	if (getFreeze()) {
+		this->setVelocity(0, 0);
+		this->setAcceleration(0, 0);
+		Entity::updateCurrent(dt);
+		return;
+	}
+
 	if (Table[type].isFly) {
 		this->setAcceleration(0.f, 0.f);
 		if (pos.y < origin.y - Table[type].range.y || pos.x < origin.x - Table[type].range.x) {

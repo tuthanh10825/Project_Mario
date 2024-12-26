@@ -34,10 +34,16 @@ time(0)
 	};
 
 	setAir.category = Category::Player | Category::Enemy | Category::Pickup;
-	setAir.action = [](SceneNode& s, sf::Time dt) {
+	setAir.action = [&](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&> (s);
 		entity.setAir(true);
-	};
+		if (entity.getWorldPosition().x <= worldView.getCenter().x - worldView.getSize().x / 2 - 20.f || entity.getWorldPosition().x >= worldView.getCenter().x + worldView.getSize().x / 2 + 20.f) {
+			entity.setFreeze(true);
+		}
+		else {
+			entity.setFreeze(false);
+		}
+		};
 	markingRemove.category = Category::Player | Category::Enemy | Category::Pickup | Category::Projectile;
 	markingRemove.action = [&](SceneNode& s, sf::Time dt) {
 		Entity& entity = static_cast<Entity&>(s);

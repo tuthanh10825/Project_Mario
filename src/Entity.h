@@ -21,12 +21,16 @@ public:
 	virtual bool isAir() const; 
 	virtual void setAir(bool isAir); 
 
+	bool getFreeze() const;
+	void setFreeze(bool freeze);
+
 private: 
 	const sf::Vector2f g = sf::Vector2f(0, 9.8); 
 	sf::Vector2f velocity; 
 	sf::Vector2f acceleration; 
 	int hp;
 	bool air; 
+	bool freeze;
 protected: 
 	virtual void updateCurrent(sf::Time dt); 
 	
