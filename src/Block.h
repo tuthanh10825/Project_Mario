@@ -11,8 +11,7 @@ public:
 	virtual unsigned getCategory() const; 
 
 	virtual sf::FloatRect getBoundingRect() const; 
-private: 
-	sf::RectangleShape boundary; 
 protected: 
+	sf::RectangleShape boundary; 
 	virtual void updateCurrent(sf::Time dt) {};
 };

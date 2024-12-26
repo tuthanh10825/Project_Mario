@@ -1,6 +1,11 @@
 #include "MovableBlock.h"
 
-MysteryBlock::MysteryBlock(sf::Texture& texture) : Block(texture), moving(false), movingState(MovingState::None){}
+
+MysteryBlock::MysteryBlock(sf::Texture& texture) : Block(texture), moving(false), movingState(MovingState::None){
+	boundary.setTextureRect(sf::IntRect(0, 0, 36, 36)); 
+	boundary.setSize(sf::Vector2f(36, 36));
+	boundary.setOrigin(sf::Vector2f(18, 18));
+}
 unsigned MysteryBlock::getCategory() const
 {
 	return Category::MysteryBlock;
@@ -58,13 +63,18 @@ void MysteryBlock::updateCurrent(sf::Time dt)
 			if (currentPosition.y >= origin.y) {
 				Block::setPosition(origin);
 				moving = false;
-				if (hasItem())
+				if (hasItem()) {
 					movingState = MovingState::None;
-				else 
+				}
+				else {
 					movingState = MovingState::Moved;
+					boundary.setTextureRect(sf::IntRect(36, 0, 36, 36)); 
+				}
 				this->setVelocity(0, 0);
 			}
 		}
+		
+			
 	}
 	Entity::updateCurrent(dt);
 }
