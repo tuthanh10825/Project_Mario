@@ -88,3 +88,8 @@ void MysteryBlock::addItem(Pickup::Type item)
 {
 	itemsType.push(item);
 }
+
+Pickup::Type MysteryBlock::getItem()
+{
+	return itemsType.front();
+}

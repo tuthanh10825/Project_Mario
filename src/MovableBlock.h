@@ -11,6 +11,7 @@ public:
 	void createPickup(SceneNode& node, TextureHolder& textures); 
 	bool hasItem() const;
 	void addItem(Pickup::Type item);
+	Pickup::Type getItem();
 
 protected: 
 	virtual void updateCurrent(sf::Time dt); 

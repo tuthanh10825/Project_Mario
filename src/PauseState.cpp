@@ -1,7 +1,7 @@
 ﻿#include "PauseState.h"
 
 PauseState::PauseState(StateStack& stateStack, Context context)
-    : State(stateStack, context), optionIndex(0), volumeLevel(50.0f) {
+    : State(stateStack, context), optionIndex(0), volumeLevel(50.0f), lastSnapshot() {
     sf::RenderWindow& window = *getContext().window;
 
     // Load textures for buttons
@@ -46,7 +46,7 @@ PauseState::PauseState(StateStack& stateStack, Context context)
     // Slider bar
     sliderBar.setSize(sf::Vector2f(200.f, 10.f));
     sliderBar.setFillColor(sf::Color(100, 100, 100));
-    sliderBar.setPosition(window.getView().getCenter() + sf::Vector2f(-100.f, 50.f));
+    sliderBar.setPosition(window.getView().getCenter() + sf::Vector2f(-100.f, 200.f));
 
     // Slider handle
     sliderHandle.setSize(sf::Vector2f(20.f, 20.f));
@@ -100,12 +100,18 @@ bool PauseState::handleEvent(const sf::Event& event) {
                 requestStackPop();
             }
             else if (optionIndex == Exit) {
+                getContext().caretaker->push(lastSnapshot); 
                 requestStateClear();
-                requestStackPush(States::LevelSelect);
+                requestStackPush(States::Menu); 
             }
         }
     }
     return false;
+}
+
+void PauseState::applySnapshot(World::Snapshot snapshot)
+{
+    lastSnapshot = snapshot; 
 }
 
 void PauseState::updateOptionText() {
@@ -135,13 +141,11 @@ void PauseState::updateSliderAppearance() {
 void PauseState::decreaseVolume() {
     volumeLevel = std::max(0.0f, volumeLevel - 1.0f);
     sliderHandle.setPosition(sliderBar.getPosition() + sf::Vector2f(sliderBar.getSize().x * (volumeLevel / 100.f), 0.f));
-    std::cout << volumeLevel << std::endl;
     getContext().musics->setVolume(volumeLevel); 
 }
 
 void PauseState::increaseVolume() {
     volumeLevel = std::min(100.0f, volumeLevel + 1.0f);
     sliderHandle.setPosition(sliderBar.getPosition() + sf::Vector2f(sliderBar.getSize().x * (volumeLevel / 100.f), 0.f));
-    std::cout << volumeLevel << std::endl;
     getContext().musics->setVolume(volumeLevel);
 }

@@ -24,7 +24,6 @@ bool WinState::handleEvent(const sf::Event& event) {
 	if (event.type == sf::Event::KeyPressed) {
 		requestStateClear(); 
 		requestStackPush(States::Menu); 
-		requestStackPush(States::LevelSelect); 
 	}
 	return false; 
 }

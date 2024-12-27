@@ -6,8 +6,9 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 	getContext().textures->load(Textures::ExitButton, "textures/ExitButtons.png");
 	getContext().textures->load(Textures::Title, "textures/Title.png");
 	getContext().textures->load(Textures::Arrow, "textures/Arrow.png");
+	getContext().textures->load(Textures::ContinueButton, "textures/ContinueButtons.png"); 
 
-	mButtonSize = sf::Vector2i(160, 80);
+	mButtonSize = sf::Vector2i(240, 80);
 
 	sf::RenderWindow& currWindow = *(context.window); 
 	currWindow.setView(currWindow.getDefaultView()); 
@@ -24,26 +25,36 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 	options.push_back(playOption); 
 	
 
+	sf::Sprite continueOption;
+
+	continueOption.setTexture(getContext().textures->get(Textures::ContinueButton));
+	continueOption.setTextureRect(sf::IntRect(0, 0, mButtonSize.x, mButtonSize.y));
+
+
+	sf::FloatRect bound2 = continueOption.getLocalBounds(); 
+	continueOption.setOrigin((bound2.left + bound2.width / 2.f),(bound2.top + bound2.height / 2.f)); 
+	continueOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 100.f));
+	options.push_back(continueOption);
+
 	sf::Sprite exitOption;
 
 	exitOption.setTexture(getContext().textures->get(Textures::ExitButton));
 	exitOption.setTextureRect(sf::IntRect(0, 0, mButtonSize.x, mButtonSize.y));
 
 
-	sf::FloatRect bound2 = exitOption.getLocalBounds(); 
-	exitOption.setOrigin((bound2.left + bound2.width / 2.f),(bound2.top + bound2.height / 2.f)); 
-	exitOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 100.f));
+	sf::FloatRect bound3 = exitOption.getLocalBounds();
+	exitOption.setOrigin((bound3.left + bound2.width / 2.f), (bound3.top + bound2.height / 2.f));
+	exitOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 200.f));
 	options.push_back(exitOption);
 
-
 	title.setTexture(getContext().textures->get(Textures::Title));
-	sf::FloatRect bound3 = title.getLocalBounds(); 
-	title.setOrigin(bound3.left + bound3.width / 2.f, bound3.top + bound3.height / 2.f); 
+	sf::FloatRect bound4 = title.getLocalBounds(); 
+	title.setOrigin(bound4.left + bound4.width / 2.f, bound4.top + bound4.height / 2.f); 
 	title.setPosition(sf::Vector2f(windowSize.x/2.f, windowSize.y/4.f));
 
 	mArrow.setTexture(getContext().textures->get(Textures::Arrow));
 	mArrow.setOrigin(mArrow.getLocalBounds().width, mArrow.getLocalBounds().height / 2.f);
-	mArrow.setPosition(options[optionIndex].getPosition() - sf::Vector2f(80.f, 10.f));
+	mArrow.setPosition(options[optionIndex].getPosition() - sf::Vector2f(120.f, 10.f));
 
 
 	updateOptionText();
@@ -88,6 +99,10 @@ bool MenuState::handleEvent(const sf::Event& event)
 			requestStackPop(); 
 			requestStackPush(States::LevelSelect);
 		}
+		if (optionIndex == Continue) { 
+			requestStackPop(); 
+			requestStackPush(States::Continue); 
+		}
 		if (optionIndex == Exit)
 			requestStateClear(); 
 	}
@@ -109,5 +124,5 @@ void MenuState::updateOptionText()
 	options[optionIndex].setTextureRect(textureRect);
 
 	// Update the arrow position to point at the selected option
-	mArrow.setPosition(options[optionIndex].getPosition() - sf::Vector2f(80.f, 10.f));
+	mArrow.setPosition(options[optionIndex].getPosition() - sf::Vector2f(120.f, 10.f));
 }

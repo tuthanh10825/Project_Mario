@@ -5,7 +5,7 @@
 # Add the executable
 find_package(OpenAL REQUIRED)
 
-add_executable(game main.cpp "MovableBlock.h" "MovableBlock.cpp" "Hub.h" "Hub.cpp" "MusicPlayer.h" "MusicPlayer.cpp" "SoundPlayer.h" "SoundPlayer.cpp" "SoundNode.h" "SoundNode.cpp"  "DeathState.h" "DeathState.cpp" "WinState.h" "WinState.cpp")
+add_executable(game main.cpp "MovableBlock.h" "MovableBlock.cpp" "Hub.h" "Hub.cpp" "MusicPlayer.h" "MusicPlayer.cpp" "SoundPlayer.h" "SoundPlayer.cpp" "SoundNode.h" "SoundNode.cpp"  "DeathState.h" "DeathState.cpp" "WinState.h" "WinState.cpp" "ContinueState.cpp" "ContinueState.h" "Caretaker.h" "Caretaker.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET game PROPERTY CXX_STANDARD 20)

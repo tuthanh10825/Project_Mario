@@ -1,11 +1,11 @@
 #include "Hub.h"
 #include <string>
-Hub::Hub(State::Context context) : context(context)
+Hub::Hub(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts): window(window) 
+	, textures(textures)
+	, fonts(fonts)
 {
-	FontHolder& fonts = *(context.fonts); 
 	fonts.load(Fonts::PixeloidMono, "fonts/PixeloidMono.ttf"); 
 
-	TextureHolder& textures = *(context.textures); 
 	textures.load(Textures::Heart, "textures/heart.png"); 
 
 	hpText.setFont(fonts.get(Fonts::PixeloidMono)); 
@@ -87,7 +87,6 @@ void Hub::updateView(const sf::View& worldView)
 
 void Hub::draw()
 {
-	sf::RenderWindow& window = *(context.window);
 	window.draw(hpText); 
 	window.draw(hpCount);
 	window.draw(heart);

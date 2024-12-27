@@ -180,35 +180,33 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 		if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {
 			if (charOptionIndex + 3 == Character1) {
 				if (levelOptionIndex == Level1) {
-					requestStackPop();
-					requestStackPushGame(Level::Easy, Characters::Character1);
+					requestStateClear(); 
+					requestStackPushGame(World::Snapshot(Characters::Character1, Level::Easy));
 					
 				}
 				if (levelOptionIndex == Level2) {
-					requestStackPop();
-					requestStackPushGame(Level::Medium, Characters::Character1);
+					requestStateClear();
+					requestStackPushGame(World::Snapshot(Characters::Character1, Level::Medium));
 					
 				}
 				if (levelOptionIndex == Level3) {
-					requestStackPop();
-					requestStackPushGame(Level::Hard, Characters::Character1);
+					requestStateClear();
+					requestStackPushGame(World::Snapshot(Characters::Character1, Level::Hard));
 					
 				}
 			}
 			if (charOptionIndex + 3 == Character2) {
 				if (levelOptionIndex == Level1) {
-					requestStackPop();
-					requestStackPushGame(Level::Easy, Characters::Character2);
-			
+					requestStateClear();
+					requestStackPushGame(World::Snapshot(Characters::Character2, Level::Easy));
 				}
 				if (levelOptionIndex == Level2) {
-					requestStackPop();
-					requestStackPushGame(Level::Medium, Characters::Character2);
-				
+					requestStateClear();
+					requestStackPushGame(World::Snapshot(Characters::Character2, Level::Medium));
 				}
 				if (levelOptionIndex == Level3) {
-					requestStackPop();
-					requestStackPushGame(Level::Hard, Characters::Character2);
+					requestStateClear(); 
+					requestStackPushGame(World::Snapshot(Characters::Character2, Level::Hard));
 		
 				}
 			}
