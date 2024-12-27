@@ -29,7 +29,7 @@ sf::FloatRect Entity::getBoundingRect() const
 	return sf::FloatRect();
 }
 
-Entity::Entity(int hp): hp(hp), air(true) {
+Entity::Entity(int hp) : hp(hp), air(true), freeze(false) {
 }
 
 bool Entity::isAir() const
@@ -79,4 +79,14 @@ void Entity::remove()
 bool Entity::isDestroyed() const
 {
 	return hp <= 0;
+}
+
+bool Entity::getFreeze() const
+{
+	return freeze;
+}
+
+void Entity::setFreeze(bool freeze)
+{
+	this->freeze = freeze;
 }

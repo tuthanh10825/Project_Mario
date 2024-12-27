@@ -3,6 +3,7 @@ namespace Textures {
 	enum ID {
 		Background, 
 		TitleBackground,
+		SaveGameBackground,
 		Title,
 		PlayButton,
 		ExitButton,
@@ -69,6 +70,7 @@ namespace States {
 		Pause,
 		Death,
 		Win, 
+		Continue, 
 	};
 }
 namespace Category {
