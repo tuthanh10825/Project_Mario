@@ -307,7 +307,8 @@ void World::loadTextures()
 	textures.load(Textures::Mushroom, "textures/Mushroom.png");
 	textures.load(Textures::FireFlower, "textures/FireFlower.png");
 	textures.load(Textures::Coin, "textures/Coin.png");
-	textures.load(Textures::Projectile, "textures/Projectile.png");
+	textures.load(Textures::Bullet, "textures/Bullet.png");
+	textures.load(Textures::BulletAnimation, "textures/BulletAnimation.png");
 	textures.load(Textures::BlockTileset, "textures/tilesets.png");
 	textures.load(Textures::MysteryBlock, "textures/MysteryBlock.png"); 
 	textures.load(Textures::Plant, "textures/Plant.png");

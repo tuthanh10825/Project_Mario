@@ -1,12 +1,14 @@
 #include "Projectile.h"
+#include "Utility.h"
 #include <iostream>
 
 Projectile::Projectile(Type type, TextureHolder& textures)
 	: Entity(1)
 	, type(type)
 	, damage(1)
+	, animation(textures.get(Textures::BulletAnimation))
 {
-	sf::Texture& texture = textures.get(Textures::Projectile);
+	sf::Texture& texture = textures.get(Textures::Bullet);
 	sf::Vector2u boundaryRect = texture.getSize();
 	sprite.setTexture(&texture);
 	sprite.setSize(sf::Vector2f(boundaryRect.x, boundaryRect.y));
@@ -15,11 +17,17 @@ Projectile::Projectile(Type type, TextureHolder& textures)
 	sprite.setOutlineColor(sf::Color::Red);
 	sprite.setOutlineThickness(-2);
 #endif // _DEBUG
+	animation.setFrameSize(sf::Vector2i(18, 18));
+	animation.setNumFrames(4);
+	animation.setDuration(sf::seconds(0.5));
+	animation.setRepeating(true);
+
+	centerOrigin(animation);
 }
 
 void Projectile::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(sprite, states);
+	target.draw(animation, states);
 }
 
 unsigned Projectile::getCategory() const
@@ -38,6 +46,7 @@ void Projectile::updateCurrent(sf::Time dt)
 	if (!isAir()) {
 		this->setVelocity(currVecl.x, -300.f);
 	}
+	animation.update(dt);
 
 	Entity::updateCurrent(dt);
 }

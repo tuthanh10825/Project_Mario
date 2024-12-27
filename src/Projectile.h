@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "ID.h"
 #include "ResourceHolder.h"
+#include "Animation.h"
 
 class Projectile : public Entity {
 public:
@@ -22,6 +23,7 @@ public:
 
 private:
 	sf::RectangleShape sprite;
+	Animation animation;
 	int damage;
 	Type type;
 };
