@@ -16,7 +16,7 @@ std::vector<EnemyData> initializeEnemyData()
 	data[Enemy::Goomba].speed = sf::Vector2f(80.f, 0.f);
 	data[Enemy::Goomba].range = sf::Vector2f(999999.f, 999999.f);
 	data[Enemy::Goomba].isFly = false;
-	data[Enemy::Goomba].frameSize = sf::Vector2i(48.f, 48.f);
+	data[Enemy::Goomba].frameSize = sf::Vector2i(36.f, 36.f);
 
 	data[Enemy::Plant].hp = 1;
 	data[Enemy::Plant].movLU = Textures::PlantMove;
