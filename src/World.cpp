@@ -103,7 +103,7 @@ void World::loadWorld(json& info, Snapshot snapshot)
 		if (layerInstance["__identifier"] == "Entities") {
 			for (auto& entity : layerInstance["entityInstances"]) {
 				if (entity["__identifier"] == "MC") {
-					spawnPosition = sf::Vector2f(entity["__worldX"], entity["__worldY"]); 
+					spawnPosition = sf::Vector2f(entity["px"][0], entity["px"][1]);
 					character = MC.get();
 					MC.get()->setPosition(snapshot.getPlayerPos()); 
 					if (snapshot.getPlayerPos() == sf::Vector2f())
@@ -167,7 +167,7 @@ void World::loadWorld(json& info, Snapshot snapshot)
 		else if (layerInstance["__identifier"] == "Block") {
 			sf::Texture& blockTileset = textures.get(Textures::BlockTileset); 
 			for (auto& blockInfo : layerInstance["autoLayerTiles"]) {
-				std::unique_ptr<Block> block(new Block(blockTileset, sf::IntRect(blockInfo["t"] * 36, 0, 36, 36)));
+				std::unique_ptr<Block> block(new Block(blockTileset, sf::IntRect(blockInfo["src"][0], blockInfo["src"][1], 36, 36)));
 
 				if (blockInfo["f"] == 0) block->setScale(1, 1);
 				else if (blockInfo["f"] == 1) block->setScale(-1, 1);
@@ -285,7 +285,7 @@ void World::adaptPlayerVelocity()
 		}
 	}
 	if (character->isJump()) {
-		charVelocity.y = -500.f; 
+		charVelocity.y = -400.f; 
 		character->setJump(false); 
 	}
 	character -> setVelocity(charVelocity);
