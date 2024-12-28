@@ -451,7 +451,12 @@ void World::handleCollisions()
 
 			if (direction == Collision::Up) {
 				if (enemy.getType() == Enemy::Plant) {
-					character->damage(enemy.getHp());
+					if (!character->isImmortal()) {
+						character->damage(enemy.getHp());
+						character->setImmortalDuration(3.f);
+					}
+					sf::Vector2f currVelo = character->getVelocity(); 
+					character->setVelocity(currVelo.x, currVelo.y + 300); 
 				}
 				else {
 					isAir = false;
@@ -466,17 +471,26 @@ void World::handleCollisions()
 			}
 			else if (direction == Collision::Down) {
 				charVelocity.y = 0;
-				character->damage(enemy.getHp());
+				if (!character->isImmortal()) {
+					character->damage(enemy.getHp());
+					character->setImmortalDuration(3.f);
+				}
 			}
 			else if (direction == Collision::Left)  {
 				charVelocity.x = 0;
 				charAccel.x = 0;
-				character->damage(enemy.getHp());
+				if (!character->isImmortal()) {
+					character->damage(enemy.getHp());
+					character->setImmortalDuration(3.f);
+				}
 			}
 			else if (direction == Collision::Right) {
 				charVelocity.x = 0;
 				charAccel.x = 0;
-				character->damage(enemy.getHp());
+				if (!character->isImmortal()) {
+					character->damage(enemy.getHp());
+					character->setImmortalDuration(3.f);
+				}
 			}
 		}
 

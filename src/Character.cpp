@@ -21,6 +21,7 @@ Character::Character(Type type, TextureHolder& textures)
 	, direction(1)
 	, point(0)
 	, hasFireFlower(false)
+	, immortalDuration(0)
 {
 	sf::Texture& texture = textures.get(Table[type].texture);
 
@@ -106,6 +107,19 @@ void Character::updateCurrent(sf::Time dt)
 	else if (mFireCountdown > sf::Time::Zero)
 		mFireCountdown -= dt;
 	Entity::updateCurrent(dt);
+	immortalDuration = (immortalDuration - dt.asSeconds() > 0) ? (immortalDuration - dt.asSeconds()) : 0;  
+	int c = static_cast<int>(immortalDuration * 5) % 2;
+	if (c) {
+		mMovLeft.setColor(sf::Color(255, 255, 255, 150)); 
+		mMovRight.setColor(sf::Color(255, 255, 255, 150)); 
+		sprite.setFillColor(sf::Color(255, 255, 255, 150)); 
+	}
+	else {
+		mMovLeft.setColor(sf::Color(255, 255, 255, 255));
+		mMovRight.setColor(sf::Color(255, 255, 255, 255)); 
+		sprite.setFillColor(sf::Color(255, 255, 255, 255));
+	}
+	
 }
 
 void Character::setMoveLeft(bool isMove)
@@ -194,4 +208,14 @@ bool Character::hasFire() const
 void Character::setHasFireFlower(bool hasFire)
 {
 	hasFireFlower = hasFire;
+}
+
+void Character::setImmortalDuration(float time)
+{
+	immortalDuration = time; 
+}
+
+bool Character::isImmortal() const
+{
+	return immortalDuration > 0;
 }

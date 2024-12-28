@@ -49,6 +49,9 @@ public:
 	bool hasFire() const;
 	void setHasFireFlower(bool hasFireFlower);
 
+	void setImmortalDuration(float time); 
+	bool isImmortal() const; 
+
 	Command getFireCommand();
 private: 
 
@@ -59,11 +62,13 @@ private:
 	int point;
 	bool hasFireFlower;
 	int direction;
+	float immortalDuration; 
 
 	Type type; 
 	sf::RectangleShape sprite; 
 	Animation mMovRight;
 	Animation mMovLeft;
+
 	bool fire;
 	sf::Time mFireCountdown;
 	Command mFireCommand;
