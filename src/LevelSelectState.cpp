@@ -134,7 +134,7 @@ void LevelSelectState::draw()
 
 bool LevelSelectState::update(sf::Time dt)
 {
-	return true;
+	return false;
 }
 
 bool LevelSelectState::handleEvent(const sf::Event& event)
@@ -155,8 +155,7 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 		}
 		if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {
 			if (levelOptionIndex + 2 == Back) {
-				requestStateClear();
-				requestStackPush(States::Menu);
+				requestStackPop(); 
 			}
 			else if (levelOptionIndex == Level1 || levelOptionIndex == Level2 || levelOptionIndex == Level3) {
 				mIsLevelSelected = true;
@@ -220,7 +219,7 @@ bool LevelSelectState::handleEvent(const sf::Event& event)
 		
 	}
 	
-	return true;
+	return false;
 }
 
 void LevelSelectState::updateOption()
