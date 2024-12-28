@@ -371,7 +371,7 @@ void World::handleCollisions()
 	std::set<SceneNode::Pair> collisionPairs; 
 	for (int i = 0; i < checkingNodes.size(); ++i) {
 		for (int j = i + 1; j < checkingNodes.size(); ++j) {
-			if (collision(*checkingNodes[i], *checkingNodes[j])) {
+			if (collision(*checkingNodes[i], *checkingNodes[j]) && !(checkingNodes[i]->getCategory() == Category::Block && checkingNodes[j]->getCategory() == Category::Block)) {
 				collisionPairs.insert(std::minmax(checkingNodes[i], checkingNodes[j])); 
 			}
 		}
