@@ -68,13 +68,13 @@ void MysteryBlock::updateCurrent(sf::Time dt)
 				}
 				else {
 					movingState = MovingState::Moved;
-					boundary.setTextureRect(sf::IntRect(36, 0, 36, 36)); 
 				}
 				this->setVelocity(0, 0);
 			}
-		}
-		
-			
+		}	
+	}
+	if (!hasItem()) {
+		boundary.setTextureRect(sf::IntRect(36, 0, 36, 36));
 	}
 	Entity::updateCurrent(dt);
 }
