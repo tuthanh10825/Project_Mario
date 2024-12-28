@@ -8,6 +8,12 @@ SoundPlayer::SoundPlayer() : soundBuffers(), sounds()
 	soundBuffers.load(SoundEffect::Fire, "music/fireworks.wav"); 
 	soundBuffers.load(SoundEffect::Die, "music/death.wav");
 	soundBuffers.load(SoundEffect::Win, "music/win.wav");
+	soundBuffers.load(SoundEffect::CreateMushroom, "music/coin.wav"); 
+	soundBuffers.load(SoundEffect::CreateFlower, "music/coin.wav"); 
+	soundBuffers.load(SoundEffect::CreateCoin, "music/coin.wav"); 
+	soundBuffers.load(SoundEffect::EnemyDeath, "music/bump.wav"); 
+	soundBuffers.load(SoundEffect::CharacterDeath, "music/entitydeath.wav"); 
+	soundBuffers.load(SoundEffect::GetPickup, "music/kick.wav"); 
 }
 void SoundPlayer::play(SoundEffect::ID effect) {
 	sounds.push_back(sf::Sound(soundBuffers.get(effect))); 

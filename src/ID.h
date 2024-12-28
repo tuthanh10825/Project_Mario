@@ -126,5 +126,11 @@ namespace SoundEffect {
 		Fire, 
 		Die,
 		Win,
+		CreateMushroom, 
+		CreateFlower, 
+		CreateCoin, 
+		EnemyDeath, 
+		CharacterDeath, 
+		GetPickup, 
 	};
 }

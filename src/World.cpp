@@ -416,6 +416,33 @@ void World::handleCollisions()
 				if (mysteryBlock.hasItem()) {
 					if (mysteryBlock.getItem() == Pickup::Type::Coin) {
 						character->incrPoint(10);
+						Command createCoinSound;
+						createCoinSound.category = Category::SceneNodeSound;
+						createCoinSound.action = [&](SceneNode& s, sf::Time dt) {
+							SoundNode& soundNode = static_cast<SoundNode&> (s);
+							soundNode.playSound(SoundEffect::CreateCoin);
+							};
+						commandQueue.push(createCoinSound);
+					}
+					else if (mysteryBlock.getItem() == Pickup::Type::FireFlower) {
+						character->incrPoint(10);
+						Command createFlowerSound;
+						createFlowerSound.category = Category::SceneNodeSound;
+						createFlowerSound.action = [&](SceneNode& s, sf::Time dt) {
+							SoundNode& soundNode = static_cast<SoundNode&> (s);
+							soundNode.playSound(SoundEffect::CreateFlower);
+							};
+						commandQueue.push(createFlowerSound);
+					}
+					else if (mysteryBlock.getItem() == Pickup::Type::Mushroom) {
+						character->incrPoint(10);
+						Command createMushroomSound;
+						createMushroomSound.category = Category::SceneNodeSound;
+						createMushroomSound.action = [&](SceneNode& s, sf::Time dt) {
+							SoundNode& soundNode = static_cast<SoundNode&> (s);
+							soundNode.playSound(SoundEffect::CreateMushroom);
+							};
+						commandQueue.push(createMushroomSound);
 					}
 					mysteryBlock.setMove(character->getVelocity().y);
 					Command createPickupCommand;
@@ -475,11 +502,25 @@ void World::handleCollisions()
 					if (!character->isImmortal()) {
 						character->damage(enemy.getHp());
 						character->setImmortalDuration(3.f);
+						Command createCharacterDeathSound;
+						createCharacterDeathSound.category = Category::SceneNodeSound;
+						createCharacterDeathSound.action = [&](SceneNode& s, sf::Time dt) {
+							SoundNode& soundNode = static_cast<SoundNode&> (s);
+							soundNode.playSound(SoundEffect::CharacterDeath);
+							};
+						commandQueue.push(createCharacterDeathSound);
 					}
 					sf::Vector2f currVelo = character->getVelocity(); 
 					character->setVelocity(currVelo.x, currVelo.y + 300); 
 				}
 				else {
+					Command createEnemyDeathSound;
+					createEnemyDeathSound.category = Category::SceneNodeSound;
+					createEnemyDeathSound.action = [&](SceneNode& s, sf::Time dt) {
+						SoundNode& soundNode = static_cast<SoundNode&> (s);
+						soundNode.playSound(SoundEffect::EnemyDeath);
+						};
+					commandQueue.push(createEnemyDeathSound);
 					isAir = false;
 					character->resetJump();
 					enemy.setMoveRight(false);
@@ -495,22 +536,43 @@ void World::handleCollisions()
 				if (!character->isImmortal()) {
 					character->damage(enemy.getHp());
 					character->setImmortalDuration(3.f);
+					Command createCharacterDeathSound;
+					createCharacterDeathSound.category = Category::SceneNodeSound;
+					createCharacterDeathSound.action = [&](SceneNode& s, sf::Time dt) {
+						SoundNode& soundNode = static_cast<SoundNode&> (s);
+						soundNode.playSound(SoundEffect::CharacterDeath);
+						};
+					commandQueue.push(createCharacterDeathSound);
 				}
 			}
 			else if (direction == Collision::Left)  {
-				charVelocity.x = 0;
+				charVelocity.x = -50;
 				charAccel.x = 0;
 				if (!character->isImmortal()) {
 					character->damage(enemy.getHp());
 					character->setImmortalDuration(3.f);
+					Command createCharacterDeathSound;
+					createCharacterDeathSound.category = Category::SceneNodeSound;
+					createCharacterDeathSound.action = [&](SceneNode& s, sf::Time dt) {
+						SoundNode& soundNode = static_cast<SoundNode&> (s);
+						soundNode.playSound(SoundEffect::CharacterDeath);
+						};
+					commandQueue.push(createCharacterDeathSound);
 				}
 			}
 			else if (direction == Collision::Right) {
-				charVelocity.x = 0;
+				charVelocity.x = 50;
 				charAccel.x = 0;
 				if (!character->isImmortal()) {
 					character->damage(enemy.getHp());
 					character->setImmortalDuration(3.f);
+					Command createCharacterDeathSound;
+					createCharacterDeathSound.category = Category::SceneNodeSound;
+					createCharacterDeathSound.action = [&](SceneNode& s, sf::Time dt) {
+						SoundNode& soundNode = static_cast<SoundNode&> (s);
+						soundNode.playSound(SoundEffect::CharacterDeath);
+						};
+					commandQueue.push(createCharacterDeathSound);
 				}
 			}
 		}
@@ -520,6 +582,13 @@ void World::handleCollisions()
 			auto& pickup = static_cast<Pickup&>(*pair.second);
 			pickup.destroy();
 			pickup.apply(*character);
+			Command createGetPickupSound;
+			createGetPickupSound.category = Category::SceneNodeSound;
+			createGetPickupSound.action = [&](SceneNode& s, sf::Time dt) {
+				SoundNode& soundNode = static_cast<SoundNode&> (s);
+				soundNode.playSound(SoundEffect::GetPickup);
+				};
+			commandQueue.push(createGetPickupSound);
 		}
 
 		// enemy and block collision
