@@ -33,7 +33,7 @@ public:
 
 	void 					update(sf::Time dt);
 
-
+	void					setColor(sf::Color color); 
 private:
 	void 					draw(sf::RenderTarget& target, sf::RenderStates states) const;
 private:

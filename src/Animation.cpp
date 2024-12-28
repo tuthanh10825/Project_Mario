@@ -151,6 +151,11 @@ void Animation::update(sf::Time dt)
 
 }
 
+void Animation::setColor(sf::Color color)
+{
+	mSprite.setFillColor(color); 
+}
+
 void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
