@@ -96,11 +96,9 @@ bool MenuState::handleEvent(const sf::Event& event)
 	}
 	if (event.type == event.KeyPressed && event.key.code == sf::Keyboard::Return) {
 		if (optionIndex == Play) {
-			requestStackPop(); 
 			requestStackPush(States::LevelSelect);
 		}
 		if (optionIndex == Continue) { 
-			requestStackPop(); 
 			requestStackPush(States::Continue); 
 		}
 		if (optionIndex == Exit)

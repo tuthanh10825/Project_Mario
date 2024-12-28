@@ -87,14 +87,29 @@ void World::loadWorld(json& info, Snapshot snapshot)
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<long long> dist1(1, LLONG_MAX);
 	//TODO: refactoring
+	std::string backgroundPath = info["bgRelPath"];
+	backgroundPath.erase(backgroundPath.begin(), backgroundPath.begin() + 10);
+	std::string tlevel = info["identifier"];
+	sf::Texture* background;
+	if (tlevel == "Level_0") {
+		textures.load(Textures::Background1, backgroundPath);
+		background = &textures.get(Textures::Background1);
+	}
+	else if (tlevel == "Level_1") {
+		textures.load(Textures::Background2, backgroundPath);
+		background = &textures.get(Textures::Background2);
+	}
+	else if (tlevel == "Level_2") {
+		textures.load(Textures::Background3, backgroundPath);
+		background = &textures.get(Textures::Background3);
+	}
 	
-	sf::Texture& background = textures.get(Textures::Background);
 	
 	sf::IntRect textureRect(worldBounds);
-	background.setRepeated(true);
+	background->setRepeated(true);
 	
 	std::unique_ptr<SpriteNode> backgroundSprite(
-		new SpriteNode(background, textureRect)
+		new SpriteNode(*background, textureRect)
 	);
 	backgroundSprite->setPosition(worldBounds.left, worldBounds.top);
 	sceneLayers[Background]->attachChild(std::move(backgroundSprite));
@@ -294,7 +309,7 @@ void World::adaptPlayerVelocity()
 
 void World::loadTextures()
 {
-	textures.load(Textures::Background, "textures/background.jpg");
+	textures.load(Textures::Background1, "textures/background.jpg");
 	textures.load(Textures::Character1, "textures/idle.png");
 	textures.load(Textures::Char1MovRight, "textures/movRight.png");
 	textures.load(Textures::Char1MovLeft, "textures/movLeft.png");

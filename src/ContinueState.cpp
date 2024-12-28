@@ -21,7 +21,7 @@ ContinueState::ContinueState(StateStack& stateStack, Context context) : State(st
 		options[i].setString(optionString); 
 		options[i].setCharacterSize(36); 
 		options[i].setOrigin(options[i].getLocalBounds().getSize() / 2.f);
-		options[i].setPosition(500, 200 + 85 * i); 
+		options[i].setPosition(500, 200 + 93 * i); 
 	}
 	sf::Text back;
 	back.setFont(getContext().fonts->get(Fonts::PixeloidMono));

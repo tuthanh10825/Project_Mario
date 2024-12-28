@@ -1,13 +1,16 @@
 #pragma once
 namespace Textures {
 	enum ID {
-		Background, 
+		Background1,
+		Background2,
+		Background3,
 		TitleBackground,
 		SaveGameBackground,
 		Title,
 		PlayButton,
 		ExitButton,
 		ContinueButton,
+		WoodenBox,
 		Level1,
 		Level2,
 		Level3,
@@ -38,7 +41,7 @@ namespace Textures {
 		Bird,
 		BirdMovRight,
 		BirdMovLeft,
-		Win
+		Win,	
 	};
 }
 

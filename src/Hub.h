@@ -7,6 +7,8 @@ private:
 	sf::RenderWindow& window; 
 	FontHolder& fonts; 
 	TextureHolder& textures; 
+	
+	sf::Sprite woodenBox;
 
 	sf::Text hpText; 
 	sf::Text hpCount; 
