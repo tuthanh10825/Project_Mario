@@ -19,7 +19,7 @@ void MysteryBlock::setPosition(const sf::Vector2f& position)
 
 void MysteryBlock::setMove(float speed)
 {
-	if (speed >= 0) {
+	if (speed > 0) {
 		return;
 	}
 	if (movingState == MovingState::None)
