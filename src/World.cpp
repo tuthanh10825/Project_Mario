@@ -89,9 +89,9 @@ void World::loadWorld(json& info, Snapshot snapshot)
 	//TODO: refactoring
 	
 	sf::Texture& background = textures.get(Textures::Background);
-	
-	sf::IntRect textureRect(worldBounds);
 	background.setRepeated(true);
+	sf::IntRect textureRect(worldBounds);
+	
 	
 	std::unique_ptr<SpriteNode> backgroundSprite(
 		new SpriteNode(background, textureRect)
@@ -285,7 +285,12 @@ void World::adaptPlayerVelocity()
 		}
 	}
 	if (character->isJump()) {
-		charVelocity.y = -400.f; 
+		if (character->getType() == Character::Character1) {
+			charVelocity.y = -400.f; 
+		}
+		else {
+			charVelocity.y = -450.f;
+		}
 		character->setJump(false); 
 	}
 	character -> setVelocity(charVelocity);

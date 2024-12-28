@@ -8,7 +8,7 @@ namespace {
 }
 
 Character::Character(Type type, TextureHolder& textures) 
-	: Entity(1)
+	: Entity(Table[type].hp)
 	, type(type)
 	, mMovRight(textures.get(Table[type].movRight))
 	, mMovLeft(textures.get(Table[type].movLeft))
@@ -218,4 +218,9 @@ void Character::setImmortalDuration(float time)
 bool Character::isImmortal() const
 {
 	return immortalDuration > 0;
+}
+
+Character::Type Character::getType() const
+{
+	return type;
 }

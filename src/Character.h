@@ -49,6 +49,8 @@ public:
 	bool hasFire() const;
 	void setHasFireFlower(bool hasFireFlower);
 
+	Character::Type getType() const;
+
 	void setImmortalDuration(float time); 
 	bool isImmortal() const; 
 
