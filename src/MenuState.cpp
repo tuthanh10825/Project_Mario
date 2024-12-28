@@ -77,7 +77,7 @@ void MenuState::draw()
 
 bool MenuState::update(sf::Time dt)
 {
-	return true;
+	return false;
 }
 
 bool MenuState::handleEvent(const sf::Event& event)
@@ -106,7 +106,7 @@ bool MenuState::handleEvent(const sf::Event& event)
 		if (optionIndex == Exit)
 			requestStateClear(); 
 	}
-	return true;
+	return false;
 }
 
 void MenuState::updateOptionText()
