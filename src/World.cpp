@@ -605,11 +605,11 @@ void World::handleCollisions()
 				}
 				pickup.setAir(false);
 			}
-			if (direction == Collision::Right) {
+			else if (direction == Collision::Right) {
 				pickup.setMoveRight(true);
 				pickup.setMoveLeft(false);
 			}
-			if (direction == Collision::Left) {
+			else if (direction == Collision::Left) {
 				pickup.setMoveLeft(true);
 				pickup.setMoveRight(false);
 			}
@@ -624,11 +624,11 @@ void World::handleCollisions()
 				}
 				pickup.setAir(false);
 			}
-			if (direction == Collision::Right) {
+			else if (direction == Collision::Right) {
 				pickup.setMoveRight(true);
 				pickup.setMoveLeft(false);
 			}
-			if (direction == Collision::Left) {
+			else if (direction == Collision::Left) {
 				pickup.setMoveLeft(true);
 				pickup.setMoveRight(false);
 			}

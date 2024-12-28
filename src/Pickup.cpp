@@ -45,11 +45,11 @@ void Pickup::updateCurrent(sf::Time dt)
 	if (type == Pickup::Type::Mushroom)
 	{
 		sf::Vector2f curVecl = getVelocity();
-		if (moveRight && !moveLeft)
+		if (moveRight)
 		{
 			this->setVelocity(80.f, curVecl.y);
 		}
-		else if (moveLeft && !moveRight)
+		else if (moveLeft)
 		{
 			this->setVelocity(-80.f, curVecl.y);
 		}
