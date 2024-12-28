@@ -1,6 +1,6 @@
 #include "MusicPlayer.h"
 
-MusicPlayer::MusicPlayer() : music(), filenames(), volume(75.f) {
+MusicPlayer::MusicPlayer() : music(), filenames(), volume(100.f) {
 	filenames[Music::MenuTheme] = "music/SuperMarioBros.ogg"; 
 	
 }

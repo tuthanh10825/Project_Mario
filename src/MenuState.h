@@ -6,6 +6,7 @@ private:
 	enum OptionNames {
 		Play, 
 		Continue, 
+		Setting,
 		Exit
 	};
 	std::vector<sf::Sprite> options; 

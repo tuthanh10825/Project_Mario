@@ -10,6 +10,7 @@ namespace Textures {
 		PlayButton,
 		ExitButton,
 		ContinueButton,
+		SettingButton,
 		WoodenBox,
 		Level1,
 		Level2,
@@ -75,6 +76,8 @@ namespace States {
 		Death,
 		Win, 
 		Continue, 
+		Settings,
+
 	};
 }
 namespace Category {

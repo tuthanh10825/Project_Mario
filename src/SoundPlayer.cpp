@@ -1,6 +1,6 @@
 #include "SoundPlayer.h"
 
-SoundPlayer::SoundPlayer() : soundBuffers(), sounds()
+SoundPlayer::SoundPlayer() : soundBuffers(), sounds(), volume(100)
 {
 	soundBuffers.load(SoundEffect::ChangeOption, "music/change-option.wav"); 
 	soundBuffers.load(SoundEffect::Jump, "music/jump-small.wav"); 
@@ -17,6 +17,7 @@ SoundPlayer::SoundPlayer() : soundBuffers(), sounds()
 }
 void SoundPlayer::play(SoundEffect::ID effect) {
 	sounds.push_back(sf::Sound(soundBuffers.get(effect))); 
+	sounds.back().setVolume(volume); 
 	sounds.back().play(); 
 }
 
@@ -26,9 +27,11 @@ void SoundPlayer::removeStoppedSounds() {
 		});
 }
 
+float SoundPlayer::getVolume() const
+{
+	return volume; 
+}
+
 void SoundPlayer::setVolume(int volumeLevel) {
-	volumeLevel = std::clamp(volumeLevel, 0, 100);
-	for (sf::Sound& sound : sounds) {
-		sound.setVolume(static_cast<float>(volumeLevel));
-	}
+	volume = volumeLevel;
 }

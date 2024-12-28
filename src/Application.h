@@ -11,6 +11,7 @@
 #include "WinState.h"
 #include "ContinueState.h"
 #include "Caretaker.h"
+#include "SettingState.h"
 class Application : sf::NonCopyable {
 private: 
 

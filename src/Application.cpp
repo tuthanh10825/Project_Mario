@@ -34,6 +34,7 @@ void Application::registerStates()
 	stateStack.registerState<DeathState>(States::Death);
 	stateStack.registerState<WinState>(States::Win); 
 	stateStack.registerState<ContinueState>(States::Continue); 
+	stateStack.registerState<SettingState>(States::Settings);
 }
 
 void Application::run()

@@ -7,6 +7,7 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 	getContext().textures->load(Textures::Title, "textures/Title.png");
 	getContext().textures->load(Textures::Arrow, "textures/Arrow.png");
 	getContext().textures->load(Textures::ContinueButton, "textures/ContinueButtons.png"); 
+	getContext().textures->load(Textures::SettingButton, "textures/SettingButton.png");
 
 	mButtonSize = sf::Vector2i(240, 80);
 
@@ -36,6 +37,18 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 	continueOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 100.f));
 	options.push_back(continueOption);
 
+
+	sf::Sprite settingOption;
+
+	settingOption.setTexture(getContext().textures->get(Textures::SettingButton));
+	settingOption.setTextureRect(sf::IntRect(0, 0, mButtonSize.x, mButtonSize.y));
+
+
+	sf::FloatRect bound7 = settingOption.getLocalBounds();
+	settingOption.setOrigin((bound7.left + bound2.width / 2.f), (bound7.top + bound2.height / 2.f));
+	settingOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 200.f));
+	options.push_back(settingOption);
+
 	sf::Sprite exitOption;
 
 	exitOption.setTexture(getContext().textures->get(Textures::ExitButton));
@@ -44,7 +57,7 @@ MenuState::MenuState(StateStack& stateStack, Context context) : State(stateStack
 
 	sf::FloatRect bound3 = exitOption.getLocalBounds();
 	exitOption.setOrigin((bound3.left + bound2.width / 2.f), (bound3.top + bound2.height / 2.f));
-	exitOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 200.f));
+	exitOption.setPosition(playOption.getPosition() + sf::Vector2f(0.f, 300.f));
 	options.push_back(exitOption);
 
 	title.setTexture(getContext().textures->get(Textures::Title));
@@ -100,6 +113,9 @@ bool MenuState::handleEvent(const sf::Event& event)
 		}
 		if (optionIndex == Continue) { 
 			requestStackPush(States::Continue); 
+		}
+		if (optionIndex == Setting) {
+			requestStackPush(States::Settings);
 		}
 		if (optionIndex == Exit)
 			requestStateClear(); 
