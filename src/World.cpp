@@ -100,6 +100,7 @@ void World::loadWorld(json& info, Snapshot snapshot)
 		background = &textures.get(Textures::Background2);
 	}
 	else if (tlevel == "Level_2") {
+		worldBounds.width = 6682; 
 		textures.load(Textures::Background3, backgroundPath);
 		background = &textures.get(Textures::Background3);
 	}

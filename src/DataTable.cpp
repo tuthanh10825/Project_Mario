@@ -62,7 +62,7 @@ std::vector<CharacterData> initializeCharacterData()
 {
 	std::vector<CharacterData> data(Character::TypeCount);
 
-	data[Character::Character1].hp = 3;
+	data[Character::Character1].hp = 7;
 	data[Character::Character1].texture = Textures::Character1;
 	data[Character::Character1].movRight = Textures::Char1MovRight;
 	data[Character::Character1].movLeft = Textures::Char1MovLeft;
